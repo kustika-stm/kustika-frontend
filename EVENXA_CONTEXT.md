@@ -61,3 +61,44 @@ Después se adapta a tablet y desktop.
 - No sobreingeniería
 - Mantener consistencia visual
 - Priorizar rendimiento
+
+La arquitectura está diseñada para crecer de forma progresiva.
+
+No todas las capas estarán completamente utilizadas desde el inicio.
+Se irán expandiendo conforme el producto lo requiera.
+
+Ejemplos:
+
+- `entities/` crecerá con nuevos modelos (events, users, tickets, etc.)
+- `features/` se utilizará para lógica específica (auth, filtros, compra de boletos)
+- `widgets/` se expandirá con secciones completas reutilizables
+- `shared/` centralizará utilidades, hooks y componentes base
+
+El objetivo no es sobreestructurar desde el inicio,
+sino mantener una base sólida que permita escalar sin romper la organización.
+
+src/
+  app/
+    providers/      → Configuración global (contextos, wrappers)
+    router/         → Rutas de la aplicación
+    styles/         → Estilos globales (design system)
+    App.tsx         → Root de la app
+
+  pages/
+    home/           → Página principal (Home)
+
+  widgets/
+    header/         → Componentes grandes reutilizables (UI compuesta)
+
+  entities/
+    event/          → Modelos de negocio (ej: eventos)
+      ui/           → Componentes UI (EventCard)
+      model/        → Tipos, mocks, lógica de datos
+
+  features/         → Funcionalidades específicas (futuro: auth, filtros, etc.)
+
+  shared/
+    assets/
+      images/
+        hero/       → Imágenes del hero
+        logo/       → Logos de la marca

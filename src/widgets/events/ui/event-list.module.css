@@ -1,0 +1,162 @@
+.section {
+    padding: var(--space-lg) 0;
+    /* 👈 menos hueco */
+}
+
+/* título */
+.section h2 {
+    font-size: 22px;
+    padding: 0 var(--space-md);
+    margin-bottom: var(--space-md);
+
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* wrapper para flechas */
+.wrapper {
+    position: relative;
+}
+
+/* 💣 FADE PRO */
+.wrapper::before,
+.wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg), transparent);
+}
+
+.wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg), transparent);
+}
+
+/* contenedor scroll */
+.list {
+    display: flex;
+    gap: var(--space-md);
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    padding: 0 var(--space-md);
+
+    /* MOBILE: centrado */
+    padding-left: calc(50% - 40%);
+    scroll-padding-left: calc(50% - 40%);
+
+    margin-top: var(--space-sm);
+    /* 👈 separación fina */
+}
+
+/* ocultar scrollbar */
+.list::-webkit-scrollbar {
+    display: none;
+}
+
+.list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* item */
+.item {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+
+    min-width: 80%;
+}
+
+/* 📱 tablet */
+@media (min-width: 640px) {
+    .item {
+        min-width: 60%;
+    }
+}
+
+/* 💻 desktop */
+@media (min-width: 1024px) {
+
+    .list {
+        padding-left: var(--space-md);
+        scroll-padding-left: var(--space-md);
+    }
+
+    .item {
+        min-width: calc((100% - (3 * var(--space-md))) / 4);
+    }
+}
+
+/* ========================= */
+/* 🔥 FLECHAS */
+/* ========================= */
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 44px;
+    height: 44px;
+
+    border-radius: 50%;
+    border: none;
+
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    z-index: 10;
+
+    transition: var(--transition-fast);
+}
+
+.arrow:hover {
+    background: rgba(var(--color-primary-rgb), 0.35);
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* icono */
+.arrow img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    pointer-events: none;
+    filter: invert(1);
+}
+
+/* invertir derecha */
+.right img {
+    transform: rotate(180deg);
+}
+
+/* posiciones */
+.left {
+    left: 8px;
+}
+
+.right {
+    right: 8px;
+}
+
+/* ❌ NO FLECHAS EN MOBILE */
+@media (max-width: 1023px) {
+    .arrow {
+        display: none;
+    }
+}

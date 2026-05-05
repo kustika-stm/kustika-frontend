@@ -1,5 +1,6 @@
 import styles from "./home.module.css";
 import bgImage from "../../shared/assets/images/hero/hero.jpg";
+import { EventList } from "../../widgets/events/ui/EventList";
 
 export const HomePage = () => {
     return (
@@ -24,6 +25,9 @@ export const HomePage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* 👇 AQUÍ VA LA LISTA */}
+            <EventList />
         </main>
     );
 };

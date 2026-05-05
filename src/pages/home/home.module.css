@@ -1,6 +1,7 @@
 .banner {
     position: relative;
-    min-height: 100vh;
+    min-height: 85vh;
+    /* 👈 antes 100vh, esto mejora el flow */
 
     display: flex;
     align-items: center;
