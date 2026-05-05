@@ -1,0 +1,128 @@
+.section {
+    padding: var(--space-xl) var(--space-md);
+}
+
+/* header */
+.header {
+    margin-bottom: var(--space-lg);
+}
+
+.header h2 {
+    font-size: 24px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header span {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* ========================= */
+/* GRID */
+/* ========================= */
+
+.grid {
+    display: grid;
+    gap: var(--space-md);
+}
+
+/* CARD BASE */
+.card {
+    position: relative;
+    height: 180px;
+
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+
+    background-size: cover;
+    background-position: center;
+
+    cursor: pointer;
+    transition: transform var(--transition-normal);
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* overlay */
+.overlay {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.9),
+            rgba(0, 0, 0, 0.2));
+}
+
+/* content */
+.content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    padding: var(--space-md);
+    z-index: 2;
+}
+
+.content h3 {
+    font-size: 16px;
+}
+
+/* tag */
+.tag {
+    font-size: 12px;
+    color: var(--color-highlight);
+}
+
+/* ========================= */
+/* 📱 MOBILE */
+/* ========================= */
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        height: 200px;
+    }
+}
+
+/* ========================= */
+/* 💻 DESKTOP */
+/* ========================= */
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 200px 200px;
+
+        grid-template-areas:
+            "one one two"
+            "three four four";
+    }
+
+    .one {
+        grid-area: one;
+        height: 100%;
+    }
+
+    .two {
+        grid-area: two;
+        height: 100%;
+    }
+
+    .three {
+        grid-area: three;
+        height: 100%;
+    }
+
+    .four {
+        grid-area: four;
+        height: 100%;
+    }
+}

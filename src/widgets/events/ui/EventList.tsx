@@ -21,7 +21,7 @@ export function EventList() {
 
     return (
         <section className={styles.section}>
-            <h2>Eventos destacados</h2>
+            <h2>En tu ciudad</h2>
 
             <div className={styles.wrapper}>
                 <button
