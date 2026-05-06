@@ -1,25 +1,70 @@
 import styles from "./landing.module.css";
-import heroImage from "../../shared/assets/images/hero/hero.jpg";
-import logo from "../../shared/assets/images/logo/logo-blanco.png";
+import heroImage from "../../shared/assets/images/landing/BANNERHERO.png";
+import bannerImage from "../../shared/assets/images/landing/BANNER2.png";
+import eventImage from "../../shared/assets/images/landing/EVENTO.jpg";
+import nexoImage from "../../shared/assets/images/landing/NEXO.jpg";
+import energyImage from "../../shared/assets/images/landing/ENERGIA.jpg";
+import eventIcon from "../../shared/assets/icons/landing/evento.png";
+import nexoIcon from "../../shared/assets/icons/landing/nexo.png";
+import energyIcon from "../../shared/assets/icons/landing/energia.png";
+import facebookIcon from "../../shared/assets/icons/facebook.svg";
+import instagramIcon from "../../shared/assets/icons/instagram.svg";
+import tiktokIcon from "../../shared/assets/icons/tiktok.svg";
+import youtubeIcon from "../../shared/assets/icons/youtube.avif";
+import logo from "../../shared/assets/images/logo/logo-combinado.png";
+import imagotipo from "../../shared/assets/images/logo/imagotipo.png";
 
-const eventHighlights = [
-    "Produccion y experiencia curada por Evenxa",
-    "Musica, ambiente y comunidad en una misma noche",
-    "Anuncio oficial y boletos disponibles muy pronto",
+const essenceCards = [
+    {
+        title: "Evento",
+        lead: "Produccion real.",
+        text: "Creamos experiencias y emociones.",
+        icon: eventIcon,
+        image: eventImage,
+    },
+    {
+        title: "Nexo",
+        lead: "Donde todo conecta.",
+        text: "Artistas, publico y ambiente en perfecta sintonia.",
+        icon: nexoIcon,
+        image: nexoImage,
+    },
+    {
+        title: "Energia",
+        lead: "Que se vive, no se explica.",
+        text: "Lo que transforma un evento en un recuerdo que se queda contigo.",
+        icon: energyIcon,
+        image: energyImage,
+    },
 ];
 
-const experienceBlocks = [
+const navLinks = [
+    { label: "Inicio", href: "#inicio" },
+    { label: "Nosotros", href: "#nosotros" },
+    { label: "Proximos eventos", href: "#proximos-eventos" },
+    { label: "Contacto", href: "#contacto" },
+];
+
+const socialLinks = [
     {
-        title: "Eventos con intencion",
-        text: "Creamos experiencias presenciales para que cada detalle se sienta cuidado desde la llegada hasta el cierre.",
+        label: "Instagram",
+        href: "https://www.instagram.com/evenxamx/",
+        icon: instagramIcon,
     },
     {
-        title: "Operacion humana",
-        text: "La organizacion se maneja de forma directa, cercana y flexible, sin depender de flujos complicados.",
+        label: "Facebook",
+        href: "https://www.facebook.com/profile.php?id=61589050558943",
+        icon: facebookIcon,
     },
     {
-        title: "Boletaje en camino",
-        text: "La plataforma completa llegara despues; por ahora este espacio concentra la promocion del primer evento.",
+        label: "TikTok",
+        href: "https://www.tiktok.com/@evenxamx",
+        icon: tiktokIcon,
+    },
+    {
+        label: "YouTube",
+        href: "https://www.youtube.com/channel/UCus_NEYv9u5LHG0SXGyqg8A",
+        icon: youtubeIcon,
     },
 ];
 
@@ -32,10 +77,16 @@ export function LandingPage() {
                 </a>
 
                 <div className={styles.navLinks}>
-                    <a href="#evento">Evento</a>
-                    <a href="#evenxa">Evenxa</a>
-                    <a href="#contacto">Contacto</a>
+                    {navLinks.map((link) => (
+                        <a href={link.href} key={link.href}>
+                            {link.label}
+                        </a>
+                    ))}
                 </div>
+
+                <a className={styles.navCta} href="#proximos-eventos">
+                    Acceso anticipado
+                </a>
             </nav>
 
             <section
@@ -46,75 +97,135 @@ export function LandingPage() {
                 <div className={styles.heroShade} />
 
                 <div className={styles.heroContent}>
-                    <p className={styles.kicker}>Primer evento Evenxa</p>
-                    <h1>Una noche creada para vivirla en persona.</h1>
-                    <p className={styles.lead}>
-                        Evenxa inicia con una experiencia presencial antes del lanzamiento
-                        completo de la boletera. Muy pronto revelaremos fecha, sede y acceso.
-                    </p>
+                    <h1>Vive la experiencia</h1>
+                    <p>Una nueva forma de vivir los eventos esta comenzando.</p>
+                </div>
 
-                    <div className={styles.heroActions}>
-                        <a className={styles.primaryAction} href="#evento">
-                            Ver avance
-                        </a>
-                        <a className={styles.secondaryAction} href="#contacto">
-                            Contactar
-                        </a>
-                    </div>
+                <div className={styles.heroMark} aria-hidden="true">
+                    <img src={imagotipo} alt="" />
                 </div>
             </section>
 
-            <section id="evento" className={styles.eventBand}>
-                <div className={styles.eventIntro}>
-                    <span className={styles.sectionLabel}>Evento inaugural</span>
-                    <h2>Evenxa presenta su primera experiencia.</h2>
+            <section id="nosotros" className={styles.about}>
+                <div className={styles.sectionTitle}>
+                    <h2>Somos Evenxa</h2>
+                    <span />
+                </div>
+
+                <div className={styles.aboutCopy}>
+                    <h3>
+                        No solo organizamos eventos. Creamos el puente donde todo sucede.
+                    </h3>
                     <p>
-                        Esta landing funciona como punto de promocion mientras el sitio de
-                        boletaje se prepara. El objetivo es anunciar, generar expectativa y
-                        abrir conversacion directa con asistentes, aliados y talento.
+                        Nacimos para crear experiencias en vivo, que conectan personas a
+                        traves de la musica y la energia.
                     </p>
                 </div>
 
-                <div className={styles.highlightList}>
-                    {eventHighlights.map((item) => (
-                        <div className={styles.highlightItem} key={item}>
-                            <span />
-                            <p>{item}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            <section id="evenxa" className={styles.about}>
-                <div className={styles.aboutHeader}>
-                    <span className={styles.sectionLabel}>Que es Evenxa</span>
-                    <h2>Mas que una boletera: una marca que produce experiencias.</h2>
+                <div className={styles.essenceHeader}>
+                    <h2>Nuestra esencia</h2>
                 </div>
 
-                <div className={styles.experienceGrid}>
-                    {experienceBlocks.map((block) => (
-                        <article className={styles.experienceBlock} key={block.title}>
-                            <h3>{block.title}</h3>
-                            <p>{block.text}</p>
+                <div className={styles.essenceGrid}>
+                    {essenceCards.map((card) => (
+                        <article
+                            className={styles.essenceCard}
+                            key={card.title}
+                            style={{ backgroundImage: `url(${card.image})` }}
+                        >
+                            <div className={styles.cardShade} />
+                            <div className={styles.essenceContent}>
+                                <img src={card.icon} alt="" aria-hidden="true" />
+                                <h3>{card.title}</h3>
+                                <p className={styles.cardLead}>{card.lead}</p>
+                                <p>{card.text}</p>
+                            </div>
                         </article>
                     ))}
                 </div>
             </section>
 
-            <section id="contacto" className={styles.contact}>
-                <div>
-                    <span className={styles.sectionLabel}>Contacto</span>
-                    <h2>Quieres saber del evento antes que nadie?</h2>
-                    <p>
-                        Deja este espacio listo para conectar el canal oficial de Evenxa:
-                        WhatsApp, Instagram, formulario o el medio que definas para la campana.
-                    </p>
+            <section id="proximos-eventos" className={styles.upcoming}>
+                <h2>Tu proximo evento, con Evenxa</h2>
+
+                <div
+                    className={styles.accessBand}
+                    style={{ backgroundImage: `url(${bannerImage})` }}
+                >
+                    <div className={styles.accessShade} />
+                    <div className={styles.accessCopy}>
+                        <h3>Ya esta sucediendo</h3>
+                        <p>
+                            Conoce proximos eventos de tus artistas favoritos. Accede antes
+                            que nadie.
+                        </p>
+                    </div>
+
+                    {/*
+                    <form className={styles.accessForm}>
+                        <label>
+                            <span>Nombre</span>
+                            <input type="text" name="name" placeholder="Nombre" />
+                        </label>
+                        <label>
+                            <span>Correo electronico</span>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Correo electronico"
+                            />
+                        </label>
+                        <button type="button">Quiero enterarme primero</button>
+                    </form>
+                    */}
+                </div>
+            </section>
+
+            <footer id="contacto" className={styles.footer}>
+                <div className={styles.footerBrand}>
+                    <img src={logo} alt="Evenxa" />
+                    <p>Vive la experiencia</p>
+
+                    <div className={styles.socials} aria-label="Redes sociales">
+                        {socialLinks.map((social) => (
+                            <a
+                                href={social.href}
+                                aria-label={social.label}
+                                target="_blank"
+                                rel="noreferrer"
+                                key={social.label}
+                            >
+                                <img src={social.icon} alt="" aria-hidden="true" />
+                            </a>
+                        ))}
+                    </div>
                 </div>
 
-                <a className={styles.primaryAction} href="mailto:hola@evenxa.com">
-                    hola@evenxa.com
-                </a>
-            </section>
+                <div className={styles.footerColumn}>
+                    <h3>Navegacion</h3>
+                    {navLinks.map((link) => (
+                        <a href={link.href} key={link.href}>
+                            {link.label}
+                        </a>
+                    ))}
+                </div>
+
+                <div className={styles.footerColumn}>
+                    <h3>Legal</h3>
+                    <a href="#">Aviso de privacidad</a>
+                    <a href="#">Terminos y Condiciones</a>
+                </div>
+
+                <div className={styles.footerColumn}>
+                    <h3>Contacto</h3>
+                    <p>Queretaro, Mexico</p>
+                    <a href="mailto:contacto@evenxa.com.mx">contacto@evenxa.com.mx</a>
+                </div>
+
+                <p className={styles.copyright}>
+                    © 2026 Evenxa. Todos los derechos reservados.
+                </p>
+            </footer>
         </main>
     );
 }
