@@ -2,24 +2,30 @@
     min-height: 100svh;
     background: #000;
     color: #fff;
+    overflow-x: clip;
 }
 
 .nav {
     position: sticky;
     top: 0;
     z-index: 10;
+    width: 100%;
+    max-width: 100%;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--space-md);
-    padding: 8px 42px;
+    justify-content: initial;
+    gap: 12px clamp(14px, 5vw, 22px);
+    justify-items: stretch;
+    padding: 14px clamp(18px, 6vw, 32px);
     background: rgba(16, 16, 16, 0.92);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(14px);
+    overflow: hidden;
 }
 
 .brand img {
-    width: 138px;
+    width: clamp(104px, 30vw, 126px);
     height: auto;
     display: block;
 }
@@ -27,13 +33,19 @@
 .brand {
     display: inline-flex;
     align-items: center;
+    justify-self: start;
+    min-width: 0;
+    order: 1;
 }
 
 .navLinks {
     grid-column: 1 / -1;
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px 20px;
+    flex-wrap: nowrap;
+    gap: clamp(9px, 2.8vw, 14px);
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
     order: 3;
 }
 
@@ -43,32 +55,39 @@
 }
 
 .navLinks a {
-    font-size: 13px;
+    font-size: clamp(9px, 2.75vw, 12px);
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .navCta {
+    order: 2;
+    justify-self: end;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 32px;
-    padding: 0 12px;
+    width: clamp(126px, 36vw, 150px);
+    max-width: 100%;
+    min-height: 34px;
+    padding: 0 10px;
     border-radius: 8px;
     background: var(--gradient-main);
     color: #fff;
-    font-size: 12px;
+    font-size: clamp(10px, 2.8vw, 12px);
     font-weight: 800;
+    line-height: 1.08;
+    text-align: center;
     text-transform: uppercase;
 }
 
 .hero {
     position: relative;
-    min-height: 560px;
+    min-height: clamp(340px, 70svh, 500px);
     display: flex;
     align-items: flex-end;
-    padding: 82px var(--space-md) 40px;
-    background-size: cover;
-    background-position: center;
+    padding: 42px clamp(14px, 5vw, 28px) 34px;
+    background-size: auto 125%;
+    background-position: center bottom;
     overflow: hidden;
 }
 
@@ -94,24 +113,25 @@
 .heroContent {
     position: relative;
     z-index: 1;
-    width: min(100%, 900px);
+    width: min(100%, 286px);
 }
 
 .heroContent h1 {
     max-width: 860px;
     margin: 0;
     color: #fff;
-    font-size: clamp(48px, 14vw, 114px);
+    font-size: clamp(27px, 8.8vw, 40px);
     font-weight: 800;
-    line-height: 0.95;
+    line-height: 0.98;
     text-transform: uppercase;
 }
 
 .heroContent p {
-    margin-top: 18px;
+    max-width: 620px;
+    margin-top: 14px;
     color: #fff;
-    font-size: clamp(20px, 4.8vw, 32px);
-    line-height: 1.12;
+    font-size: clamp(16px, 4.8vw, 22px);
+    line-height: 1.16;
 }
 
 .heroMark {
@@ -136,12 +156,13 @@
 }
 
 .about {
-    padding: 72px var(--space-md) 88px;
+    padding: 56px clamp(16px, 5vw, 28px) 64px;
 }
 
 .sectionTitle {
     position: relative;
     display: inline-flex;
+    width: 100%;
     padding-bottom: 18px;
 }
 
@@ -155,7 +176,7 @@
 }
 
 .sectionTitle h2 {
-    font-size: clamp(40px, 9vw, 68px);
+    font-size: clamp(26px, 7.8vw, 36px);
     font-weight: 800;
     text-transform: uppercase;
 }
@@ -168,48 +189,49 @@
 
 .aboutCopy {
     display: grid;
-    gap: var(--space-xl);
-    padding-top: 64px;
+    gap: 24px;
+    padding-top: 48px;
 }
 
 .aboutCopy h3 {
     max-width: 640px;
     color: #fff;
-    font-size: clamp(28px, 6vw, 42px);
+    font-size: clamp(22px, 6.8vw, 32px);
     font-weight: 800;
-    line-height: 1.14;
+    line-height: 1.12;
 }
 
 .aboutCopy p {
     max-width: 520px;
     color: #fff;
-    font-size: clamp(22px, 4.8vw, 31px);
-    line-height: 1.08;
+    font-size: clamp(16px, 4.8vw, 22px);
+    line-height: 1.16;
 }
 
 .essenceHeader {
-    margin-top: 76px;
-    text-align: center;
+    margin-top: 64px;
+    text-align: left;
 }
 
 .essenceHeader h2 {
-    font-size: clamp(34px, 8vw, 56px);
+    font-size: clamp(28px, 8.5vw, 40px);
     font-weight: 400;
+    line-height: 1.08;
     text-transform: uppercase;
 }
 
 .essenceGrid {
     display: grid;
-    gap: var(--space-lg);
-    margin-top: 46px;
+    gap: 24px;
+    margin-top: 34px;
 }
 
 .essenceCard {
     position: relative;
-    min-height: 300px;
+    min-height: clamp(270px, 76vw, 350px);
     overflow: hidden;
     border: 1px solid rgba(255, 102, 196, 0.32);
-    border-radius: 28px;
+    border-radius: 22px;
     background-size: cover;
     background-position: center;
 }
@@ -225,50 +247,51 @@
 .essenceContent {
     position: relative;
     z-index: 1;
-    min-height: 300px;
+    min-height: clamp(270px, 76vw, 350px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--space-xl);
+    padding: 28px 20px;
     text-align: center;
 }
 
 .essenceContent img {
-    width: 76px;
-    height: 76px;
+    width: clamp(64px, 18vw, 82px);
+    height: clamp(64px, 18vw, 82px);
     object-fit: contain;
-    margin-bottom: var(--space-md);
+    margin-bottom: 14px;
 }
 
 .essenceContent h3 {
     color: #fff;
-    font-size: 30px;
+    font-size: clamp(26px, 7.6vw, 34px);
     font-weight: 800;
+    line-height: 1;
     text-transform: uppercase;
 }
 
 .essenceContent p {
-    max-width: 280px;
+    max-width: 300px;
     color: #fff;
-    font-size: 22px;
-    line-height: 1.16;
+    font-size: clamp(18px, 5.4vw, 23px);
+    line-height: 1.15;
 }
 
 .cardLead {
-    margin-top: var(--space-md);
+    margin-top: 18px;
     margin-bottom: 8px;
 }
 
 .upcoming {
-    padding-top: 34px;
+    padding-top: 12px;
 }
 
 .upcoming h2 {
-    padding: 0 var(--space-md) 34px;
-    font-size: clamp(42px, 8.5vw, 72px);
+    padding: 0 clamp(14px, 5vw, 28px) 32px;
+    font-size: clamp(26px, 8vw, 38px);
     font-weight: 800;
-    line-height: 0.96;
+    line-height: 1;
     text-align: center;
     text-transform: uppercase;
 }
@@ -278,8 +301,8 @@
     display: grid;
     gap: var(--space-xl);
     align-items: center;
-    min-height: 430px;
-    padding: 64px var(--space-md);
+    min-height: clamp(320px, 82vw, 430px);
+    padding: 42px clamp(16px, 5vw, 28px);
     background-size: cover;
     background-position: center;
     overflow: hidden;
@@ -288,18 +311,19 @@
 .accessShade {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.06));
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.42)),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.04));
 }
 
-.accessCopy,
-.accessForm {
+.accessCopy {
     position: relative;
     z-index: 1;
 }
 
 .accessCopy h3 {
     color: #fff;
-    font-size: clamp(38px, 8vw, 62px);
+    font-size: clamp(32px, 10vw, 50px);
     font-weight: 800;
     line-height: 1;
     text-transform: uppercase;
@@ -307,104 +331,18 @@
 
 .accessCopy p {
     max-width: 680px;
-    margin-top: var(--space-md);
+    margin-top: 14px;
     color: #fff;
-    font-size: clamp(22px, 4.8vw, 29px);
-    line-height: 1.08;
-}
-
-.accessForm {
-    display: grid;
-    gap: 12px;
-    width: min(100%, 430px);
-}
-
-.accessForm label {
-    display: grid;
-}
-
-.accessForm label span {
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-}
-
-.accessForm input {
-    width: 100%;
-    min-height: 40px;
-    padding: 0 18px;
-    border: 2px solid #fff;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    font: inherit;
-    font-size: 18px;
-}
-
-.accessForm input::placeholder {
-    color: #fff;
-}
-
-.accessForm button {
-    min-height: 40px;
-    border-radius: 8px;
-    background: #000;
-    color: #fff;
-    font-size: 17px;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-size: clamp(18px, 5.4vw, 24px);
+    line-height: 1.12;
 }
 
 .footer {
     display: grid;
-    gap: var(--space-xl);
+    gap: 32px;
     width: min(100%, 1440px);
     margin: 0 auto;
-    padding: 38px var(--space-md) 22px;
-    background: #000;
-}
-
-.footerBrand img {
-    width: 220px;
-    height: auto;
-}
-
-.footerBrand p {
-    margin-top: 4px;
-    color: #fff;
-    font-size: 12px;
-    text-transform: uppercase;
-}
-
-.socials {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: var(--space-md);
-}
-
-.socials a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    color: #fff;
-}
-
-.socials img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-
-.footer {
-    display: grid;
-    gap: var(--space-xl);
-    width: min(100%, 1440px);
-    margin: 0 auto;
-    padding: 38px var(--space-md) 22px;
+    padding: 46px clamp(16px, 8vw, 48px) 24px;
     background: #000;
 
     border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -419,7 +357,7 @@
 }
 
 .footerBrand img {
-    width: 220px;
+    width: min(58vw, 220px);
     height: auto;
     display: block;
 }
@@ -478,7 +416,7 @@
     margin-bottom: 4px;
 
     color: #fff;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
     text-transform: uppercase;
 }
@@ -494,22 +432,25 @@
     font-size: 13px;
 }
 
-.copyright {
-    color: #fff;
-    font-size: 13px;
-}
-
 @media (min-width: 768px) {
     .nav {
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        justify-items: stretch;
         padding: 12px 42px;
+        gap: 34px;
     }
 
     .brand img {
         width: 150px;
     }
 
+    .brand {
+        order: initial;
+        justify-self: start;
+    }
+
     .navLinks {
+        display: flex;
         grid-column: auto;
         justify-content: center;
         order: initial;
@@ -521,14 +462,34 @@
     }
 
     .navCta {
+        position: static;
+        order: initial;
+        justify-self: end;
+        width: auto;
         min-height: 32px;
         padding: 0 18px;
         font-size: 16px;
+        line-height: 1.2;
     }
 
     .hero {
         min-height: 530px;
         padding: 96px 8.6vw 38px;
+        background-position: center;
+    }
+
+    .heroContent h1 {
+        font-size: clamp(64px, 9vw, 114px);
+        line-height: 0.95;
+    }
+
+    .heroContent {
+        width: min(100%, 900px);
+    }
+
+    .heroContent p {
+        font-size: clamp(24px, 2.5vw, 32px);
+        line-height: 1.12;
     }
 
     .heroMark {
@@ -539,10 +500,29 @@
         padding: 92px 7.4vw 98px;
     }
 
+    .sectionTitle {
+        width: auto;
+    }
+
+    .sectionTitle h2 {
+        font-size: clamp(48px, 5vw, 68px);
+    }
+
     .aboutCopy {
         grid-template-columns: 1fr 1fr;
         align-items: start;
         padding-top: 74px;
+        gap: var(--space-xl);
+    }
+
+    .aboutCopy h3 {
+        font-size: clamp(32px, 3.4vw, 42px);
+        line-height: 1.14;
+    }
+
+    .aboutCopy p {
+        font-size: clamp(24px, 2.6vw, 31px);
+        line-height: 1.08;
     }
 
     .aboutCopy p {
@@ -554,14 +534,51 @@
         gap: 44px;
     }
 
+    .essenceHeader {
+        text-align: center;
+    }
+
+    .essenceHeader h2 {
+        font-size: clamp(40px, 4.4vw, 56px);
+    }
+
+    .essenceCard,
+    .essenceContent {
+        min-height: 300px;
+    }
+
+    .essenceCard {
+        border-radius: 28px;
+    }
+
+    .essenceContent {
+        padding: var(--space-xl);
+    }
+
+    .essenceContent img {
+        width: 76px;
+        height: 76px;
+    }
+
+    .essenceContent h3 {
+        font-size: 30px;
+    }
+
+    .essenceContent p {
+        max-width: 280px;
+        font-size: 22px;
+    }
+
+    .upcoming h2 {
+        padding: 0 var(--space-md) 34px;
+        font-size: clamp(48px, 5.4vw, 72px);
+        line-height: 0.96;
+    }
+
     .accessBand {
         grid-template-columns: 1fr 430px;
         min-height: 500px;
         padding: 72px 8.4vw;
-    }
-
-    .accessForm {
-        justify-self: end;
     }
 
     .footer {
@@ -577,16 +594,36 @@
 }
 
 @media (max-width: 520px) {
-    .navCta {
-        max-width: 150px;
-        text-align: center;
-    }
-
-    .heroContent h1 {
-        font-size: 46px;
-    }
-
     .heroMark {
         display: none;
+    }
+}
+
+@media (max-width: 380px) {
+    .nav {
+        gap: 10px;
+        padding-inline: 14px;
+    }
+
+    .brand img {
+        width: 88px;
+    }
+
+    .navCta {
+        width: 104px;
+        min-height: 30px;
+        font-size: 8px;
+    }
+
+    .navLinks {
+        gap: 5px;
+    }
+
+    .navLinks a {
+        font-size: 8px;
+    }
+
+    .heroContent {
+        width: min(100%, 292px);
     }
 }
