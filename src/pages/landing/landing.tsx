@@ -1,3 +1,5 @@
+// landing.tsx
+
 import styles from "./landing.module.css";
 import heroImage from "../../shared/assets/images/landing/BANNERHERO.png";
 import bannerImage from "../../shared/assets/images/landing/BANNER2.png";
@@ -17,7 +19,7 @@ import imagotipo from "../../shared/assets/images/logo/imagotipo.png";
 const essenceCards = [
     {
         title: "Evento",
-        lead: "Produccion real.",
+        lead: "Producción real.",
         text: "Creamos experiencias y emociones.",
         icon: eventIcon,
         image: eventImage,
@@ -25,12 +27,12 @@ const essenceCards = [
     {
         title: "Nexo",
         lead: "Donde todo conecta.",
-        text: "Artistas, publico y ambiente en perfecta sintonia.",
+        text: "Artistas, público y ambiente en perfecta sintonía.",
         icon: nexoIcon,
         image: nexoImage,
     },
     {
-        title: "Energia",
+        title: "Energía",
         lead: "Que se vive, no se explica.",
         text: "Lo que transforma un evento en un recuerdo que se queda contigo.",
         icon: energyIcon,
@@ -41,7 +43,7 @@ const essenceCards = [
 const navLinks = [
     { label: "Inicio", href: "#inicio" },
     { label: "Nosotros", href: "#nosotros" },
-    { label: "Proximos eventos", href: "#proximos-eventos" },
+    { label: "Próximos eventos", href: "#proximos-eventos" },
     { label: "Contacto", href: "#contacto" },
 ];
 
@@ -98,7 +100,10 @@ export function LandingPage() {
 
                 <div className={styles.heroContent}>
                     <h1>Vive la experiencia</h1>
-                    <p>Una nueva forma de vivir los eventos esta comenzando.</p>
+
+                    <p>
+                        Una nueva forma de vivir los eventos está comenzando.
+                    </p>
                 </div>
 
                 <div className={styles.heroMark} aria-hidden="true">
@@ -116,9 +121,10 @@ export function LandingPage() {
                     <h3>
                         No solo organizamos eventos. Creamos el puente donde todo sucede.
                     </h3>
+
                     <p>
-                        Nacimos para crear experiencias en vivo, que conectan personas a
-                        traves de la musica y la energia.
+                        Nacimos para crear experiencias en vivo que conectan personas
+                        a través de la música y la energía.
                     </p>
                 </div>
 
@@ -134,10 +140,16 @@ export function LandingPage() {
                             style={{ backgroundImage: `url(${card.image})` }}
                         >
                             <div className={styles.cardShade} />
+
                             <div className={styles.essenceContent}>
                                 <img src={card.icon} alt="" aria-hidden="true" />
+
                                 <h3>{card.title}</h3>
-                                <p className={styles.cardLead}>{card.lead}</p>
+
+                                <p className={styles.cardLead}>
+                                    {card.lead}
+                                </p>
+
                                 <p>{card.text}</p>
                             </div>
                         </article>
@@ -146,44 +158,29 @@ export function LandingPage() {
             </section>
 
             <section id="proximos-eventos" className={styles.upcoming}>
-                <h2>Tu proximo evento, con Evenxa</h2>
+                <h2>Tu próximo evento, con Evenxa</h2>
 
                 <div
                     className={styles.accessBand}
                     style={{ backgroundImage: `url(${bannerImage})` }}
                 >
                     <div className={styles.accessShade} />
+
                     <div className={styles.accessCopy}>
-                        <h3>Ya esta sucediendo</h3>
+                        <h3>Ya está sucediendo</h3>
+
                         <p>
-                            Conoce proximos eventos de tus artistas favoritos. Accede antes
-                            que nadie.
+                            Conoce próximos eventos de tus artistas favoritos.
+                            Accede antes que nadie.
                         </p>
                     </div>
-
-                    {/*
-                    <form className={styles.accessForm}>
-                        <label>
-                            <span>Nombre</span>
-                            <input type="text" name="name" placeholder="Nombre" />
-                        </label>
-                        <label>
-                            <span>Correo electronico</span>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Correo electronico"
-                            />
-                        </label>
-                        <button type="button">Quiero enterarme primero</button>
-                    </form>
-                    */}
                 </div>
             </section>
 
             <footer id="contacto" className={styles.footer}>
                 <div className={styles.footerBrand}>
                     <img src={logo} alt="Evenxa" />
+
                     <p>Vive la experiencia</p>
 
                     <div className={styles.socials} aria-label="Redes sociales">
@@ -202,7 +199,8 @@ export function LandingPage() {
                 </div>
 
                 <div className={styles.footerColumn}>
-                    <h3>Navegacion</h3>
+                    <h3>Navegación</h3>
+
                     {navLinks.map((link) => (
                         <a href={link.href} key={link.href}>
                             {link.label}
@@ -212,14 +210,19 @@ export function LandingPage() {
 
                 <div className={styles.footerColumn}>
                     <h3>Legal</h3>
+
                     <a href="#">Aviso de privacidad</a>
-                    <a href="#">Terminos y Condiciones</a>
+                    <a href="#">Términos y Condiciones</a>
                 </div>
 
                 <div className={styles.footerColumn}>
                     <h3>Contacto</h3>
-                    <p>Queretaro, Mexico</p>
-                    <a href="mailto:contacto@evenxa.com.mx">contacto@evenxa.com.mx</a>
+
+                    <p>Querétaro, México</p>
+
+                    <a href="mailto:contacto@evenxa.com.mx">
+                        contacto@evenxa.com.mx
+                    </a>
                 </div>
 
                 <p className={styles.copyright}>
