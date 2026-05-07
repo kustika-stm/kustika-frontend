@@ -9,22 +9,24 @@
     top: 0;
     z-index: 10;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: var(--space-md);
-    padding: 10px var(--space-md);
-    background: rgba(16, 16, 16, 0.94);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 42px;
+    background: rgba(16, 16, 16, 0.92);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+}
+
+.brand img {
+    width: 138px;
+    height: auto;
+    display: block;
 }
 
 .brand {
     display: inline-flex;
     align-items: center;
-}
-
-.brand img {
-    width: 126px;
-    height: auto;
 }
 
 .navLinks {
