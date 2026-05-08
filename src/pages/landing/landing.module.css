@@ -103,9 +103,9 @@
     width: 100%;
     padding: 18px clamp(18px, 6vw, 32px) 22px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(16, 16, 16, 0.98);
-    box-shadow: 0 22px 34px rgba(0, 0, 0, 0.34);
-    backdrop-filter: blur(14px);
+    background: rgba(16, 16, 16, 0.68);
+    box-shadow: 0 22px 34px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(18px) saturate(1.12);
 }
 
 .mobileMenuOpen {
