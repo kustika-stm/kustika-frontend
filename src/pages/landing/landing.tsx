@@ -1,11 +1,14 @@
 // landing.tsx
 
+import { type MouseEvent, useEffect, useState } from "react";
 import styles from "./landing.module.css";
 import heroImage from "../../shared/assets/images/landing/BANNERHERO.png";
 import bannerImage from "../../shared/assets/images/landing/BANNER2.png";
+import fiestaMestizaImage from "../../shared/assets/images/landing/FIESTA_MESTIZA_BANNER.png";
 import eventImage from "../../shared/assets/images/landing/EVENTO.jpg";
 import nexoImage from "../../shared/assets/images/landing/NEXO.jpg";
 import energyImage from "../../shared/assets/images/landing/ENERGIA.jpg";
+import menuIcon from "../../shared/assets/icons/menu.png";
 import eventIcon from "../../shared/assets/icons/landing/evento.png";
 import nexoIcon from "../../shared/assets/icons/landing/nexo.png";
 import energyIcon from "../../shared/assets/icons/landing/energia.png";
@@ -41,10 +44,15 @@ const essenceCards = [
 ];
 
 const navLinks = [
-    { label: "Inicio", href: "#inicio" },
-    { label: "Nosotros", href: "#nosotros" },
-    { label: "Próximos eventos", href: "#proximos-eventos" },
-    { label: "Contacto", href: "#contacto" },
+    { label: "Inicio", path: "/inicio", sectionId: "inicio" },
+    { label: "Nosotros", path: "/nosotros", sectionId: "nosotros" },
+    { label: "Proximos eventos", path: "/proximos-eventos", sectionId: "proximos-eventos" },
+    { label: "Contacto", path: "/contacto", sectionId: "contacto" },
+];
+
+const sectionRoutes = [
+    ...navLinks,
+    { label: "Fiesta Mestiza", path: "/fiesta-mestiza", sectionId: "fiesta-mestiza" },
 ];
 
 const socialLinks = [
@@ -71,24 +79,105 @@ const socialLinks = [
 ];
 
 export function LandingPage() {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const closeMobileMenu = () => setMobileMenuOpen(false);
+
+    const scrollToSection = (sectionId: string) => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    const handleSectionNavigation = (
+        event: MouseEvent<HTMLAnchorElement>,
+        path: string,
+        sectionId: string,
+    ) => {
+        event.preventDefault();
+        window.history.pushState(null, "", path);
+        scrollToSection(sectionId);
+        closeMobileMenu();
+    };
+
+    useEffect(() => {
+        const scrollToCurrentPath = () => {
+            const currentRoute = sectionRoutes.find((route) => route.path === window.location.pathname);
+
+            if (currentRoute) {
+                window.requestAnimationFrame(() => scrollToSection(currentRoute.sectionId));
+            }
+        };
+
+        scrollToCurrentPath();
+        window.addEventListener("popstate", scrollToCurrentPath);
+
+        return () => window.removeEventListener("popstate", scrollToCurrentPath);
+    }, []);
+
     return (
         <main className={styles.page}>
             <nav className={styles.nav} aria-label="Evenxa landing">
-                <a href="#inicio" className={styles.brand} aria-label="Evenxa inicio">
+                <a
+                    href="/inicio"
+                    className={styles.brand}
+                    aria-label="Evenxa inicio"
+                    onClick={(event) => handleSectionNavigation(event, "/inicio", "inicio")}
+                >
                     <img src={logo} alt="Evenxa" />
                 </a>
 
                 <div className={styles.navLinks}>
                     {navLinks.map((link) => (
-                        <a href={link.href} key={link.href}>
+                        <a
+                            href={link.path}
+                            key={link.path}
+                            onClick={(event) => handleSectionNavigation(event, link.path, link.sectionId)}
+                        >
                             {link.label}
                         </a>
                     ))}
                 </div>
 
-                <a className={styles.navCta} href="#proximos-eventos">
+                <a
+                    className={styles.navCta}
+                    href="/fiesta-mestiza"
+                    onClick={(event) => handleSectionNavigation(event, "/fiesta-mestiza", "fiesta-mestiza")}
+                >
                     Acceso anticipado
                 </a>
+
+                <button
+                    className={styles.menuButton}
+                    type="button"
+                    aria-label="Abrir menu"
+                    aria-expanded={mobileMenuOpen}
+                    aria-controls="landing-mobile-menu"
+                    onClick={() => setMobileMenuOpen((open) => !open)}
+                >
+                    <img src={menuIcon} alt="" aria-hidden="true" />
+                </button>
+
+                <div
+                    id="landing-mobile-menu"
+                    className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : ""}`}
+                >
+                    {navLinks.map((link) => (
+                        <a
+                            href={link.path}
+                            key={link.path}
+                            onClick={(event) => handleSectionNavigation(event, link.path, link.sectionId)}
+                        >
+                            {link.label}
+                        </a>
+                    ))}
+
+                    <a
+                        className={styles.mobileMenuCta}
+                        href="/fiesta-mestiza"
+                        onClick={(event) => handleSectionNavigation(event, "/fiesta-mestiza", "fiesta-mestiza")}
+                    >
+                        Acceso anticipado
+                    </a>
+                </div>
             </nav>
 
             <section
@@ -109,6 +198,26 @@ export function LandingPage() {
                 <div className={styles.heroMark} aria-hidden="true">
                     <img src={imagotipo} alt="" />
                 </div>
+            </section>
+
+            <section
+                id="fiesta-mestiza"
+                className={styles.featuredEvent}
+                aria-labelledby="fiesta-mestiza-title"
+            >
+                <div className={styles.featuredCopy}>
+                    <p>Unete a</p>
+
+                    <h2 id="fiesta-mestiza-title">Fiesta Mestiza</h2>
+                </div>
+
+                <div className={styles.featuredMedia}>
+                    <img src={fiestaMestizaImage} alt="Fiesta Mestiza" />
+                </div>
+
+                <a className={styles.featuredCta} href="https://arema.mx/e/17886" target="_blank" rel="noreferrer">
+                    &iexcl;Compra aqui!
+                </a>
             </section>
 
             <section id="nosotros" className={styles.about}>
@@ -202,7 +311,11 @@ export function LandingPage() {
                     <h3>Navegación</h3>
 
                     {navLinks.map((link) => (
-                        <a href={link.href} key={link.href}>
+                        <a
+                            href={link.path}
+                            key={link.path}
+                            onClick={(event) => handleSectionNavigation(event, link.path, link.sectionId)}
+                        >
                             {link.label}
                         </a>
                     ))}
@@ -220,8 +333,12 @@ export function LandingPage() {
 
                     <p>Querétaro, México</p>
 
-                    <a href="mailto:contacto@evenxa.com.mx">
-                        contacto@evenxa.com.mx
+                    <a href="mailto:Booking@evenxa.com.mx">
+                        Booking@evenxa.com.mx
+                    </a>
+
+                    <a href="tel:+524461463538">
+                        4461463538
                     </a>
                 </div>
 
@@ -232,3 +349,5 @@ export function LandingPage() {
         </main>
     );
 }
+
+

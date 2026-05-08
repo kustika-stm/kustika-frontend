@@ -1,3 +1,5 @@
+//Para que aparezca el landing, se comenta el router y se importa el landing, luego se descomenta el router y se comenta el landing
+
 import { Header } from "../widgets/header/ui/header";
 import { LandingPage } from "../pages/landing";
 import { AppProviders } from "./providers";

@@ -1,0 +1,21 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'buildx', 'build',
+      '--platform', 'linux/amd64',
+      '-t', 'us-central1-docker.pkg.dev/evenxa-backend-prod/evenxa-repo/web-dev:latest',
+      '--push', '.'
+    ]
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args: [
+      'gcloud', 'run', 'deploy', 'evenxa-web-dev',
+      '--image=us-central1-docker.pkg.dev/evenxa-backend-prod/evenxa-repo/web-dev:latest',
+      '--region=us-central1',
+      '--platform=managed',
+      '--allow-unauthenticated',
+      '--port=8080'
+    ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
