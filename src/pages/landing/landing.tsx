@@ -46,7 +46,7 @@ const essenceCards = [
 const navLinks = [
     { label: "Inicio", path: "/inicio", sectionId: "inicio" },
     { label: "Nosotros", path: "/nosotros", sectionId: "nosotros" },
-    { label: "Proximos eventos", path: "/proximos-eventos", sectionId: "proximos-eventos" },
+    { label: "Próximos eventos", path: "/proximos-eventos", sectionId: "proximos-eventos" },
     { label: "Contacto", path: "/contacto", sectionId: "contacto" },
 ];
 
@@ -206,7 +206,7 @@ export function LandingPage() {
                 aria-labelledby="fiesta-mestiza-title"
             >
                 <div className={styles.featuredCopy}>
-                    <p>Unete a</p>
+                    <p>Únete a</p>
 
                     <h2 id="fiesta-mestiza-title">Fiesta Mestiza</h2>
                 </div>
@@ -216,7 +216,7 @@ export function LandingPage() {
                 </div>
 
                 <a className={styles.featuredCta} href="https://arema.mx/e/17886" target="_blank" rel="noreferrer">
-                    &iexcl;Compra aqui!
+                    &iexcl;Compra aquí!
                 </a>
             </section>
 
@@ -349,5 +349,6 @@ export function LandingPage() {
         </main>
     );
 }
+
 
 
