@@ -11,8 +11,8 @@ export const HomePage = () => {
             <section className={styles.searchSection} aria-label="Buscar eventos">
                 <EventSearchBar />
             </section>
-            <DiscoverGrid />
             <EventList />
+            <DiscoverGrid />
         </main>
     );
 };

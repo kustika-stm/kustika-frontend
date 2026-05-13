@@ -1,60 +1,57 @@
-import styles from "./discover-grid.module.css";
+import { routes } from "../../../app/router/routes";
 import bg from "../../../shared/assets/images/hero/hero.jpg";
+import styles from "./discover-grid.module.css";
+
+const categories = [
+    {
+        className: styles.one,
+        href: routes.categoryDetail("musica"),
+        label: "Conciertos y noches en vivo",
+        title: "Musica",
+    },
+    {
+        className: styles.two,
+        href: routes.categoryDetail("comedia"),
+        label: "Shows para reir",
+        title: "Comedia",
+    },
+    {
+        className: styles.three,
+        href: routes.categoryDetail("musica-latina"),
+        label: "Baile y energia",
+        title: "Musica latina",
+    },
+    {
+        className: styles.four,
+        href: routes.categoryDetail("regional"),
+        label: "Fiesta con identidad",
+        title: "Regional",
+    },
+];
 
 export function DiscoverGrid() {
     return (
         <section className={styles.section}>
             <div className={styles.header}>
-                <h2>Eventos destacados</h2>
-                <span>Eventos que no te puedes perder</span>
+                <h2>Explora por categorias</h2>
+                <span>Encuentra eventos por el plan que traes en mente</span>
             </div>
 
             <div className={styles.grid}>
-                {/* 1 - GRANDE ARRIBA IZQUIERDA */}
-                <div
-                    className={`${styles.card} ${styles.one}`}
-                    style={{ backgroundImage: `url(${bg})` }}
-                >
-                    <div className={styles.overlay} />
-                    <div className={styles.content}>
-                        <span className={styles.tag}>🔥 Trending</span>
-                        <h3>Midnight City Tour: Live</h3>
-                    </div>
-                </div>
-
-                {/* 2 - ARRIBA DERECHA */}
-                <div
-                    className={`${styles.card} ${styles.two}`}
-                    style={{ backgroundImage: `url(${bg})` }}
-                >
-                    <div className={styles.overlay} />
-                    <div className={styles.content}>
-                        <span className={styles.tag}>Comedy</span>
-                        <h3>Late Night Laughs</h3>
-                    </div>
-                </div>
-
-                {/* 3 - ABAJO IZQUIERDA */}
-                <div
-                    className={`${styles.card} ${styles.three}`}
-                    style={{ backgroundImage: `url(${bg})` }}
-                >
-                    <div className={styles.overlay} />
-                    <div className={styles.content}>
-                        <h3>Sunset Jazz Sessions</h3>
-                    </div>
-                </div>
-
-                {/* 4 - GRANDE ABAJO DERECHA */}
-                <div
-                    className={`${styles.card} ${styles.four}`}
-                    style={{ backgroundImage: `url(${bg})` }}
-                >
-                    <div className={styles.overlay} />
-                    <div className={styles.content}>
-                        <h3>Underground Beats Vol. 4</h3>
-                    </div>
-                </div>
+                {categories.map((category) => (
+                    <a
+                        className={`${styles.card} ${category.className}`}
+                        href={category.href}
+                        key={category.href}
+                        style={{ backgroundImage: `url(${bg})` }}
+                    >
+                        <div className={styles.overlay} />
+                        <div className={styles.content}>
+                            <span className={styles.tag}>{category.label}</span>
+                            <h3>{category.title}</h3>
+                        </div>
+                    </a>
+                ))}
             </div>
         </section>
     );

@@ -1,4 +1,5 @@
 import { HomePage } from "../../pages/home";
+import { CategoriesPage } from "../../pages/categories";
 import { EventsPage } from "../../pages/events";
 import { EventDetailPage } from "../../pages/event-detail";
 import { CheckoutPage } from "../../pages/checkout";
@@ -19,6 +20,16 @@ export function AppRouter() {
 
     if (pathname === routes.events) {
         return <EventsPage />;
+    }
+
+    if (pathname === routes.categories) {
+        return <CategoriesPage />;
+    }
+
+    if (pathname.startsWith(`${routes.categoryDetailBase}/`)) {
+        const categoryId = decodeURIComponent(pathname.replace(`${routes.categoryDetailBase}/`, ""));
+
+        return <CategoriesPage categoryId={categoryId} />;
     }
 
     if (pathname.startsWith(`${routes.eventDetailBase}/`) && pathname.endsWith("/comprar")) {
