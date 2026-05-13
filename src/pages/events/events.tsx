@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { routes } from "../../app/router/routes";
+import { EventSearchBar } from "../../features/event-search";
 import { mockEvents } from "../../entities/event/model/mockEvents";
 import styles from "./events.module.css";
 
@@ -19,6 +20,7 @@ const eventStatusLabel = {
 } as const;
 
 export function EventsPage() {
+    const searchQuery = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
     const [city, setCity] = useState("all");
     const [category, setCategory] = useState("all");
     const [status, setStatus] = useState<StatusFilter>("all");
@@ -32,11 +34,23 @@ export function EventsPage() {
     }, []);
 
     const filteredEvents = mockEvents.filter((event) => {
+        const normalizedQuery = searchQuery.toLowerCase();
+        const searchableText = [
+            event.title,
+            event.subtitle,
+            event.description,
+            event.location,
+            event.city,
+            event.venueName,
+            event.category,
+            ...event.tags,
+        ].join(" ").toLowerCase();
         const matchesCity = city === "all" || event.location === city;
         const matchesCategory = category === "all" || event.category === category;
         const matchesStatus = status === "all" || event.status === status;
+        const matchesSearch = !normalizedQuery || searchableText.includes(normalizedQuery);
 
-        return matchesCity && matchesCategory && matchesStatus;
+        return matchesSearch && matchesCity && matchesCategory && matchesStatus;
     });
 
     return (
@@ -49,6 +63,10 @@ export function EventsPage() {
                         Explora conciertos, festivales y experiencias seleccionadas para vivir la ciudad de otra forma.
                     </p>
                 </div>
+            </section>
+
+            <section className={styles.searchSection} aria-label="Buscar eventos">
+                <EventSearchBar defaultValue={searchQuery} compact />
             </section>
 
             <section className={styles.toolbar} aria-label="Filtros de eventos">
@@ -89,7 +107,7 @@ export function EventsPage() {
             <section className={styles.results} aria-labelledby="events-title">
                 <div className={styles.resultsHeader}>
                     <div>
-                        <h2 id="events-title">Todos los eventos</h2>
+                        <h2 id="events-title">{searchQuery ? `Resultados para "${searchQuery}"` : "Todos los eventos"}</h2>
                         <p>{filteredEvents.length} evento{filteredEvents.length === 1 ? "" : "s"} disponible{filteredEvents.length === 1 ? "" : "s"}</p>
                     </div>
                 </div>
