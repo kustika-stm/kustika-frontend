@@ -55,6 +55,43 @@ export function EventDetailPage({ eventId }: Props) {
 
     const availableTickets = event.ticketTiers.filter((ticket) => ticket.available);
     const primaryTicket = availableTickets[0] ?? event.ticketTiers[0];
+    const renderBuyBoxContent = (isInteractive: boolean) => (
+        <>
+            <div className={styles.buyIntro}>
+                <span className={styles.eyebrow}>Desde</span>
+                <strong className={styles.price}>{formatPrice(event.price)}</strong>
+                <p>{primaryTicket.description}</p>
+            </div>
+
+            <div className={styles.eventFacts} aria-label="Fecha, hora y ubicacion del evento">
+                <div>
+                    <span>Fecha</span>
+                    <strong>{event.date}</strong>
+                </div>
+                <div>
+                    <span>Hora</span>
+                    <strong>{event.time}</strong>
+                </div>
+                <div>
+                    <span>Lugar</span>
+                    <strong>{event.venueName}</strong>
+                    <p>{event.address}</p>
+                    <p>{event.city}</p>
+                </div>
+            </div>
+
+            <div className={styles.buyAction}>
+                <button
+                    type="button"
+                    className={styles.cta}
+                    disabled={event.status === "sold-out"}
+                    tabIndex={isInteractive ? 0 : -1}
+                >
+                    {event.status === "sold-out" ? "Agotado" : "Comprar boletos"}
+                </button>
+            </div>
+        </>
+    );
 
     return (
         <main className={styles.page}>
@@ -92,35 +129,18 @@ export function EventDetailPage({ eventId }: Props) {
                 <aside className={styles.sidebar}>
                     <div ref={buyBoxTriggerRef} className={styles.buyBoxTrigger} />
 
-                    <section className={`${styles.buyBox} ${isBuyBoxCompact ? styles.buyBoxCompact : ""}`}>
-                        <div className={styles.buyIntro}>
-                            <span className={styles.eyebrow}>Desde</span>
-                            <strong className={styles.price}>{formatPrice(event.price)}</strong>
-                            <p>{primaryTicket.description}</p>
-                        </div>
+                    <section
+                        className={`${styles.buyBox} ${styles.buyBoxDocked} ${isBuyBoxCompact ? styles.buyBoxDockedHidden : ""}`}
+                        aria-hidden={isBuyBoxCompact}
+                    >
+                        {renderBuyBoxContent(!isBuyBoxCompact)}
+                    </section>
 
-                        <div className={styles.eventFacts} aria-label="Fecha, hora y ubicacion del evento">
-                            <div>
-                                <span>Fecha</span>
-                                <strong>{event.date}</strong>
-                            </div>
-                            <div>
-                                <span>Hora</span>
-                                <strong>{event.time}</strong>
-                            </div>
-                            <div>
-                                <span>Lugar</span>
-                                <strong>{event.venueName}</strong>
-                                <p>{event.address}</p>
-                                <p>{event.city}</p>
-                            </div>
-                        </div>
-
-                        <div className={styles.buyAction}>
-                            <button type="button" className={styles.cta} disabled={event.status === "sold-out"}>
-                                {event.status === "sold-out" ? "Agotado" : "Comprar boletos"}
-                            </button>
-                        </div>
+                    <section
+                        className={`${styles.buyBox} ${styles.buyBoxFloating} ${isBuyBoxCompact ? styles.buyBoxFloatingVisible : ""}`}
+                        aria-hidden={!isBuyBoxCompact}
+                    >
+                        {renderBuyBoxContent(isBuyBoxCompact)}
                     </section>
 
                     <section className={styles.sideBlock}>
