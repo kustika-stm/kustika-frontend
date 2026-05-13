@@ -317,7 +317,7 @@
 }
 
 .buyBoxDocked {
-    max-height: 420px;
+    max-height: 620px;
     overflow: hidden;
     opacity: 1;
     transform: translateY(0) scale(1);
