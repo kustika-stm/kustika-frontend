@@ -55,6 +55,7 @@ export function EventDetailPage({ eventId }: Props) {
 
     const availableTickets = event.ticketTiers.filter((ticket) => ticket.available);
     const primaryTicket = availableTickets[0] ?? event.ticketTiers[0];
+    const canBuyTickets = event.status !== "sold-out" && availableTickets.length > 0;
     const renderBuyBoxContent = (isInteractive: boolean) => (
         <>
             <div className={styles.buyIntro}>
@@ -84,10 +85,13 @@ export function EventDetailPage({ eventId }: Props) {
                 <button
                     type="button"
                     className={styles.cta}
-                    disabled={event.status === "sold-out"}
+                    disabled={!canBuyTickets}
                     tabIndex={isInteractive ? 0 : -1}
+                    onClick={() => {
+                        window.location.href = routes.eventCheckout(eventId);
+                    }}
                 >
-                    {event.status === "sold-out" ? "Agotado" : "Comprar boletos"}
+                    {canBuyTickets ? "Comprar boletos" : "Agotado"}
                 </button>
             </div>
         </>
