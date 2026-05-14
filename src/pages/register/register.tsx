@@ -99,6 +99,10 @@ export function RegisterPage() {
                                     name="codigo"
                                     type="text"
                                     inputMode="numeric"
+                                    autoComplete="one-time-code"
+                                    minLength={6}
+                                    maxLength={6}
+                                    pattern="[0-9]{6}"
                                     placeholder="123456"
                                     required
                                 />
