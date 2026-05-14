@@ -2,6 +2,7 @@ import { useState } from "react";
 import { routes } from "../../../app/router/routes";
 import { clearSession, getStoredSession } from "../../../entities/session";
 import { authApi } from "../../../features/auth/api";
+import userIcon from "../../../shared/assets/icons/usuario.png";
 import logo from "../../../shared/assets/images/logo/logo-combinado.png";
 import styles from "./header.module.css";
 
@@ -13,7 +14,6 @@ const navLinks = [
 
 const authNavLinks = [
     { label: "Mis boletos", href: routes.myTickets },
-    { label: "Perfil", href: routes.profile },
 ];
 
 export const Header = () => {
@@ -70,14 +70,24 @@ export const Header = () => {
 
                 <div className={styles.actions}>
                     {isAuthenticated ? (
-                        <button
-                            className={styles.logoutButton}
-                            type="button"
-                            disabled={isLoggingOut}
-                            onClick={handleLogout}
-                        >
-                            {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
-                        </button>
+                        <>
+                            <a
+                                className={`${styles.profileLink} ${isActive(routes.profile) ? styles.profileLinkActive : ""}`}
+                                href={routes.profile}
+                                aria-label="Ver perfil"
+                                title="Perfil"
+                            >
+                                <img src={userIcon} alt="" aria-hidden="true" />
+                            </a>
+                            <button
+                                className={styles.logoutButton}
+                                type="button"
+                                disabled={isLoggingOut}
+                                onClick={handleLogout}
+                            >
+                                {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                            </button>
+                        </>
                     ) : (
                         <>
                             <a className={styles.loginLink} href={routes.login}>Iniciar sesion</a>
@@ -113,14 +123,23 @@ export const Header = () => {
                     ))}
 
                     {isAuthenticated ? (
-                        <button
-                            className={styles.logoutButton}
-                            type="button"
-                            disabled={isLoggingOut}
-                            onClick={handleLogout}
-                        >
-                            {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
-                        </button>
+                        <>
+                            <a
+                                className={`${styles.mobileProfileLink} ${isActive(routes.profile) ? styles.activeLink : ""}`}
+                                href={routes.profile}
+                            >
+                                <img src={userIcon} alt="" aria-hidden="true" />
+                                Perfil
+                            </a>
+                            <button
+                                className={styles.logoutButton}
+                                type="button"
+                                disabled={isLoggingOut}
+                                onClick={handleLogout}
+                            >
+                                {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                            </button>
+                        </>
                     ) : (
                         <>
                             <a href={routes.login}>Iniciar sesion</a>
