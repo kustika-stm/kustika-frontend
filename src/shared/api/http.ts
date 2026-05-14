@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./config";
+import { API_BASE_URL, isSecureApiBaseUrl } from "./config";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
     body?: unknown;
@@ -30,6 +30,10 @@ const getErrorMessage = (data: unknown, fallback: string) => {
 };
 
 export async function apiRequest<TResponse>(path: string, options: RequestOptions = {}) {
+    if (import.meta.env.PROD && !isSecureApiBaseUrl()) {
+        throw new ApiError("La API debe usar HTTPS en produccion.", 0, null);
+    }
+
     const headers = new Headers(options.headers);
 
     if (options.body !== undefined) {

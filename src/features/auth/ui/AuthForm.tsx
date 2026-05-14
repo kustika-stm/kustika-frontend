@@ -42,6 +42,11 @@ export function AuthForm(props: Props) {
         if (isRegister) {
             const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
+            if (password.length < 8) {
+                setFormError("La contrasena debe tener al menos 8 caracteres.");
+                return;
+            }
+
             if (password !== passwordConfirm) {
                 setFormError("Las contrasenas no coinciden.");
                 return;
@@ -67,12 +72,12 @@ export function AuthForm(props: Props) {
                 <>
                     <label className={styles.field}>
                         <span>Nombre</span>
-                        <input name="nombre" type="text" placeholder="Ej. Juan" required />
+                        <input name="nombre" type="text" placeholder="Ej. Juan" autoComplete="given-name" required />
                     </label>
 
                     <label className={styles.field}>
                         <span>Apellido paterno</span>
-                        <input name="apellido_paterno" type="text" placeholder="Ej. Garcia" required />
+                        <input name="apellido_paterno" type="text" placeholder="Ej. Garcia" autoComplete="family-name" required />
                     </label>
 
                     <label className={styles.field}>
@@ -82,25 +87,39 @@ export function AuthForm(props: Props) {
 
                     <label className={styles.field}>
                         <span>Telefono</span>
-                        <input name="telefono" type="tel" placeholder="4421234567" required />
+                        <input name="telefono" type="tel" placeholder="4421234567" autoComplete="tel" required />
                     </label>
                 </>
             )}
 
             <label className={styles.field}>
                 <span>Correo electronico</span>
-                <input name="email" type="email" placeholder="tu@email.com" required />
+                <input name="email" type="email" placeholder="tu@email.com" autoComplete="email" required />
             </label>
 
             <label className={styles.field}>
                 <span>Contrasena</span>
-                <input name="password" type="password" placeholder="Tu contrasena" required />
+                <input
+                    name="password"
+                    type="password"
+                    placeholder="Tu contrasena"
+                    autoComplete={isRegister ? "new-password" : "current-password"}
+                    minLength={8}
+                    required
+                />
             </label>
 
             {isRegister && (
                 <label className={styles.field}>
                     <span>Confirmar contrasena</span>
-                    <input name="passwordConfirm" type="password" placeholder="Repite tu contrasena" required />
+                    <input
+                        name="passwordConfirm"
+                        type="password"
+                        placeholder="Repite tu contrasena"
+                        autoComplete="new-password"
+                        minLength={8}
+                        required
+                    />
                 </label>
             )}
 
