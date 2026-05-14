@@ -2,6 +2,10 @@ import { routes } from "../../app/router/routes";
 import { getStoredSession } from "../../entities/session";
 import styles from "./profile.module.css";
 
+type Props = {
+    mode?: "view" | "edit";
+};
+
 const mockProfile = {
     email: "usuario@evenxa.com",
     nombre: "Leonardo",
@@ -19,8 +23,9 @@ const profileStats = [
 
 const preferences = ["Musica en vivo", "Festivales", "Experiencias urbanas", "Comedia"];
 
-export function ProfilePage() {
+export function ProfilePage({ mode = "view" }: Props) {
     const session = getStoredSession();
+    const isEditing = mode === "edit";
     const user = session?.user;
     const displayName = [user?.nombre, user?.apellido_paterno, user?.apellido_materno]
         .filter(Boolean)
@@ -40,6 +45,82 @@ export function ProfilePage() {
         telefono: user?.telefono ?? mockProfile.telefono,
         tipo_usuario: user?.tipo_usuario ?? mockProfile.tipo_usuario,
     };
+
+    if (isEditing) {
+        return (
+            <main className={styles.page}>
+                <section className={styles.editHeader}>
+                    <a href={routes.profile} className={styles.backLink}>Volver al perfil</a>
+                    <div>
+                        <span className={styles.eyebrow}>Editar perfil</span>
+                        <h1>Actualiza tus datos</h1>
+                        <p>Esta pantalla esta lista como mock para conectar la ruta real cuando exista en el backend.</p>
+                    </div>
+                </section>
+
+                <form className={styles.editForm}>
+                    <section className={styles.panel}>
+                        <div className={styles.panelHeader}>
+                            <div>
+                                <span className={styles.eyebrow}>Cuenta</span>
+                                <h2>Informacion personal</h2>
+                            </div>
+                        </div>
+
+                        <div className={styles.formGrid}>
+                            <label>
+                                Nombre
+                                <input name="nombre" type="text" defaultValue={profile.nombre} />
+                            </label>
+                            <label>
+                                Apellido paterno
+                                <input name="apellido_paterno" type="text" defaultValue={profile.apellido_paterno} />
+                            </label>
+                            <label>
+                                Apellido materno
+                                <input name="apellido_materno" type="text" defaultValue={profile.apellido_materno} />
+                            </label>
+                            <label>
+                                Correo
+                                <input name="email" type="email" defaultValue={profile.email} />
+                            </label>
+                            <label>
+                                Telefono
+                                <input name="telefono" type="tel" defaultValue={profile.telefono} />
+                            </label>
+                            <label>
+                                Tipo de cuenta
+                                <input name="tipo_usuario" type="text" defaultValue={profile.tipo_usuario} disabled />
+                            </label>
+                        </div>
+                    </section>
+
+                    <section className={styles.panel}>
+                        <div className={styles.panelHeader}>
+                            <div>
+                                <span className={styles.eyebrow}>Preferencias</span>
+                                <h2>Intereses</h2>
+                            </div>
+                        </div>
+
+                        <div className={styles.checkboxGrid}>
+                            {preferences.map((preference) => (
+                                <label key={preference}>
+                                    <input type="checkbox" defaultChecked />
+                                    <span>{preference}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </section>
+
+                    <div className={styles.formActions}>
+                        <a href={routes.profile}>Cancelar</a>
+                        <button type="button">Guardar cambios</button>
+                    </div>
+                </form>
+            </main>
+        );
+    }
 
     return (
         <main className={styles.page}>
@@ -71,7 +152,7 @@ export function ProfilePage() {
                             <span className={styles.eyebrow}>Cuenta</span>
                             <h2>Datos personales</h2>
                         </div>
-                        <button type="button">Editar</button>
+                        <a href={routes.editProfile}>Editar</a>
                     </div>
 
                     <dl className={styles.infoGrid}>

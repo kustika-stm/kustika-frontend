@@ -32,8 +32,8 @@ export function AppRouter() {
         return <MyTicketsPage />;
     }
 
-    if (pathname === routes.profile) {
-        return <ProfilePage />;
+    if (pathname === routes.profile || pathname === routes.editProfile) {
+        return <ProfilePage mode={pathname === routes.editProfile ? "edit" : "view"} />;
     }
 
     if (pathname.startsWith(`${routes.categoryDetailBase}/`)) {

@@ -46,7 +46,9 @@
 }
 
 .primaryAction,
-.panelHeader button {
+.panelHeader a,
+.formActions a,
+.formActions button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -121,10 +123,115 @@
     font-size: 22px;
 }
 
-.panelHeader button {
+.panelHeader a,
+.formActions a {
     border: 1px solid var(--border);
     background: rgba(15, 15, 15, 0.64);
     color: var(--text-h);
+}
+
+.editHeader {
+    display: grid;
+    gap: 18px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.editHeader h1 {
+    margin: 6px 0 10px;
+    font-size: 36px;
+    line-height: 1.05;
+}
+
+.editHeader p {
+    max-width: 680px;
+    color: var(--text-muted);
+}
+
+.backLink {
+    width: fit-content;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.backLink:hover {
+    color: var(--color-highlight);
+}
+
+.editForm {
+    display: grid;
+    gap: 16px;
+    padding-top: 24px;
+}
+
+.formGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.formGrid label {
+    display: grid;
+    gap: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.formGrid input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: 0;
+    background: rgba(15, 15, 15, 0.72);
+    color: var(--text-h);
+    font: inherit;
+}
+
+.formGrid input:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+.formGrid input:focus {
+    border-color: rgba(255, 63, 199, 0.72);
+}
+
+.checkboxGrid {
+    display: grid;
+    gap: 10px;
+}
+
+.checkboxGrid label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.54);
+    color: var(--text-h);
+    font-weight: 700;
+}
+
+.checkboxGrid input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-secondary);
+}
+
+.formActions {
+    display: grid;
+    gap: 10px;
+}
+
+.formActions button {
+    background: var(--gradient-main);
+    color: #000;
 }
 
 .infoGrid {
@@ -184,6 +291,19 @@
 
     .infoGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .checkboxGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formActions {
+        grid-template-columns: 180px 220px;
+        justify-content: end;
     }
 }
 
