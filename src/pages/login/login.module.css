@@ -131,6 +131,78 @@
     font-weight: 700;
 }
 
+.feedback {
+    margin: 0 0 var(--space-md);
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.error {
+    border: 1px solid rgba(254, 124, 102, 0.42);
+    background: rgba(254, 124, 102, 0.12);
+    color: #ffb8aa;
+}
+
+.success {
+    border: 1px solid rgba(255, 219, 51, 0.32);
+    background: rgba(255, 219, 51, 0.1);
+    color: var(--color-highlight);
+}
+
+.verifyForm {
+    display: grid;
+    gap: 14px;
+}
+
+.verifyField {
+    display: grid;
+    gap: 6px;
+}
+
+.verifyField span {
+    color: rgba(228, 228, 231, 0.78);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.verifyField input {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.055);
+    color: var(--text-h);
+    font: inherit;
+    padding: 0 16px;
+    outline: none;
+}
+
+.verifySubmit,
+.secondaryButton {
+    min-height: 52px;
+    font-weight: 700;
+}
+
+.verifySubmit {
+    background: var(--gradient-main);
+    color: #050505;
+    box-shadow: var(--shadow);
+}
+
+.secondaryButton {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.055);
+    color: var(--text-h);
+}
+
+.verifySubmit:disabled,
+.secondaryButton:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
 @media (max-width: 900px) {
     .shell {
         grid-template-columns: 1fr;
