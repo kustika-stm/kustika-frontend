@@ -40,6 +40,16 @@
     box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.22);
 }
 
+.error {
+    padding: 10px 12px;
+    border: 1px solid rgba(254, 124, 102, 0.42);
+    border-radius: var(--radius-md);
+    background: rgba(254, 124, 102, 0.12);
+    color: #ffb8aa;
+    font-size: 13px;
+    font-weight: 600;
+}
+
 .submit {
     min-height: 52px;
     margin-top: var(--space-sm);
@@ -47,6 +57,12 @@
     color: #050505;
     font-weight: 700;
     box-shadow: var(--shadow);
+}
+
+.submit:disabled {
+    cursor: wait;
+    filter: grayscale(0.35);
+    opacity: 0.72;
 }
 
 @media (max-height: 820px) and (min-width: 901px) {
