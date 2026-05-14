@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { routes } from "../../../app/router/routes";
+import { clearSession, getStoredSession } from "../../../entities/session";
+import { authApi } from "../../../features/auth/api";
 import logo from "../../../shared/assets/images/logo/logo-combinado.png";
 import styles from "./header.module.css";
 
@@ -12,7 +14,10 @@ const navLinks = [
 
 export const Header = () => {
     const [open, setOpen] = useState(false);
+    const [session, setSession] = useState(() => getStoredSession());
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const pathname = window.location.pathname;
+    const isAuthenticated = Boolean(session?.accessToken);
 
     const isActive = (href: string) => {
         if (href === routes.home) {
@@ -20,6 +25,23 @@ export const Header = () => {
         }
 
         return pathname === href || pathname.startsWith(`${href}/`);
+    };
+
+    const handleLogout = async () => {
+        if (!session?.accessToken || isLoggingOut) {
+            return;
+        }
+
+        setIsLoggingOut(true);
+
+        try {
+            await authApi.logout(session.accessToken);
+        } finally {
+            clearSession();
+            setSession(null);
+            setOpen(false);
+            window.location.assign(routes.home);
+        }
     };
 
     return (
@@ -42,8 +64,21 @@ export const Header = () => {
                 </nav>
 
                 <div className={styles.actions}>
-                    <a className={styles.loginLink} href={routes.login}>Iniciar sesion</a>
-                    <a className={styles.cta} href={routes.register}>Registrarse</a>
+                    {isAuthenticated ? (
+                        <button
+                            className={styles.logoutButton}
+                            type="button"
+                            disabled={isLoggingOut}
+                            onClick={handleLogout}
+                        >
+                            {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                        </button>
+                    ) : (
+                        <>
+                            <a className={styles.loginLink} href={routes.login}>Iniciar sesion</a>
+                            <a className={styles.cta} href={routes.register}>Registrarse</a>
+                        </>
+                    )}
                 </div>
 
                 <button
@@ -72,8 +107,21 @@ export const Header = () => {
                         </a>
                     ))}
 
-                    <a href={routes.login}>Iniciar sesion</a>
-                    <a className={styles.cta} href={routes.register}>Registrarse</a>
+                    {isAuthenticated ? (
+                        <button
+                            className={styles.logoutButton}
+                            type="button"
+                            disabled={isLoggingOut}
+                            onClick={handleLogout}
+                        >
+                            {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                        </button>
+                    ) : (
+                        <>
+                            <a href={routes.login}>Iniciar sesion</a>
+                            <a className={styles.cta} href={routes.register}>Registrarse</a>
+                        </>
+                    )}
                 </div>
             )}
         </header>
