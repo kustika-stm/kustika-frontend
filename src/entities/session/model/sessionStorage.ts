@@ -1,4 +1,5 @@
-import type { AuthSession } from "./session";
+import type { AuthSession, UserRole } from "./session";
+import { normalizeRole } from "./roles";
 
 const SESSION_STORAGE_KEY = "evenxa.session";
 const LEGACY_LOCAL_STORAGE_KEY = "evenxa.session";
@@ -21,6 +22,26 @@ export function getStoredSession() {
 export function saveSession(session: AuthSession) {
     window.localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
     window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+}
+
+export function updateStoredSessionRole(role: UserRole) {
+    const session = getStoredSession();
+
+    if (!session) {
+        return null;
+    }
+
+    const nextSession = {
+        ...session,
+        user: {
+            ...session.user,
+            email: session.user?.email ?? "",
+            tipo_usuario: normalizeRole(role),
+        },
+    };
+
+    saveSession(nextSession);
+    return nextSession;
 }
 
 export function clearSession() {

@@ -9,23 +9,21 @@ type Props = {
 };
 
 export function ProfilePage({ mode = "view" }: Props) {
+    const session = getStoredSession();
+    const accessToken = session?.accessToken;
     const [profile, setProfile] = useState<SessionUser | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(Boolean(accessToken));
+    const [error, setError] = useState(accessToken ? "" : "Inicia sesion para ver tu perfil.");
     const isEditing = mode === "edit";
 
     useEffect(() => {
-        const session = getStoredSession();
-
-        if (!session?.accessToken) {
-            setError("Inicia sesion para ver tu perfil.");
-            setIsLoading(false);
+        if (!accessToken) {
             return;
         }
 
         let isMounted = true;
 
-        profileApi.getProfile(session.accessToken)
+        profileApi.getProfile(accessToken)
             .then((userProfile) => {
                 if (isMounted) {
                     setProfile(userProfile);
@@ -46,7 +44,7 @@ export function ProfilePage({ mode = "view" }: Props) {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [accessToken]);
 
     if (isLoading) {
         return (

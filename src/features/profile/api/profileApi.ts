@@ -1,4 +1,4 @@
-import type { SessionUser } from "../../../entities/session";
+import { normalizeRole, type SessionUser } from "../../../entities/session";
 import { apiRequest } from "../../../shared/api";
 
 type ProfileResponse = {
@@ -24,7 +24,7 @@ const normalizeProfile = (response: ProfileResponse): SessionUser => {
         apellido_paterno: payload.apellido_paterno,
         apellido_materno: payload.apellido_materno,
         telefono: payload.telefono,
-        tipo_usuario: payload.tipo_usuario ?? payload.rol,
+        tipo_usuario: normalizeRole(payload.tipo_usuario ?? payload.rol),
     };
 };
 

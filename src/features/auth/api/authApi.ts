@@ -1,5 +1,5 @@
 import { apiRequest } from "../../../shared/api";
-import type { AuthSession, SessionUser } from "../../../entities/session";
+import { normalizeRole, type AuthSession, type SessionUser } from "../../../entities/session";
 
 export type RegisterRequest = {
     email: string;
@@ -45,6 +45,7 @@ type LoginPayload = {
     usuario?: SessionUser;
     user?: SessionUser;
     tipo_usuario?: string;
+    rol?: string;
 };
 
 type RefreshResponse = {
@@ -72,7 +73,9 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
             email,
             ...payload.user,
             ...payload.usuario,
-            tipo_usuario: payload.tipo_usuario ?? payload.user?.tipo_usuario ?? payload.usuario?.tipo_usuario,
+            tipo_usuario: normalizeRole(
+                payload.tipo_usuario ?? payload.rol ?? payload.user?.tipo_usuario ?? payload.usuario?.tipo_usuario,
+            ),
         },
     };
 };

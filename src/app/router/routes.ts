@@ -6,6 +6,8 @@ export const routes = {
     events: "/eventos",
     categories: "/categorias",
     myTickets: "/mis-boletos",
+    eventCustomer: "/panel-eventos",
+    admin: "/admin",
     profile: "/perfil",
     editProfile: "/perfil/editar",
     categoryDetailBase: "/categorias",

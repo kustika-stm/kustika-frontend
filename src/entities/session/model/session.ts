@@ -1,4 +1,4 @@
-export type UserRole = "user" | "organizer" | "admin" | string;
+export type UserRole = "customer" | "event_customer" | "admin" | string;
 
 export type SessionUser = {
     id?: string;

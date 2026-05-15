@@ -1,13 +1,39 @@
+import type { ReactNode } from "react";
+import { AdminPage } from "../../pages/admin";
 import { HomePage } from "../../pages/home";
 import { CategoriesPage } from "../../pages/categories";
 import { EventsPage } from "../../pages/events";
 import { EventDetailPage } from "../../pages/event-detail";
+import { EventCustomerPage } from "../../pages/event-customer";
 import { CheckoutPage } from "../../pages/checkout";
 import { LoginPage } from "../../pages/login";
 import { MyTicketsPage } from "../../pages/my-tickets";
 import { ProfilePage } from "../../pages/profile";
 import { RegisterPage } from "../../pages/register";
+import { getRoleHomePath, getSessionRole, getStoredSession, type UserRole } from "../../entities/session";
 import { routes } from "./routes";
+
+type RoleAccessProps = {
+    allowedRole: UserRole;
+    children: ReactNode;
+};
+
+function RoleAccess({ allowedRole, children }: RoleAccessProps) {
+    const session = getStoredSession();
+    const role = getSessionRole(session);
+
+    if (!session?.accessToken) {
+        window.location.assign(routes.login);
+        return null;
+    }
+
+    if (role !== allowedRole) {
+        window.location.assign(getRoleHomePath(role));
+        return null;
+    }
+
+    return children;
+}
 
 export function AppRouter() {
     const pathname = window.location.pathname;
@@ -18,6 +44,22 @@ export function AppRouter() {
 
     if (pathname === routes.register) {
         return <RegisterPage />;
+    }
+
+    if (pathname === routes.eventCustomer) {
+        return (
+            <RoleAccess allowedRole="event_customer">
+                <EventCustomerPage />
+            </RoleAccess>
+        );
+    }
+
+    if (pathname === routes.admin) {
+        return (
+            <RoleAccess allowedRole="admin">
+                <AdminPage />
+            </RoleAccess>
+        );
     }
 
     if (pathname === routes.events) {

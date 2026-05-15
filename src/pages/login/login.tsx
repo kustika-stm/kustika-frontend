@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AuthForm, type LoginFormValues } from "../../features/auth/ui";
 import { authApi } from "../../features/auth/api";
-import { saveSession } from "../../entities/session";
+import { getRoleHomePath, saveSession } from "../../entities/session";
 import { routes } from "../../app/router/routes";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import logo from "../../shared/assets/images/logo/logo-combinado.png";
@@ -18,7 +18,7 @@ export function LoginPage() {
         try {
             const session = await authApi.login(values);
             saveSession(session);
-            window.location.assign(routes.home);
+            window.location.assign(getRoleHomePath(session.user?.tipo_usuario));
         } catch (requestError) {
             const message = requestError instanceof Error ? requestError.message : "No pudimos iniciar sesion.";
             setError(message);

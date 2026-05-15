@@ -43,7 +43,8 @@
 .navDesktop a,
 .mobileMenu a,
 .loginLink,
-.logoutButton {
+.logoutButton,
+.ctaButton {
     color: var(--text);
     font-size: 14px;
     font-weight: 600;
@@ -86,6 +87,24 @@
 }
 
 .cta:hover {
+    color: #000;
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.ctaButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 16px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 800;
+}
+
+.ctaButton:hover {
     color: #000;
     filter: brightness(1.08);
     transform: translateY(-1px);
@@ -178,6 +197,11 @@
     width: 100%;
     justify-content: flex-start;
     text-align: left;
+}
+
+.mobileMenu .ctaButton {
+    width: 100%;
+    margin-top: 4px;
 }
 
 .mobileProfileLink {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { routes } from "../../../app/router/routes";
-import { clearSession, getStoredSession } from "../../../entities/session";
+import { clearSession, getSessionRole, getStoredSession, updateStoredSessionRole } from "../../../entities/session";
 import { authApi } from "../../../features/auth/api";
 import userIcon from "../../../shared/assets/icons/usuario.png";
 import logo from "../../../shared/assets/images/logo/logo-combinado.png";
@@ -16,13 +16,38 @@ const authNavLinks = [
     { label: "Mis boletos", href: routes.myTickets },
 ];
 
+const eventCustomerNavLinks = [
+    { label: "Panel eventos", href: routes.eventCustomer },
+];
+
+const adminNavLinks = [
+    { label: "Usuarios", href: routes.admin },
+];
+
+const getNavLinks = (role: string, isAuthenticated: boolean) => {
+    if (!isAuthenticated) {
+        return navLinks;
+    }
+
+    if (role === "admin") {
+        return adminNavLinks;
+    }
+
+    if (role === "event_customer") {
+        return eventCustomerNavLinks;
+    }
+
+    return [...navLinks, ...authNavLinks];
+};
+
 export const Header = () => {
     const [open, setOpen] = useState(false);
     const [session, setSession] = useState(() => getStoredSession());
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const pathname = window.location.pathname;
     const isAuthenticated = Boolean(session?.accessToken);
-    const visibleNavLinks = isAuthenticated ? [...navLinks, ...authNavLinks] : navLinks;
+    const role = getSessionRole(session);
+    const visibleNavLinks = getNavLinks(role, isAuthenticated);
 
     const isActive = (href: string) => {
         if (href === routes.home) {
@@ -49,6 +74,19 @@ export const Header = () => {
         }
     };
 
+    const handleCreateEvent = () => {
+        const nextSession = updateStoredSessionRole("event_customer");
+
+        if (!nextSession) {
+            window.location.assign(routes.login);
+            return;
+        }
+
+        setSession(nextSession);
+        setOpen(false);
+        window.location.assign(routes.eventCustomer);
+    };
+
     return (
         <header className={styles.header}>
             <div className={styles.container}>
@@ -71,6 +109,11 @@ export const Header = () => {
                 <div className={styles.actions}>
                     {isAuthenticated ? (
                         <>
+                            {role === "customer" && (
+                                <button className={styles.ctaButton} type="button" onClick={handleCreateEvent}>
+                                    Hacer evento
+                                </button>
+                            )}
                             <a
                                 className={`${styles.profileLink} ${isActive(routes.profile) ? styles.profileLinkActive : ""}`}
                                 href={routes.profile}
@@ -124,6 +167,11 @@ export const Header = () => {
 
                     {isAuthenticated ? (
                         <>
+                            {role === "customer" && (
+                                <button className={styles.ctaButton} type="button" onClick={handleCreateEvent}>
+                                    Hacer evento
+                                </button>
+                            )}
                             <a
                                 className={`${styles.mobileProfileLink} ${isActive(routes.profile) ? styles.activeLink : ""}`}
                                 href={routes.profile}
