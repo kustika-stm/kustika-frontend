@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { routes } from "../../app/router/routes";
 import { getEventById } from "../../entities/event/model/getEventById";
+import { getStoredSession } from "../../entities/session";
+import { isProfileComplete } from "../../features/profile/model";
 import styles from "./event-detail.module.css";
 
 type Props = {
@@ -19,6 +21,22 @@ export function EventDetailPage({ eventId }: Props) {
     const event = getEventById(eventId);
     const buyBoxTriggerRef = useRef<HTMLDivElement>(null);
     const [isBuyBoxCompact, setIsBuyBoxCompact] = useState(false);
+
+    const handleBuyTickets = () => {
+        const session = getStoredSession();
+
+        if (!session?.accessToken) {
+            window.location.href = routes.login;
+            return;
+        }
+
+        if (!isProfileComplete(session.user)) {
+            window.location.href = `${routes.profile}?complete=1`;
+            return;
+        }
+
+        window.location.href = routes.eventCheckout(eventId);
+    };
 
     useEffect(() => {
         const updateBuyBoxState = () => {
@@ -87,9 +105,7 @@ export function EventDetailPage({ eventId }: Props) {
                     className={styles.cta}
                     disabled={!canBuyTickets}
                     tabIndex={isInteractive ? 0 : -1}
-                    onClick={() => {
-                        window.location.href = routes.eventCheckout(eventId);
-                    }}
+                    onClick={handleBuyTickets}
                 >
                     {canBuyTickets ? "Comprar boletos" : "Agotado"}
                 </button>

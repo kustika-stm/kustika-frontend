@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
-import { getStoredSession, type SessionUser } from "../../entities/session";
+import { getStoredSession, saveSession, type SessionUser } from "../../entities/session";
+import { ApiError } from "../../shared/api";
 import { profileApi } from "../../features/profile/api";
+import { getMissingProfileFields, isProfileFieldFilled, type RequiredProfileField } from "../../features/profile/model";
 import styles from "./profile.module.css";
 
 type Props = {
@@ -13,8 +15,12 @@ export function ProfilePage({ mode = "view" }: Props) {
     const accessToken = session?.accessToken;
     const [profile, setProfile] = useState<SessionUser | null>(null);
     const [isLoading, setIsLoading] = useState(Boolean(accessToken));
+    const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(accessToken ? "" : "Inicia sesion para ver tu perfil.");
+    const [formError, setFormError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const isEditing = mode === "edit";
+    const shouldPromptCompletion = new URLSearchParams(window.location.search).get("complete") === "1";
 
     useEffect(() => {
         if (!accessToken) {
@@ -84,6 +90,81 @@ export function ProfilePage({ mode = "view" }: Props) {
         .map((part) => part[0])
         .join("")
         .toUpperCase();
+    const missingFields = getMissingProfileFields(profile);
+    const hasMissingFields = missingFields.length > 0;
+    const missingFieldNames = missingFields.map((field) => field.label).join(", ");
+    const isMissingField = (field: RequiredProfileField) => {
+        return !isProfileFieldFilled(profile[field]);
+    };
+    const fieldCardClassName = (field: RequiredProfileField) => {
+        return `${styles.infoItem} ${isMissingField(field) ? styles.missingItem : ""}`;
+    };
+
+    const handleProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        if (!accessToken) {
+            setFormError("Inicia sesion para actualizar tu perfil.");
+            return;
+        }
+
+        const formData = new FormData(event.currentTarget);
+        const nextProfile = {
+            nombre: String(formData.get("nombre") ?? "").trim(),
+            apellido_paterno: String(formData.get("apellido_paterno") ?? "").trim(),
+            apellido_materno: String(formData.get("apellido_materno") ?? "").trim(),
+            email: String(formData.get("email") ?? "").trim(),
+            telefono: String(formData.get("telefono") ?? "").trim(),
+        };
+        const nextMissingFields = getMissingProfileFields(nextProfile);
+
+        setFormError("");
+        setSuccessMessage("");
+
+        if (nextMissingFields.length > 0) {
+            setFormError(`Completa estos campos: ${nextMissingFields.map((field) => field.label).join(", ")}.`);
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextProfile.email)) {
+            setFormError("Escribe un correo valido.");
+            return;
+        }
+
+        if (!/^\d{10}$/.test(nextProfile.telefono.replace(/\D/g, ""))) {
+            setFormError("Escribe un telefono celular de 10 digitos.");
+            return;
+        }
+
+        setIsSaving(true);
+
+        try {
+            const updatedProfile = await profileApi.updateProfile(accessToken, {
+                ...nextProfile,
+                telefono: nextProfile.telefono.replace(/\D/g, ""),
+            });
+
+            setProfile(updatedProfile);
+            saveSession({
+                ...session,
+                accessToken: session?.accessToken ?? accessToken,
+                refreshToken: session?.refreshToken ?? "",
+                user: {
+                    ...session?.user,
+                    ...updatedProfile,
+                },
+            });
+            setSuccessMessage("Tus datos se actualizaron correctamente.");
+            window.location.assign(routes.profile);
+        } catch (requestError) {
+            const message = requestError instanceof ApiError && requestError.status === 404
+                ? "El backend no encontro la ruta para actualizar tu perfil."
+                : requestError instanceof Error ? requestError.message : "No pudimos actualizar tu perfil.";
+            setFormError(message);
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     if (isEditing) {
         return (
@@ -97,7 +178,17 @@ export function ProfilePage({ mode = "view" }: Props) {
                     </div>
                 </section>
 
-                <form className={styles.editForm}>
+                <form className={styles.editForm} onSubmit={handleProfileSubmit}>
+                    {hasMissingFields && (
+                        <div className={styles.warningBanner}>
+                            <strong>Completa tus datos</strong>
+                            <p>Necesitamos {missingFieldNames} para que puedas comprar boletos sin interrupciones.</p>
+                        </div>
+                    )}
+
+                    {formError && <p className={styles.formError}>{formError}</p>}
+                    {successMessage && <p className={styles.formSuccess}>{successMessage}</p>}
+
                     <section className={styles.panel}>
                         <div className={styles.panelHeader}>
                             <div>
@@ -107,36 +198,32 @@ export function ProfilePage({ mode = "view" }: Props) {
                         </div>
 
                         <div className={styles.formGrid}>
-                            <label>
+                            <label className={isMissingField("nombre") ? styles.missingField : ""}>
                                 Nombre
-                                <input name="nombre" type="text" defaultValue={profile.nombre ?? ""} />
+                                <input name="nombre" type="text" defaultValue={profile.nombre ?? ""} required />
                             </label>
-                            <label>
+                            <label className={isMissingField("apellido_paterno") ? styles.missingField : ""}>
                                 Apellido paterno
-                                <input name="apellido_paterno" type="text" defaultValue={profile.apellido_paterno ?? ""} />
+                                <input name="apellido_paterno" type="text" defaultValue={profile.apellido_paterno ?? ""} required />
                             </label>
-                            <label>
+                            <label className={isMissingField("apellido_materno") ? styles.missingField : ""}>
                                 Apellido materno
-                                <input name="apellido_materno" type="text" defaultValue={profile.apellido_materno ?? ""} />
+                                <input name="apellido_materno" type="text" defaultValue={profile.apellido_materno ?? ""} required />
                             </label>
-                            <label>
+                            <label className={isMissingField("email") ? styles.missingField : ""}>
                                 Correo
-                                <input name="email" type="email" defaultValue={profile.email} />
+                                <input name="email" type="email" defaultValue={profile.email} required />
                             </label>
-                            <label>
+                            <label className={isMissingField("telefono") ? styles.missingField : ""}>
                                 Telefono
-                                <input name="telefono" type="tel" defaultValue={profile.telefono ?? ""} />
-                            </label>
-                            <label>
-                                Tipo de cuenta
-                                <input name="tipo_usuario" type="text" defaultValue={profile.tipo_usuario ?? ""} disabled />
+                                <input name="telefono" type="tel" defaultValue={profile.telefono ?? ""} inputMode="numeric" required />
                             </label>
                         </div>
                     </section>
 
                     <div className={styles.formActions}>
                         <a href={routes.profile}>Cancelar</a>
-                        <button type="button">Guardar cambios</button>
+                        <button type="submit" disabled={isSaving}>{isSaving ? "Guardando..." : "Guardar cambios"}</button>
                     </div>
                 </form>
             </main>
@@ -158,6 +245,18 @@ export function ProfilePage({ mode = "view" }: Props) {
             </section>
 
             <section className={styles.layout}>
+                {(hasMissingFields || shouldPromptCompletion) && (
+                    <div className={styles.warningBanner}>
+                        <strong>Completa tus datos</strong>
+                        <p>
+                            {hasMissingFields
+                                ? `Te falta agregar: ${missingFieldNames}.`
+                                : "Revisa que tu informacion este completa antes de comprar boletos."}
+                        </p>
+                        <a href={routes.editProfile}>Editar perfil</a>
+                    </div>
+                )}
+
                 <article className={styles.panel}>
                     <div className={styles.panelHeader}>
                         <div>
@@ -168,29 +267,25 @@ export function ProfilePage({ mode = "view" }: Props) {
                     </div>
 
                     <dl className={styles.infoGrid}>
-                        <div>
+                        <div className={fieldCardClassName("nombre")}>
                             <dt>Nombre</dt>
                             <dd>{profile.nombre || "Sin nombre"}</dd>
                         </div>
-                        <div>
+                        <div className={fieldCardClassName("apellido_paterno")}>
                             <dt>Apellido paterno</dt>
                             <dd>{profile.apellido_paterno || "Sin apellido"}</dd>
                         </div>
-                        <div>
+                        <div className={fieldCardClassName("apellido_materno")}>
                             <dt>Apellido materno</dt>
                             <dd>{profile.apellido_materno || "Sin apellido"}</dd>
                         </div>
-                        <div>
+                        <div className={fieldCardClassName("email")}>
                             <dt>Correo</dt>
                             <dd>{profile.email}</dd>
                         </div>
-                        <div>
+                        <div className={fieldCardClassName("telefono")}>
                             <dt>Telefono</dt>
                             <dd>{profile.telefono || "Sin telefono"}</dd>
-                        </div>
-                        <div>
-                            <dt>Tipo de cuenta</dt>
-                            <dd>{profile.tipo_usuario || "Sin tipo asignado"}</dd>
                         </div>
                     </dl>
                 </article>

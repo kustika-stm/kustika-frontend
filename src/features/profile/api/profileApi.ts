@@ -14,6 +14,14 @@ type ProfilePayload = SessionUser & {
     created_at?: string;
 };
 
+export type UpdateProfileRequest = {
+    nombre: string;
+    apellido_paterno: string;
+    apellido_materno: string;
+    email: string;
+    telefono: string;
+};
+
 const normalizeProfile = (response: ProfileResponse): SessionUser => {
     const payload = response.data ?? response;
 
@@ -36,5 +44,22 @@ export const profileApi = {
         });
 
         return normalizeProfile(response);
+    },
+
+    async updateProfile(token: string, payload: UpdateProfileRequest) {
+        const response = await apiRequest<ProfileResponse>("/usuarios/actualizar-perfil", {
+            method: "PUT",
+            token,
+            body: payload,
+        });
+
+        return normalizeProfile(response);
+    },
+
+    deleteAccount(token: string) {
+        return apiRequest<unknown>("/usuarios/eliminar-cuenta", {
+            method: "DELETE",
+            token,
+        });
     },
 };

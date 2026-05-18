@@ -84,6 +84,51 @@
     padding-top: 20px;
 }
 
+.warningBanner,
+.formError,
+.formSuccess {
+    display: grid;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+
+.warningBanner {
+    border: 1px solid rgba(255, 219, 51, 0.48);
+    background: rgba(255, 219, 51, 0.12);
+    color: #ffe877;
+}
+
+.warningBanner strong {
+    color: var(--color-highlight);
+    font-size: 16px;
+}
+
+.warningBanner p {
+    color: rgba(255, 255, 255, 0.84);
+}
+
+.warningBanner a {
+    width: fit-content;
+    color: var(--color-highlight);
+    font-weight: 800;
+}
+
+.formError {
+    border: 1px solid rgba(254, 124, 102, 0.42);
+    background: rgba(254, 124, 102, 0.12);
+    color: #ffb8aa;
+    font-weight: 700;
+}
+
+.formSuccess {
+    border: 1px solid rgba(255, 219, 51, 0.32);
+    background: rgba(255, 219, 51, 0.1);
+    color: var(--color-highlight);
+    font-weight: 700;
+}
+
 .panel {
     padding: 18px;
     box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
@@ -179,6 +224,16 @@
     border-color: rgba(255, 63, 199, 0.72);
 }
 
+.missingField {
+    color: var(--color-highlight);
+}
+
+.missingField input {
+    border-color: rgba(255, 219, 51, 0.72);
+    background: rgba(255, 219, 51, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 219, 51, 0.1);
+}
+
 .formActions {
     display: grid;
     gap: 10px;
@@ -189,12 +244,18 @@
     color: #000;
 }
 
+.formActions button:disabled {
+    cursor: wait;
+    filter: grayscale(0.35);
+    opacity: 0.72;
+}
+
 .infoGrid {
     display: grid;
     gap: 12px;
 }
 
-.infoGrid div {
+.infoItem {
     display: grid;
     align-content: start;
     gap: 6px;
@@ -203,6 +264,18 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: rgba(15, 15, 15, 0.54);
+}
+
+.missingItem {
+    border-color: rgba(255, 219, 51, 0.66);
+    background:
+        linear-gradient(180deg, rgba(255, 219, 51, 0.1), rgba(15, 15, 15, 0.54)),
+        rgba(15, 15, 15, 0.54);
+}
+
+.missingItem dt,
+.missingItem dd {
+    color: var(--color-highlight);
 }
 
 .infoGrid dt {

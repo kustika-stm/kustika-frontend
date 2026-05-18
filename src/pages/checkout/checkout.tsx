@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { routes } from "../../app/router/routes";
 import { getEventById } from "../../entities/event/model/getEventById";
+import { getStoredSession } from "../../entities/session";
+import { getMissingProfileFields, isProfileComplete } from "../../features/profile/model";
 import styles from "./checkout.module.css";
 
 type Props = {
@@ -58,6 +60,7 @@ const formatPrice = (price: number) => {
 
 export function CheckoutPage({ eventId }: Props) {
     const event = getEventById(eventId);
+    const session = getStoredSession();
     const [selectedTicketId, setSelectedTicketId] = useState("");
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const [paymentMethod, setPaymentMethod] = useState("card");
@@ -69,6 +72,32 @@ export function CheckoutPage({ eventId }: Props) {
                 <h1>No encontramos este evento.</h1>
                 <p>Puede que el enlace haya cambiado o que el evento ya no este disponible.</p>
                 <a href={routes.home}>Volver a eventos</a>
+            </main>
+        );
+    }
+
+    if (!session?.accessToken) {
+        return (
+            <main className={styles.notFound}>
+                <span>Compra segura</span>
+                <h1>Inicia sesion para comprar.</h1>
+                <p>Necesitamos validar tu cuenta antes de generar tus boletos.</p>
+                <a href={routes.login}>Iniciar sesion</a>
+            </main>
+        );
+    }
+
+    if (!isProfileComplete(session.user)) {
+        const missingFields = getMissingProfileFields(session.user).map((field) => field.label).join(", ");
+
+        return (
+            <main className={styles.page}>
+                <section className={styles.profileGate}>
+                    <span className={styles.eyebrow}>Completa tus datos</span>
+                    <h1>Antes de comprar necesitamos tu perfil completo.</h1>
+                    <p>Te falta agregar: {missingFields}. Cuando termines, podras continuar con tu compra.</p>
+                    <a href={`${routes.profile}?complete=1`}>Completar perfil</a>
+                </section>
             </main>
         );
     }
