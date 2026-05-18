@@ -11,7 +11,7 @@ import "./styles/index.css";
 export function App() {
     // const showProductApp = window.location.pathname.startsWith(routes.app);
     const pathname = window.location.pathname;
-    const hideFooter = pathname === routes.login || pathname === routes.register;
+    const hideFooter = pathname === routes.login || pathname === routes.register || pathname === routes.googleCallback;
 
     // if (!showProductApp) {
     //     return <LandingPage />;

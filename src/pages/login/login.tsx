@@ -3,6 +3,7 @@ import { AuthForm, type LoginFormValues } from "../../features/auth/ui";
 import { authApi } from "../../features/auth/api";
 import { getRoleHomePath, saveSession } from "../../entities/session";
 import { routes } from "../../app/router/routes";
+import googleLogo from "../../shared/assets/icons/Google_logo.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import logo from "../../shared/assets/images/logo/logo-combinado.png";
 import styles from "./login.module.css";
@@ -25,6 +26,12 @@ export function LoginPage() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleGoogleLogin = () => {
+        setError("");
+        setIsLoading(true);
+        window.location.assign(authApi.getGoogleLoginUrl());
     };
 
     return (
@@ -60,6 +67,20 @@ export function LoginPage() {
                     {error && <p className={`${styles.feedback} ${styles.error}`}>{error}</p>}
 
                     <AuthForm mode="login" onSubmit={handleLogin} isLoading={isLoading} />
+
+                    <div className={styles.divider}>
+                        <span>o</span>
+                    </div>
+
+                    <button
+                        className={styles.googleButton}
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        disabled={isLoading}
+                    >
+                        <img className={styles.googleMark} src={googleLogo} alt="" aria-hidden="true" />
+                        Continuar con Google
+                    </button>
 
                     <p className={styles.switch}>
                         Olvidaste tu contrasena? <a href={routes.recoverPassword}>Recuperala aqui</a>

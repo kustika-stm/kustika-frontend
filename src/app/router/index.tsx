@@ -6,7 +6,7 @@ import { EventsPage } from "../../pages/events";
 import { EventDetailPage } from "../../pages/event-detail";
 import { EventCustomerPage } from "../../pages/event-customer";
 import { CheckoutPage } from "../../pages/checkout";
-import { LoginPage } from "../../pages/login";
+import { GoogleCallbackPage, LoginPage } from "../../pages/login";
 import { MyTicketsPage } from "../../pages/my-tickets";
 import { ProfilePage } from "../../pages/profile";
 import { RecoverPasswordPage } from "../../pages/recover-password";
@@ -41,6 +41,10 @@ export function AppRouter() {
 
     if (pathname === routes.login) {
         return <LoginPage />;
+    }
+
+    if (pathname === routes.googleCallback) {
+        return <GoogleCallbackPage />;
     }
 
     if (pathname === routes.recoverPassword) {

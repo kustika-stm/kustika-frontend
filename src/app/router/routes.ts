@@ -13,6 +13,7 @@ export const routes = {
     categoryDetailBase: "/categorias",
     categoryDetail: (categoryId: string) => `/categorias/${categoryId}`,
     login: "/login",
+    googleCallback: "/auth/google/callback",
     recoverPassword: "/recuperar-password",
     register: "/registro",
     eventDetailBase: "/eventos",

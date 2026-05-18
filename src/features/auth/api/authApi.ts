@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../shared/api";
+import { API_BASE_URL } from "../../../shared/api/config";
 import { normalizeRole, type AuthSession, type SessionUser } from "../../../entities/session";
 
 export type RegisterRequest = {
@@ -94,6 +95,10 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
 };
 
 export const authApi = {
+    getGoogleLoginUrl() {
+        return `${API_BASE_URL}/auth/google`;
+    },
+
     register(payload: RegisterRequest) {
         return apiRequest<RegisterResponse>("/auth/register", {
             method: "POST",
