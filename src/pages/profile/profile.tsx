@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
 import {
+    clearSession,
     getAuthSessionPhotoUrl,
     getSessionUserPhotoUrl,
     getStoredSession,
@@ -22,8 +23,10 @@ export function ProfilePage({ mode = "view" }: Props) {
     const [profile, setProfile] = useState<SessionUser | null>(null);
     const [isLoading, setIsLoading] = useState(Boolean(accessToken));
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState(accessToken ? "" : "Inicia sesion para ver tu perfil.");
     const [formError, setFormError] = useState("");
+    const [deleteError, setDeleteError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const isEditing = mode === "edit";
     const shouldPromptCompletion = new URLSearchParams(window.location.search).get("complete") === "1";
@@ -180,6 +183,33 @@ export function ProfilePage({ mode = "view" }: Props) {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        if (!accessToken) {
+            setDeleteError("Inicia sesion para eliminar tu cuenta.");
+            return;
+        }
+
+        const shouldDelete = window.confirm("Esta accion eliminara tu cuenta de Evenxa. Deseas continuar?");
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        setDeleteError("");
+        setIsDeleting(true);
+
+        try {
+            await profileApi.deleteAccount(accessToken);
+            clearSession();
+            window.location.assign(routes.login);
+        } catch (requestError) {
+            const message = requestError instanceof Error ? requestError.message : "No pudimos eliminar tu cuenta.";
+            setDeleteError(message);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     if (isEditing) {
         return (
             <main className={styles.page}>
@@ -306,6 +336,17 @@ export function ProfilePage({ mode = "view" }: Props) {
                     </dl>
                 </article>
 
+                <section className={styles.dangerZone}>
+                    <div>
+                        <span className={styles.eyebrow}>Zona sensible</span>
+                        <h2>Eliminar cuenta</h2>
+                        <p>Esta accion borra tu cuenta y cerrara tu sesion actual.</p>
+                    </div>
+                    {deleteError && <p className={styles.formError}>{deleteError}</p>}
+                    <button type="button" onClick={handleDeleteAccount} disabled={isDeleting}>
+                        {isDeleting ? "Eliminando..." : "Eliminar cuenta"}
+                    </button>
+                </section>
             </section>
         </main>
     );
