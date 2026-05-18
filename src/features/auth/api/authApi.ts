@@ -99,6 +99,10 @@ export const authApi = {
         return `${API_BASE_URL}/auth/google`;
     },
 
+    getGoogleCallbackUrl() {
+        return `${API_BASE_URL}/auth/google/callback`;
+    },
+
     register(payload: RegisterRequest) {
         return apiRequest<RegisterResponse>("/auth/register", {
             method: "POST",
