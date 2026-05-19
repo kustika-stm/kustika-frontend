@@ -40,6 +40,16 @@ const getNavLinks = (role: string, isAuthenticated: boolean) => {
     return [...navLinks, ...authNavLinks];
 };
 
+const getDisplayName = (session: ReturnType<typeof getStoredSession>) => {
+    const user = session?.user;
+    const fullName = [user?.nombre, user?.apellido_paterno]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+    return fullName || user?.email?.split("@")[0] || "Perfil";
+};
+
 export const Header = () => {
     const [open, setOpen] = useState(false);
     const [session, setSession] = useState(() => getStoredSession());
@@ -48,6 +58,7 @@ export const Header = () => {
     const isAuthenticated = Boolean(session?.accessToken);
     const role = getSessionRole(session);
     const profilePhotoUrl = getAuthSessionPhotoUrl(session);
+    const profileName = getDisplayName(session);
     const visibleNavLinks = getNavLinks(role, isAuthenticated);
 
     const isActive = (href: string) => {
@@ -118,7 +129,7 @@ export const Header = () => {
                             <a
                                 className={`${styles.profileLink} ${isActive(routes.profile) ? styles.profileLinkActive : ""}`}
                                 href={routes.profile}
-                                aria-label="Ver perfil"
+                                aria-label={`Ver perfil de ${profileName}`}
                                 title="Perfil"
                             >
                                 <img
@@ -127,6 +138,7 @@ export const Header = () => {
                                     alt=""
                                     aria-hidden="true"
                                 />
+                                <span>{profileName}</span>
                             </a>
                             <button
                                 className={styles.logoutButton}
@@ -188,7 +200,7 @@ export const Header = () => {
                                     alt=""
                                     aria-hidden="true"
                                 />
-                                Perfil
+                                {profileName}
                             </a>
                             <button
                                 className={styles.logoutButton}
