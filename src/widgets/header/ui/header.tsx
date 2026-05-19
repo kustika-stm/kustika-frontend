@@ -119,7 +119,7 @@ export const Header = () => {
                         ))}
                     </nav>
 
-                    {!isAuthenticated && (
+                    {(!isAuthenticated || role === "customer") && (
                         <button className={styles.navCtaButton} type="button" onClick={handleCreateEvent}>
                             Hacer evento
                         </button>
@@ -129,11 +129,6 @@ export const Header = () => {
                 <div className={styles.actions}>
                     {isAuthenticated ? (
                         <>
-                            {role === "customer" && (
-                                <button className={styles.ctaButton} type="button" onClick={handleCreateEvent}>
-                                    Hacer evento
-                                </button>
-                            )}
                             <a
                                 className={`${styles.profileLink} ${isActive(routes.profile) ? styles.profileLinkActive : ""}`}
                                 href={routes.profile}
