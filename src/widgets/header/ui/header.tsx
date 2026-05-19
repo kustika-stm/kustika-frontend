@@ -106,17 +106,25 @@ export const Header = () => {
                     <img src={logo} alt="Evenxa logo" className={styles.logo} />
                 </a>
 
-                <nav className={styles.navDesktop} aria-label="Navegacion principal">
-                    {visibleNavLinks.map((link) => (
-                        <a
-                            href={link.href}
-                            className={isActive(link.href) ? styles.activeLink : ""}
-                            key={link.href}
-                        >
-                            {link.label}
-                        </a>
-                    ))}
-                </nav>
+                <div className={styles.navArea}>
+                    <nav className={styles.navDesktop} aria-label="Navegacion principal">
+                        {visibleNavLinks.map((link) => (
+                            <a
+                                href={link.href}
+                                className={isActive(link.href) ? styles.activeLink : ""}
+                                key={link.href}
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                    </nav>
+
+                    {!isAuthenticated && (
+                        <button className={styles.navCtaButton} type="button" onClick={handleCreateEvent}>
+                            Hacer evento
+                        </button>
+                    )}
+                </div>
 
                 <div className={styles.actions}>
                     {isAuthenticated ? (
@@ -213,6 +221,9 @@ export const Header = () => {
                         </>
                     ) : (
                         <>
+                            <button className={styles.ctaButton} type="button" onClick={handleCreateEvent}>
+                                Hacer evento
+                            </button>
                             <a href={routes.login}>Iniciar sesion</a>
                             <a className={styles.cta} href={routes.register}>Registrarse</a>
                         </>
