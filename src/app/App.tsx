@@ -11,7 +11,8 @@ import "./styles/index.css";
 export function App() {
     // const showProductApp = window.location.pathname.startsWith(routes.app);
     const pathname = window.location.pathname;
-    const hideFooter = pathname === routes.login || pathname === routes.register || pathname === routes.googleCallback;
+    const authRoutes: string[] = [routes.login, routes.register, routes.recoverPassword, routes.googleCallback];
+    const isAuthRoute = authRoutes.includes(pathname);
 
     // if (!showProductApp) {
     //     return <LandingPage />;
@@ -19,13 +20,13 @@ export function App() {
 
     return (
         <>
-            <Header />
+            {!isAuthRoute && <Header />}
 
             <AppProviders>
                 <AppRouter />
             </AppProviders>
 
-            {!hideFooter && <Footer />}
+            {!isAuthRoute && <Footer />}
         </>
     );
 }

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
 import { authApi } from "../../features/auth/api";
+import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import logo from "../../shared/assets/images/logo/logo-combinado.png";
 import styles from "../login/login.module.css";
@@ -139,7 +140,13 @@ export function RecoverPasswordPage() {
 
                 <section className={styles.panel}>
                     <div className={styles.copy}>
-                        <img src={logo} alt="Evenxa" className={styles.formLogo} />
+                        <div className={styles.formTopbar}>
+                            <img src={logo} alt="Evenxa" className={styles.formLogo} />
+                            <a className={styles.homeLink} href={routes.home}>
+                                <img src={arrowIcon} alt="" aria-hidden="true" />
+                                Volver al inicio
+                            </a>
+                        </div>
                         <h1>Recuperar contrasena</h1>
                         <p>Completa los pasos para crear una nueva contrasena.</p>
                     </div>

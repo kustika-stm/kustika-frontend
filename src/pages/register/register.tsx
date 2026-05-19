@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { AuthForm, type RegisterFormValues } from "../../features/auth/ui";
 import { authApi } from "../../features/auth/api";
 import { routes } from "../../app/router/routes";
+import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import logo from "../../shared/assets/images/logo/logo-combinado.png";
 import styles from "../login/login.module.css";
@@ -83,7 +84,13 @@ export function RegisterPage() {
 
                 <section className={styles.panel}>
                     <div className={styles.copy}>
-                        <img src={logo} alt="Evenxa" className={styles.formLogo} />
+                        <div className={styles.formTopbar}>
+                            <img src={logo} alt="Evenxa" className={styles.formLogo} />
+                            <a className={styles.homeLink} href={routes.home}>
+                                <img src={arrowIcon} alt="" aria-hidden="true" />
+                                Volver al inicio
+                            </a>
+                        </div>
                         <h1>Crear cuenta</h1>
                         <p>Registrate para comprar boletos y recibir tus accesos digitales.</p>
                     </div>

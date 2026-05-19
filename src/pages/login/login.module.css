@@ -1,7 +1,7 @@
 .page {
     position: relative;
     width: 100%;
-    min-height: calc(100dvh - 57px);
+    min-height: 100dvh;
     display: grid;
     place-items: center;
     padding: 0;
@@ -9,6 +9,42 @@
         radial-gradient(circle at 12% 10%, rgba(var(--color-primary-rgb), 0.34), transparent 28rem),
         radial-gradient(circle at 86% 80%, rgba(254, 124, 102, 0.18), transparent 26rem),
         linear-gradient(135deg, rgba(255, 102, 196, 0.1), transparent 38%);
+}
+
+.homeLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0;
+    background: transparent;
+    color: var(--text-h);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.homeLink img {
+    display: block;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    filter: invert(1);
+    opacity: 0.9;
+    transform: rotate(180deg);
+    transition:
+        opacity var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.homeLink:hover {
+    color: var(--color-highlight);
+}
+
+.homeLink:hover img {
+    opacity: 1;
+    transform: translateX(-2px) rotate(180deg);
 }
 
 .loadingOverlay {
@@ -63,8 +99,8 @@
 .shell {
     width: 100%;
     max-width: 1440px;
-    height: min(820px, calc(100dvh - 57px));
-    min-height: min(640px, calc(100dvh - 57px));
+    height: min(820px, 100dvh);
+    min-height: min(640px, 100dvh);
     margin: 0 auto;
     display: grid;
     grid-template-columns: minmax(0, 1.08fr) minmax(420px, 0.92fr);
@@ -173,11 +209,18 @@
     margin-bottom: var(--space-md);
 }
 
+.formTopbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: var(--space-lg);
+}
+
 .formLogo {
     width: 112px;
     height: auto;
     display: block;
-    margin-bottom: var(--space-lg);
 }
 
 .copy h1 {
@@ -332,7 +375,7 @@
     .shell {
         grid-template-columns: 1fr;
         height: auto;
-        min-height: calc(100dvh - 57px);
+        min-height: 100dvh;
     }
 
     .media {
@@ -347,9 +390,14 @@
 }
 
 @media (max-width: 520px) {
+    .formTopbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
     .formLogo {
         width: 104px;
-        margin-bottom: var(--space-md);
     }
 
     .copy h1 {
@@ -365,6 +413,9 @@
 
     .formLogo {
         width: 96px;
+    }
+
+    .formTopbar {
         margin-bottom: var(--space-md);
     }
 

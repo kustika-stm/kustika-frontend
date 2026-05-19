@@ -1,4 +1,6 @@
+import { routes } from "../../app/router/routes";
 import { getRoleHomePath, normalizeRole, saveSession, type AuthSession, type SessionUser } from "../../entities/session";
+import arrowIcon from "../../shared/assets/icons/flecha.png";
 import styles from "./login.module.css";
 
 const getCallbackParams = () => {
@@ -76,6 +78,10 @@ export function GoogleCallbackPage() {
     return (
         <main className={styles.page}>
             <section className={styles.callbackPanel}>
+                <a className={styles.homeLink} href={routes.home}>
+                    <img src={arrowIcon} alt="" aria-hidden="true" />
+                    Volver al inicio
+                </a>
                 <h1>No pudimos completar el inicio con Google</h1>
                 <p>El backend no regreso los tokens de sesion al frontend.</p>
             </section>
