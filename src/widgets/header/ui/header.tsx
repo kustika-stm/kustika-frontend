@@ -54,10 +54,11 @@ export const Header = () => {
     const [open, setOpen] = useState(false);
     const [session, setSession] = useState(() => getStoredSession());
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [hasProfilePhotoError, setHasProfilePhotoError] = useState(false);
     const pathname = window.location.pathname;
     const isAuthenticated = Boolean(session?.accessToken);
     const role = getSessionRole(session);
-    const profilePhotoUrl = getAuthSessionPhotoUrl(session);
+    const profilePhotoUrl = hasProfilePhotoError ? "" : getAuthSessionPhotoUrl(session);
     const profileName = getDisplayName(session);
     const visibleNavLinks = getNavLinks(role, isAuthenticated);
 
@@ -140,6 +141,7 @@ export const Header = () => {
                                     src={profilePhotoUrl || userIcon}
                                     alt=""
                                     aria-hidden="true"
+                                    onError={() => setHasProfilePhotoError(true)}
                                 />
                                 <span>{profileName}</span>
                             </a>
@@ -202,6 +204,7 @@ export const Header = () => {
                                     src={profilePhotoUrl || userIcon}
                                     alt=""
                                     aria-hidden="true"
+                                    onError={() => setHasProfilePhotoError(true)}
                                 />
                                 {profileName}
                             </a>

@@ -29,6 +29,7 @@ export function ProfilePage({ mode = "view" }: Props) {
     const [formError, setFormError] = useState("");
     const [deleteError, setDeleteError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [hasProfilePhotoError, setHasProfilePhotoError] = useState(false);
     const isEditing = mode === "edit";
     const shouldPromptCompletion = new URLSearchParams(window.location.search).get("complete") === "1";
 
@@ -108,7 +109,7 @@ export function ProfilePage({ mode = "view" }: Props) {
         .join("")
         .toUpperCase();
     const missingFields = getMissingProfileFields(profile);
-    const profilePhotoUrl = getSessionUserPhotoUrl(profile) || getAuthSessionPhotoUrl(session);
+    const profilePhotoUrl = hasProfilePhotoError ? "" : getSessionUserPhotoUrl(profile) || getAuthSessionPhotoUrl(session);
     const hasMissingFields = missingFields.length > 0;
     const missingFieldNames = missingFields.map((field) => field.label).join(", ");
     const isMissingField = (field: RequiredProfileField) => {
@@ -279,7 +280,7 @@ export function ProfilePage({ mode = "view" }: Props) {
         <main className={styles.page}>
             <section className={styles.hero}>
                 <div className={styles.avatar} aria-hidden="true">
-                    {profilePhotoUrl ? <img src={profilePhotoUrl} alt="" /> : initials}
+                    {profilePhotoUrl ? <img src={profilePhotoUrl} alt="" onError={() => setHasProfilePhotoError(true)} /> : initials}
                 </div>
 
                 <div>
