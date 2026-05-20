@@ -3,6 +3,7 @@ import { routes } from "../../app/router/routes";
 import { clearSession, getStoredSession, saveSession, type SessionUser } from "../../entities/session";
 import { adminApi, type AdminUser, type AdminUserRole } from "../../features/admin/api";
 import { authApi } from "../../features/auth/api";
+import { organizerRequestsApi, type OrganizerRequest, type OrganizerRequestStatus } from "../../features/organizers/api";
 import { profileApi } from "../../features/profile/api";
 import trashIcon from "../../shared/assets/icons/basura.png";
 import userIcon from "../../shared/assets/icons/usuario.png";
@@ -10,7 +11,7 @@ import logo from "../../shared/assets/images/logo/imagotipo.png";
 import styles from "./admin.module.css";
 
 type AdminPageProps = {
-    page?: "users" | "profile";
+    page?: "users" | "requests" | "profile";
 };
 
 const roleOptions: Array<{ value: AdminUserRole; label: string }> = [
@@ -20,6 +21,12 @@ const roleOptions: Array<{ value: AdminUserRole; label: string }> = [
 ];
 
 const usersPerPage = 10;
+const requestStatusOptions: Array<{ value: OrganizerRequestStatus | "todos"; label: string }> = [
+    { value: "todos", label: "Todas" },
+    { value: "pendiente", label: "Pendientes" },
+    { value: "aprobada", label: "Aprobadas" },
+    { value: "rechazada", label: "Rechazadas" },
+];
 
 const getFullName = (user: AdminUser) =>
     [user.nombre, user.apellido_paterno, user.apellido_materno].filter(Boolean).join(" ") || "Sin nombre";
@@ -56,17 +63,22 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const currentUserId = getTokenUserId(token) ?? session?.user?.id ?? null;
     const displayName = [session?.user?.nombre, session?.user?.apellido_paterno].filter(Boolean).join(" ") || "Administrador";
     const [users, setUsers] = useState<AdminUser[]>([]);
+    const [requests, setRequests] = useState<OrganizerRequest[]>([]);
+    const [requestStatus, setRequestStatus] = useState<OrganizerRequestStatus | "todos">("pendiente");
     const [profile, setProfile] = useState<SessionUser | null>(session?.user ?? null);
     const [page, setPage] = useState(1);
     const [limit] = useState(usersPerPage);
     const [pages, setPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [isRequestsLoading, setIsRequestsLoading] = useState(activePage === "requests");
     const [isProfileLoading, setIsProfileLoading] = useState(activePage === "profile");
+    const [processingRequestId, setProcessingRequestId] = useState<string | null>(null);
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+    const [requestsMessage, setRequestsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
     const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const canGoPrevious = page > 1 && !isLoading;
@@ -113,6 +125,35 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     useEffect(() => {
         void loadUsers();
     }, [loadUsers]);
+
+    const loadRequests = useCallback(async (options?: { keepMessage?: boolean }) => {
+        if (!token || activePage !== "requests") {
+            return;
+        }
+
+        setIsRequestsLoading(true);
+
+        if (!options?.keepMessage) {
+            setRequestsMessage(null);
+        }
+
+        try {
+            const response = await organizerRequestsApi.getRequests(token, requestStatus);
+
+            setRequests(response);
+        } catch (error) {
+            setRequestsMessage({
+                type: "error",
+                text: error instanceof Error ? error.message : "No pudimos cargar las solicitudes.",
+            });
+        } finally {
+            setIsRequestsLoading(false);
+        }
+    }, [activePage, requestStatus, token]);
+
+    useEffect(() => {
+        void loadRequests();
+    }, [loadRequests]);
 
     useEffect(() => {
         if (!token || activePage !== "profile") {
@@ -228,7 +269,52 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         }
     };
 
+    const handleApproveRequest = async (requestId: string) => {
+        setProcessingRequestId(requestId);
+        setRequestsMessage(null);
+
+        try {
+            const response = await organizerRequestsApi.approveRequest(token, requestId);
+
+            setRequestsMessage({ type: "success", text: response.message });
+            await loadRequests({ keepMessage: true });
+        } catch (error) {
+            setRequestsMessage({
+                type: "error",
+                text: error instanceof Error ? error.message : "No pudimos aprobar la solicitud.",
+            });
+        } finally {
+            setProcessingRequestId(null);
+        }
+    };
+
+    const handleRejectRequest = async (requestId: string) => {
+        const motivo = window.prompt("Motivo del rechazo");
+
+        if (!motivo?.trim()) {
+            return;
+        }
+
+        setProcessingRequestId(requestId);
+        setRequestsMessage(null);
+
+        try {
+            const response = await organizerRequestsApi.rejectRequest(token, requestId, motivo.trim());
+
+            setRequestsMessage({ type: "success", text: response.message });
+            await loadRequests({ keepMessage: true });
+        } catch (error) {
+            setRequestsMessage({
+                type: "error",
+                text: error instanceof Error ? error.message : "No pudimos rechazar la solicitud.",
+            });
+        } finally {
+            setProcessingRequestId(null);
+        }
+    };
+
     const profileName = [profile?.nombre, profile?.apellido_paterno, profile?.apellido_materno].filter(Boolean).join(" ") || profile?.email || displayName;
+    const pendingRequests = requests.filter((request) => request.status === "pendiente").length;
 
     return (
         <main className={styles.shell}>
@@ -242,6 +328,10 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                     <a className={activePage === "users" ? styles.activeNavItem : ""} href={routes.admin}>
                         <span className={styles.navIcon}>U</span>
                         Usuarios
+                    </a>
+                    <a className={activePage === "requests" ? styles.activeNavItem : ""} href={routes.adminRequests}>
+                        <span className={styles.navIcon}>S</span>
+                        Solicitudes
                     </a>
                     <a className={activePage === "profile" ? styles.activeNavItem : ""} href={routes.adminProfile}>
                         <span className={styles.navIcon}>P</span>
@@ -258,7 +348,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                 <header className={styles.topbar}>
                     <div>
                         <span>Panel de Control</span>
-                        <h1>{activePage === "profile" ? "Mi perfil" : "Usuarios"}</h1>
+                        <h1>{activePage === "profile" ? "Mi perfil" : activePage === "requests" ? "Solicitudes" : "Usuarios"}</h1>
                     </div>
 
                     <div className={styles.account}>
@@ -389,6 +479,129 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                     </button>
                 </div>
                 </section>
+                    </>
+                ) : activePage === "requests" ? (
+                    <>
+                        <section className={styles.statsGrid} aria-label="Resumen de solicitudes">
+                            <article>
+                                <span>Solicitudes visibles</span>
+                                <strong>{requests.length}</strong>
+                            </article>
+                            <article>
+                                <span>Pendientes</span>
+                                <strong>{pendingRequests}</strong>
+                            </article>
+                            <article>
+                                <span>Filtro</span>
+                                <strong>{requestStatus === "todos" ? "Todas" : requestStatus}</strong>
+                            </article>
+                        </section>
+
+                        <section className={styles.panel}>
+                            <div className={styles.panelHeader}>
+                                <div>
+                                    <span>Solicitudes de organizadores</span>
+                                    <h2>Accesos para publicar eventos</h2>
+                                </div>
+                                <button type="button" onClick={() => void loadRequests()} disabled={isRequestsLoading}>
+                                    {isRequestsLoading ? "Cargando" : "Actualizar"}
+                                </button>
+                            </div>
+
+                            <div className={styles.toolbar}>
+                                <p>{requests.length} solicitudes</p>
+
+                                <label className={styles.limitControl}>
+                                    Estado
+                                    <select
+                                        value={requestStatus}
+                                        onChange={(event) => setRequestStatus(event.target.value as OrganizerRequestStatus | "todos")}
+                                    >
+                                        {requestStatusOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
+
+                            {requestsMessage && (
+                                <div className={`${styles.message} ${styles[requestsMessage.type]}`} role="status" aria-live="polite">
+                                    {requestsMessage.text}
+                                </div>
+                            )}
+
+                            <div className={styles.tableWrap}>
+                                <table className={styles.usersTable}>
+                                    <thead>
+                                        <tr>
+                                            <th>Empresa</th>
+                                            <th>Solicitante</th>
+                                            <th>RFC</th>
+                                            <th>Estado</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {requests.map((request) => {
+                                            const isProcessing = processingRequestId === request.id;
+                                            const isPending = request.status === "pendiente";
+
+                                            return (
+                                                <tr key={request.id}>
+                                                    <td>
+                                                        <strong>{request.nombre_empresa}</strong>
+                                                    </td>
+                                                    <td>
+                                                        <strong>{[request.nombre, request.apellido_paterno].filter(Boolean).join(" ") || request.email}</strong>
+                                                        <span>{request.email}</span>
+                                                    </td>
+                                                    <td>{request.rfc}</td>
+                                                    <td>
+                                                        <span className={styles[request.status]}>{request.status}</span>
+                                                    </td>
+                                                    <td>{formatDate(request.created_at)}</td>
+                                                    <td>
+                                                        <div className={styles.rowActions}>
+                                                            <button
+                                                                type="button"
+                                                                disabled={!isPending || isProcessing}
+                                                                onClick={() => void handleApproveRequest(request.id)}
+                                                            >
+                                                                Aprobar
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                disabled={!isPending || isProcessing}
+                                                                onClick={() => void handleRejectRequest(request.id)}
+                                                            >
+                                                                Rechazar
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+
+                                {!isRequestsLoading && requests.length === 0 && (
+                                    <div className={styles.emptyState}>
+                                        <strong>No hay solicitudes</strong>
+                                        <p>No encontramos solicitudes con el filtro seleccionado.</p>
+                                    </div>
+                                )}
+
+                                {isRequestsLoading && (
+                                    <div className={styles.emptyState}>
+                                        <strong>Cargando solicitudes</strong>
+                                        <p>Estamos consultando las solicitudes de organizadores.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
                     </>
                 ) : (
                     <section className={styles.profilePanel}>

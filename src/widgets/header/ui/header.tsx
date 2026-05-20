@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { routes } from "../../../app/router/routes";
-import { clearSession, getAuthSessionPhotoUrl, getSessionRole, getStoredSession, getTokenRole, updateStoredSessionRole } from "../../../entities/session";
+import { clearSession, getAuthSessionPhotoUrl, getSessionRole, getStoredSession, getTokenRole } from "../../../entities/session";
 import { authApi } from "../../../features/auth/api";
 import userIcon from "../../../shared/assets/icons/usuario.png";
 import logo from "../../../shared/assets/images/logo/logo-combinado.png";
@@ -88,16 +88,13 @@ export const Header = () => {
     };
 
     const handleCreateEvent = () => {
-        const nextSession = updateStoredSessionRole("event_customer");
-
-        if (!nextSession) {
+        if (!session?.accessToken) {
             window.location.assign(routes.login);
             return;
         }
 
-        setSession(nextSession);
         setOpen(false);
-        window.location.assign(routes.eventCustomer);
+        window.location.assign(role === "event_customer" ? routes.eventCustomer : routes.organizerRequest);
     };
 
     return (
