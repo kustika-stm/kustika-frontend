@@ -7,9 +7,14 @@ export type OrganizerRequest = {
     nombre_empresa: string;
     rfc: string;
     status: OrganizerRequestStatus;
-    email: string;
-    nombre: string;
-    apellido_paterno: string;
+    descripcion?: string | null;
+    telefono_empresa?: string | null;
+    email_contacto?: string | null;
+    sitio_web?: string | null;
+    motivo_rechazo?: string | null;
+    email?: string;
+    nombre?: string;
+    apellido_paterno?: string;
     created_at: string;
 };
 
@@ -21,6 +26,10 @@ type OrganizerRequestResponse = {
     data: OrganizerRequest | null;
 };
 
+type CreateOrganizerRequestResponse = {
+    data: OrganizerRequest;
+};
+
 type MessageResponse = {
     message: string;
 };
@@ -28,6 +37,10 @@ type MessageResponse = {
 export type CreateOrganizerRequestPayload = {
     nombre_empresa: string;
     rfc: string;
+    descripcion?: string;
+    telefono_empresa?: string;
+    email_contacto?: string;
+    sitio_web?: string;
 };
 
 export const organizerRequestsApi = {
@@ -53,7 +66,7 @@ export const organizerRequestsApi = {
     },
 
     createRequest(token: string, payload: CreateOrganizerRequestPayload) {
-        return apiRequest<MessageResponse>("/organizadores/solicitar", {
+        return apiRequest<CreateOrganizerRequestResponse>("/organizadores/solicitar", {
             method: "POST",
             token,
             body: payload,
