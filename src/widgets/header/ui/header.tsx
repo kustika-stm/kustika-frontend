@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { routes } from "../../../app/router/routes";
-import { clearSession, getAuthSessionPhotoUrl, getSessionRole, getStoredSession, updateStoredSessionRole } from "../../../entities/session";
+import { clearSession, getAuthSessionPhotoUrl, getSessionRole, getStoredSession, getTokenRole, updateStoredSessionRole } from "../../../entities/session";
 import { authApi } from "../../../features/auth/api";
 import userIcon from "../../../shared/assets/icons/usuario.png";
 import logo from "../../../shared/assets/images/logo/logo-combinado.png";
@@ -57,7 +57,7 @@ export const Header = () => {
     const [hasProfilePhotoError, setHasProfilePhotoError] = useState(false);
     const pathname = window.location.pathname;
     const isAuthenticated = Boolean(session?.accessToken);
-    const role = getSessionRole(session);
+    const role = getTokenRole(session?.accessToken) ?? getSessionRole(session);
     const profilePhotoUrl = hasProfilePhotoError ? "" : getAuthSessionPhotoUrl(session);
     const profileName = getDisplayName(session);
     const visibleNavLinks = getNavLinks(role, isAuthenticated);

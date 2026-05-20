@@ -6,6 +6,7 @@ export {
     getSessionRole,
     getStoredSession,
     getSessionUserPhotoUrl,
+    getTokenRole,
     normalizeRole,
     saveSession,
     updateStoredSessionRole,

@@ -1,5 +1,5 @@
 import { routes } from "../../app/router/routes";
-import { getRoleHomePath, normalizeRole, saveSession, type AuthSession, type SessionUser } from "../../entities/session";
+import { getRoleHomePath, getTokenRole, normalizeRole, saveSession, type AuthSession, type SessionUser } from "../../entities/session";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import styles from "./login.module.css";
 
@@ -39,7 +39,7 @@ const getSessionFromParams = (): AuthSession | null => {
 
     const user = parseUser(params.get("user"));
     const email = params.get("email") ?? user.email ?? "";
-    const role = params.get("tipo_usuario") ?? params.get("role") ?? user.tipo_usuario;
+    const role = params.get("tipo_usuario") ?? params.get("role") ?? user.tipo_usuario ?? getTokenRole(accessToken);
     const photoUrl =
         params.get("foto_url") ??
         params.get("avatar_url") ??

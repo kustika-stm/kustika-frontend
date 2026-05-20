@@ -8,6 +8,7 @@ export const routes = {
     myTickets: "/mis-boletos",
     eventCustomer: "/panel-eventos",
     admin: "/admin",
+    adminProfile: "/admin/perfil",
     profile: "/perfil",
     editProfile: "/perfil/editar",
     categoryDetailBase: "/categorias",
