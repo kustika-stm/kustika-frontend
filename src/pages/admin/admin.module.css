@@ -357,6 +357,63 @@
     color: var(--text-muted);
 }
 
+.pendiente,
+.aprobada,
+.rechazada {
+    width: fit-content;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: capitalize;
+}
+
+.pendiente {
+    background: rgba(255, 219, 51, 0.14);
+    color: var(--color-highlight);
+}
+
+.aprobada {
+    background: rgba(51, 214, 159, 0.14);
+    color: #9af3d3;
+}
+
+.rechazada {
+    background: rgba(255, 92, 122, 0.14);
+    color: #ffb3c1;
+}
+
+.rowActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rowActions button {
+    min-height: 38px;
+    padding: 8px 11px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-h);
+    font-weight: 900;
+}
+
+.rowActions button:first-child {
+    border-color: rgba(51, 214, 159, 0.36);
+    color: #9af3d3;
+}
+
+.rowActions button:last-child {
+    border-color: rgba(255, 92, 122, 0.38);
+    color: #ffb3c1;
+}
+
+.rowActions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.48;
+}
+
 .emptyState {
     display: grid;
     gap: 8px;

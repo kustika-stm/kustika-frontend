@@ -8,6 +8,7 @@ import { EventCustomerPage } from "../../pages/event-customer";
 import { CheckoutPage } from "../../pages/checkout";
 import { GoogleCallbackPage, LoginPage } from "../../pages/login";
 import { MyTicketsPage } from "../../pages/my-tickets";
+import { OrganizerRequestPage } from "../../pages/organizer-request";
 import { ProfilePage } from "../../pages/profile";
 import { RecoverPasswordPage } from "../../pages/recover-password";
 import { RegisterPage } from "../../pages/register";
@@ -63,10 +64,10 @@ export function AppRouter() {
         );
     }
 
-    if (pathname === routes.admin || pathname === routes.adminProfile) {
+    if (pathname === routes.admin || pathname === routes.adminProfile || pathname === routes.adminRequests) {
         return (
             <RoleAccess allowedRole="admin">
-                <AdminPage page={pathname === routes.adminProfile ? "profile" : "users"} />
+                <AdminPage page={pathname === routes.adminProfile ? "profile" : pathname === routes.adminRequests ? "requests" : "users"} />
             </RoleAccess>
         );
     }
@@ -81,6 +82,10 @@ export function AppRouter() {
 
     if (pathname === routes.myTickets) {
         return <MyTicketsPage />;
+    }
+
+    if (pathname === routes.organizerRequest) {
+        return <OrganizerRequestPage />;
     }
 
     if (pathname === routes.profile || pathname === routes.editProfile) {
