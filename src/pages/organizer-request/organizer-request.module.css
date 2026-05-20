@@ -35,7 +35,39 @@
 .layout {
     display: grid;
     gap: 18px;
+    max-width: 920px;
     padding-top: 24px;
+}
+
+.steps {
+    display: grid;
+    gap: 10px;
+    max-width: 920px;
+    padding-top: 24px;
+}
+
+.steps span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    font-weight: 900;
+}
+
+.steps .currentStep {
+    background: var(--gradient-main);
+    color: #000;
+}
+
+.steps .doneStep {
+    border-color: rgba(51, 214, 159, 0.42);
+    background: rgba(51, 214, 159, 0.12);
+    color: #9af3d3;
 }
 
 .panel {
@@ -74,7 +106,8 @@
     font-weight: 800;
 }
 
-.formGrid input {
+.formGrid input,
+.formGrid textarea {
     min-height: 48px;
     padding: 12px 14px;
     border: 1px solid var(--border);
@@ -85,11 +118,17 @@
     font: inherit;
 }
 
-.formGrid input:focus {
+.formGrid textarea {
+    resize: vertical;
+}
+
+.formGrid input:focus,
+.formGrid textarea:focus {
     border-color: rgba(255, 63, 199, 0.72);
 }
 
-.formGrid input:disabled {
+.formGrid input:disabled,
+.formGrid textarea:disabled {
     color: var(--text-muted);
     cursor: not-allowed;
     opacity: 0.72;
@@ -185,6 +224,14 @@
     .formGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .fullField {
+        grid-column: 1 / -1;
+    }
+
+    .steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (min-width: 980px) {
@@ -194,11 +241,6 @@
 
     .hero h1 {
         font-size: clamp(48px, 4vw, 62px);
-    }
-
-    .layout {
-        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.55fr);
-        gap: 24px;
     }
 
     .panel {
