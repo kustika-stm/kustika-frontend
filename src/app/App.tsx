@@ -13,6 +13,7 @@ export function App() {
     const pathname = window.location.pathname;
     const authRoutes: string[] = [routes.login, routes.register, routes.recoverPassword, routes.googleCallback];
     const isAuthRoute = authRoutes.includes(pathname);
+    const isAdminRoute = pathname === routes.admin || pathname.startsWith(`${routes.admin}/`);
 
     // if (!showProductApp) {
     //     return <LandingPage />;
@@ -20,13 +21,13 @@ export function App() {
 
     return (
         <>
-            {!isAuthRoute && <Header />}
+            {!isAuthRoute && !isAdminRoute && <Header />}
 
             <AppProviders>
                 <AppRouter />
             </AppProviders>
 
-            {!isAuthRoute && <Footer />}
+            {!isAuthRoute && !isAdminRoute && <Footer />}
         </>
     );
 }

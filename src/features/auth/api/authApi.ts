@@ -1,6 +1,6 @@
 import { apiRequest } from "../../../shared/api";
 import { API_BASE_URL } from "../../../shared/api/config";
-import { normalizeRole, type AuthSession, type SessionUser } from "../../../entities/session";
+import { getTokenRole, normalizeRole, type AuthSession, type SessionUser } from "../../../entities/session";
 
 export type RegisterRequest = {
     email: string;
@@ -84,6 +84,8 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
         throw new Error("El backend no regreso tokens de sesion.");
     }
 
+    const tokenRole = getTokenRole(accessToken);
+
     return {
         accessToken,
         refreshToken,
@@ -96,7 +98,7 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
             photo_url: payload.photo_url ?? payload.user?.photo_url ?? payload.usuario?.photo_url,
             picture: payload.picture ?? payload.user?.picture ?? payload.usuario?.picture,
             tipo_usuario: normalizeRole(
-                payload.tipo_usuario ?? payload.rol ?? payload.user?.tipo_usuario ?? payload.usuario?.tipo_usuario,
+                payload.tipo_usuario ?? payload.rol ?? payload.user?.tipo_usuario ?? payload.usuario?.tipo_usuario ?? tokenRole,
             ),
         },
     };

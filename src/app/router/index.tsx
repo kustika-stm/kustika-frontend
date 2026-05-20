@@ -11,7 +11,7 @@ import { MyTicketsPage } from "../../pages/my-tickets";
 import { ProfilePage } from "../../pages/profile";
 import { RecoverPasswordPage } from "../../pages/recover-password";
 import { RegisterPage } from "../../pages/register";
-import { getRoleHomePath, getSessionRole, getStoredSession, type UserRole } from "../../entities/session";
+import { getRoleHomePath, getSessionRole, getStoredSession, getTokenRole, type UserRole } from "../../entities/session";
 import { routes } from "./routes";
 
 type RoleAccessProps = {
@@ -21,15 +21,15 @@ type RoleAccessProps = {
 
 function RoleAccess({ allowedRole, children }: RoleAccessProps) {
     const session = getStoredSession();
-    const role = getSessionRole(session);
+    const role = getTokenRole(session?.accessToken) ?? getSessionRole(session);
 
     if (!session?.accessToken) {
-        window.location.assign(routes.login);
+        window.location.assign(allowedRole === "admin" ? routes.home : routes.login);
         return null;
     }
 
     if (role !== allowedRole) {
-        window.location.assign(getRoleHomePath(role));
+        window.location.assign(allowedRole === "admin" ? routes.home : getRoleHomePath(role));
         return null;
     }
 
@@ -63,10 +63,10 @@ export function AppRouter() {
         );
     }
 
-    if (pathname === routes.admin) {
+    if (pathname === routes.admin || pathname === routes.adminProfile) {
         return (
             <RoleAccess allowedRole="admin">
-                <AdminPage />
+                <AdminPage page={pathname === routes.adminProfile ? "profile" : "users"} />
             </RoleAccess>
         );
     }

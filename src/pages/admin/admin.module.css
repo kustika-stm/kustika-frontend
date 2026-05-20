@@ -1,75 +1,203 @@
-.page {
-    width: min(100%, 1240px);
-    margin: 0 auto;
-    padding: 44px 14px 88px;
+.shell {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    min-height: 100svh;
+    background: var(--bg);
+    color: var(--text);
 }
 
-.hero {
+.sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    border-right: 1px solid var(--border);
+    background: rgba(10, 10, 12, 0.96);
+    box-shadow: 18px 0 50px rgba(0, 0, 0, 0.34);
+}
+
+.brand {
     display: grid;
-    gap: 20px;
-    align-items: end;
-    padding: 30px 0 34px;
+    gap: 14px;
+    justify-items: start;
+    padding: 38px 30px 34px;
     border-bottom: 1px solid var(--border);
 }
 
-.eyebrow {
-    display: block;
-    color: var(--color-highlight);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0;
+.brand img {
+    width: 70px;
+    height: auto;
+}
+
+.brand span {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 900;
     text-transform: uppercase;
 }
 
-.hero h1 {
-    max-width: 760px;
-    margin: 6px 0 10px;
-    font-size: 38px;
-    line-height: 1.02;
+.sideNav {
+    display: grid;
+    gap: 8px;
+    padding: 18px 12px;
 }
 
-.hero p {
-    max-width: 680px;
-    color: var(--text-muted);
-    font-size: 17px;
-    line-height: 1.55;
-}
-
-.secondaryAction,
-.panelHeader button,
-.filters button {
-    display: inline-flex;
+.sideNav a {
+    display: flex;
+    gap: 14px;
     align-items: center;
-    justify-content: center;
-    min-height: 46px;
-    padding: 11px 16px;
-    border: 1px solid var(--border);
+    min-height: 58px;
+    padding: 0 18px;
+    border: 1px solid transparent;
     border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-weight: 900;
+}
+
+.sideNav a:hover,
+.sideNav .activeNavItem {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-h);
+}
+
+.navIcon {
+    display: inline-grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-h);
+    font-size: 13px;
+}
+
+.activeNavItem .navIcon,
+.sideNav a:hover .navIcon {
+    background: var(--gradient-main);
+    color: #000;
+}
+
+.sidebarLogout {
+    min-height: 50px;
+    margin: auto 24px 28px;
+    border: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.04);
     color: var(--text-h);
+    font-weight: 900;
+}
+
+.workspace {
+    min-width: 0;
+    padding: 38px 42px 64px;
+}
+
+.topbar {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.topbar span,
+.panelHeader span,
+.toolbar p {
+    color: var(--text-muted);
     font-weight: 800;
 }
 
+.topbar h1 {
+    margin: 2px 0 0;
+    color: var(--text-h);
+    font-size: 34px;
+    line-height: 1.1;
+}
+
+.account {
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+    min-height: 56px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-h);
+    box-shadow: var(--shadow);
+}
+
+.account img {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 26px;
+}
+
+.statsGrid article,
 .panel {
-    margin-top: 24px;
-    padding: 18px;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    background: rgba(24, 24, 27, 0.82);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+    background: rgba(24, 24, 27, 0.86);
+    box-shadow: var(--shadow);
+}
+
+.statsGrid article {
+    display: grid;
+    gap: 8px;
+    min-height: 116px;
+    align-content: center;
+    padding: 24px 28px;
+}
+
+.statsGrid span {
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.statsGrid strong {
+    color: var(--text-h);
+    font-size: 30px;
+    line-height: 1;
+}
+
+.panel {
+    padding: 28px 30px 24px;
 }
 
 .panelHeader {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 18px;
+    margin-bottom: 22px;
 }
 
 .panelHeader h2 {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
+    color: var(--text-h);
     font-size: 24px;
+}
+
+.panelHeader button,
+.pagination button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-h);
+    font-weight: 900;
 }
 
 .panelHeader button {
@@ -77,56 +205,164 @@
     color: #000;
 }
 
-.toolbar {
-    display: grid;
-    gap: 14px;
-    margin-bottom: 18px;
+.panelHeader button:disabled,
+.pagination button:disabled,
+.usersTable select:disabled,
+.sidebarLogout:disabled {
+    cursor: not-allowed;
+    opacity: 0.54;
 }
 
-.toolbar label {
-    display: grid;
-    gap: 8px;
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.limitControl {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
     color: var(--text);
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 900;
 }
 
-.toolbar input {
-    width: 100%;
-    min-height: 48px;
-    padding: 12px 14px;
+.limitControl select,
+.usersTable select {
+    min-height: 40px;
+    padding: 8px 12px;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     outline: 0;
-    background: rgba(15, 15, 15, 0.72);
+    background: rgba(15, 15, 15, 0.92);
     color: var(--text-h);
     font: inherit;
 }
 
-.toolbar input:focus {
+.limitControl select:focus,
+.usersTable select:focus {
     border-color: rgba(255, 63, 199, 0.72);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.18);
 }
 
-.filters {
+.message {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+}
+
+.success {
+    border: 1px solid rgba(51, 214, 159, 0.42);
+    background: rgba(51, 214, 159, 0.12);
+    color: #9af3d3;
+}
+
+.error {
+    border: 1px solid rgba(255, 92, 122, 0.44);
+    background: rgba(255, 92, 122, 0.12);
+    color: #ffb3c1;
+}
+
+.tableWrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.52);
+}
+
+.usersTable {
+    width: 100%;
+    min-width: 880px;
+    border-collapse: collapse;
+}
+
+.usersTable th,
+.usersTable td {
+    padding: 15px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.usersTable th {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.usersTable td {
+    color: var(--text);
+}
+
+.usersTable tr:last-child td {
+    border-bottom: 0;
+}
+
+.usersTable strong,
+.usersTable span,
+.usersTable small {
+    display: block;
+}
+
+.usersTable strong {
+    color: var(--text-h);
+}
+
+.usersTable span {
+    margin-top: 3px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.usersTable small {
+    width: max-content;
+    margin-top: 8px;
+    padding: 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    color: var(--color-highlight);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.statusList {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px;
 }
 
-.filters button {
-    min-height: 42px;
-    padding: 9px 12px;
+.activeBadge,
+.inactiveBadge {
+    width: max-content;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.activeBadge {
+    background: rgba(51, 214, 159, 0.14);
+    color: #9af3d3;
+}
+
+.inactiveBadge {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
 }
 
 .emptyState {
     display: grid;
     gap: 8px;
-    min-height: 240px;
+    min-height: 220px;
     align-content: center;
     padding: 18px;
-    border: 1px dashed rgba(255, 255, 255, 0.18);
-    border-radius: var(--radius-md);
-    background: rgba(15, 15, 15, 0.48);
 }
 
 .emptyState strong {
@@ -139,23 +375,209 @@
     color: var(--text-muted);
 }
 
-@media (min-width: 720px) {
-    .hero,
-    .toolbar {
-        grid-template-columns: minmax(0, 1fr) auto;
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.pagination span {
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.profilePanel {
+    display: grid;
+    gap: 20px;
+}
+
+.profileHero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.86);
+    box-shadow: var(--shadow);
+}
+
+.profileAvatar {
+    display: grid;
+    width: 82px;
+    height: 82px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--gradient-main);
+    color: #000;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.profileHero span,
+.dangerZone span {
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.profileHero h2 {
+    margin: 4px 0 8px;
+    color: var(--text-h);
+    font-size: 34px;
+    line-height: 1.05;
+}
+
+.profileHero p,
+.dangerZone p {
+    max-width: 680px;
+    color: var(--text-muted);
+}
+
+.profileGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.profileGrid div {
+    display: grid;
+    gap: 8px;
+    min-height: 104px;
+    align-content: start;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.54);
+}
+
+.profileGrid dt {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.profileGrid dd {
+    color: var(--text-h);
+    font-size: 18px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.dangerZone {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px;
+    border: 1px solid rgba(254, 124, 102, 0.38);
+    border-radius: var(--radius-md);
+    background: rgba(254, 124, 102, 0.08);
+}
+
+.dangerZone h2 {
+    margin: 4px 0 8px;
+    color: var(--text-h);
+    font-size: 22px;
+}
+
+.dangerZone button {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 11px 14px;
+    border: 1px solid rgba(254, 124, 102, 0.72);
+    border-radius: var(--radius-md);
+    background: rgba(254, 124, 102, 0.16);
+    color: #ffb8aa;
+    font-weight: 900;
+}
+
+.dangerZone button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
+.dangerZone img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+@media (max-width: 920px) {
+    .shell {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+        min-height: auto;
+    }
+
+    .brand,
+    .sideNav {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .sideNav a {
+        min-height: 52px;
+    }
+
+    .sidebarLogout {
+        margin: 12px 18px 18px;
+    }
+
+    .workspace {
+        padding: 26px 18px 44px;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .profileGrid {
+        grid-template-columns: 1fr;
     }
 }
 
-@media (min-width: 980px) {
-    .page {
-        padding: 72px 22px 110px;
+@media (max-width: 620px) {
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
-    .hero h1 {
-        font-size: clamp(48px, 4vw, 62px);
+    .topbar h1 {
+        font-size: 28px;
     }
 
     .panel {
-        padding: 24px;
+        padding: 20px 14px;
+    }
+
+    .panelHeader {
+        flex-direction: column;
+    }
+
+    .profileHero {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .profileHero h2 {
+        font-size: 28px;
+    }
+
+    .dangerZone {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
