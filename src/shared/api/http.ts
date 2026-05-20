@@ -3,7 +3,26 @@ import { API_BASE_URL, isSecureApiBaseUrl } from "./config";
 type RequestOptions = Omit<RequestInit, "body"> & {
     body?: unknown;
     token?: string;
+    skipAuthRefresh?: boolean;
 };
+
+type StoredSession = {
+    accessToken: string;
+    refreshToken: string;
+    user?: unknown;
+};
+
+type RefreshResponse = {
+    data?: {
+        accessToken?: string;
+        access_token?: string;
+    };
+    accessToken?: string;
+    access_token?: string;
+};
+
+const SESSION_STORAGE_KEY = "evenxa.session";
+const LEGACY_LOCAL_STORAGE_KEY = "evenxa.session";
 
 export class ApiError extends Error {
     status: number;
@@ -29,30 +48,110 @@ const getErrorMessage = (data: unknown, fallback: string) => {
     return fallback;
 };
 
-export async function apiRequest<TResponse>(path: string, options: RequestOptions = {}) {
-    if (import.meta.env.PROD && !isSecureApiBaseUrl()) {
-        throw new ApiError("La API debe usar HTTPS en produccion.", 0, null);
+const getStoredSession = () => {
+    const rawSession = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
+
+    if (!rawSession) {
+        return null;
     }
 
+    try {
+        return JSON.parse(rawSession) as StoredSession;
+    } catch {
+        window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        return null;
+    }
+};
+
+const saveStoredSession = (session: StoredSession) => {
+    window.localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
+    window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+};
+
+const clearStoredSession = () => {
+    window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    window.localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
+};
+
+const parseResponseData = async (response: Response) => {
+    const contentType = response.headers.get("content-type");
+    const responseText = response.status === 204 ? "" : await response.text();
+
+    return contentType?.includes("application/json") && responseText ? JSON.parse(responseText) : responseText;
+};
+
+const refreshAccessToken = async () => {
+    const session = getStoredSession();
+
+    if (!session?.refreshToken) {
+        return null;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh_token: session.refreshToken }),
+    });
+    const data = await parseResponseData(response) as RefreshResponse;
+
+    if (!response.ok) {
+        clearStoredSession();
+        return null;
+    }
+
+    const payload = data.data ?? data;
+    const accessToken = payload.accessToken ?? payload.access_token;
+
+    if (!accessToken) {
+        clearStoredSession();
+        return null;
+    }
+
+    saveStoredSession({
+        ...session,
+        accessToken,
+    });
+
+    return accessToken;
+};
+
+const sendRequest = (path: string, options: RequestOptions, token?: string) => {
+    const { skipAuthRefresh: _skipAuthRefresh, ...requestOptions } = options;
     const headers = new Headers(options.headers);
 
     if (options.body !== undefined) {
         headers.set("Content-Type", "application/json");
     }
 
-    if (options.token) {
-        headers.set("Authorization", `Bearer ${options.token}`);
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
     }
 
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-        ...options,
+    return fetch(`${API_BASE_URL}${path}`, {
+        ...requestOptions,
         headers,
         body: options.body === undefined ? undefined : JSON.stringify(options.body),
     });
+};
 
-    const contentType = response.headers.get("content-type");
-    const responseText = response.status === 204 ? "" : await response.text();
-    const data = contentType?.includes("application/json") && responseText ? JSON.parse(responseText) : responseText;
+export async function apiRequest<TResponse>(path: string, options: RequestOptions = {}) {
+    if (import.meta.env.PROD && !isSecureApiBaseUrl()) {
+        throw new ApiError("La API debe usar HTTPS en produccion.", 0, null);
+    }
+
+    let response = await sendRequest(path, options, options.token);
+
+    if (response.status === 401 && options.token && !options.skipAuthRefresh && path !== "/auth/refresh") {
+        const nextAccessToken = await refreshAccessToken();
+
+        if (nextAccessToken) {
+            response = await sendRequest(path, options, nextAccessToken);
+        }
+    }
+
+    const data = await parseResponseData(response);
 
     if (!response.ok) {
         throw new ApiError(getErrorMessage(data, "No pudimos completar la solicitud."), response.status, data);
