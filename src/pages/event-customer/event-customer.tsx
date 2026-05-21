@@ -8,14 +8,10 @@ import styles from "./event-customer.module.css";
 type EventForm = {
     titulo: string;
     categoria_id: string;
-    venue_nombre: string;
-    venue_ciudad: string;
-    venue_direccion: string;
+    venue_id: string;
     descripcion_corta: string;
     descripcion: string;
     imagen_portada: string;
-    imagen_banner: string;
-    video_url: string;
     artistas: string;
     tags: string;
     edad_minima: string;
@@ -25,8 +21,6 @@ type EventForm = {
 
 type MediaFileNames = {
     imagen_portada: string;
-    imagen_banner: string;
-    video_url: string;
 };
 
 type FunctionForm = {
@@ -56,14 +50,10 @@ type TicketForm = {
 const initialEventForm: EventForm = {
     titulo: "",
     categoria_id: "",
-    venue_nombre: "",
-    venue_ciudad: "",
-    venue_direccion: "",
+    venue_id: "",
     descripcion_corta: "",
     descripcion: "",
     imagen_portada: "",
-    imagen_banner: "",
-    video_url: "",
     artistas: "",
     tags: "",
     edad_minima: "0",
@@ -73,8 +63,6 @@ const initialEventForm: EventForm = {
 
 const initialMediaFileNames: MediaFileNames = {
     imagen_portada: "",
-    imagen_banner: "",
-    video_url: "",
 };
 
 const initialFunctionForm: FunctionForm = {
@@ -147,16 +135,10 @@ const buildEventPayload = (form: EventForm): CreateEventPayload => {
     return {
         titulo: form.titulo.trim(),
         categoria_id: form.categoria_id.trim(),
-        venue: {
-            nombre: form.venue_nombre.trim(),
-            ciudad: form.venue_ciudad.trim(),
-            direccion: optionalText(form.venue_direccion),
-        },
+        venue_id: form.venue_id.trim(),
         descripcion: optionalText(form.descripcion),
         descripcion_corta: optionalText(form.descripcion_corta),
         imagen_portada: optionalText(form.imagen_portada),
-        imagen_banner: optionalText(form.imagen_banner),
-        video_url: optionalText(form.video_url),
         artistas: artistas.length ? artistas : undefined,
         tags: tags.length ? tags : undefined,
         edad_minima: optionalNumber(form.edad_minima) ?? 0,
@@ -300,13 +282,8 @@ export function EventCustomerPage() {
             return;
         }
 
-        if (!eventForm.titulo.trim() || !eventForm.categoria_id.trim()) {
-            setError("Completa titulo y categoria para crear el evento.");
-            return;
-        }
-
-        if (!eventForm.venue_nombre.trim() || !eventForm.venue_ciudad.trim()) {
-            setError("Completa nombre del venue y ciudad.");
+        if (!eventForm.titulo.trim() || !eventForm.categoria_id.trim() || !eventForm.venue_id.trim()) {
+            setError("Completa titulo, categoria y lugar del evento.");
             return;
         }
 
@@ -415,21 +392,14 @@ export function EventCustomerPage() {
                             <label>
                                 Lugar del evento
                                 <input
-                                    value={eventForm.venue_nombre}
-                                    onChange={(event) => handleEventFieldChange("venue_nombre", event.target.value)}
-                                    placeholder="Estadio, foro, salon o recinto"
+                                    value={eventForm.venue_id}
+                                    onChange={(event) => handleEventFieldChange("venue_id", event.target.value)}
+                                    placeholder="ID del lugar desde backend"
                                     required
                                 />
-                            </label>
-
-                            <label>
-                                Ciudad
-                                <input
-                                    value={eventForm.venue_ciudad}
-                                    onChange={(event) => handleEventFieldChange("venue_ciudad", event.target.value)}
-                                    placeholder="Queretaro"
-                                    required
-                                />
+                                <span className={styles.fieldHint}>
+                                    Este ID debe venir del catalogo de lugares del backend.
+                                </span>
                             </label>
 
                             <label>
@@ -439,15 +409,6 @@ export function EventCustomerPage() {
                                     min="0"
                                     value={eventForm.edad_minima}
                                     onChange={(event) => handleEventFieldChange("edad_minima", event.target.value)}
-                                />
-                            </label>
-
-                            <label className={styles.fullField}>
-                                Direccion
-                                <input
-                                    value={eventForm.venue_direccion}
-                                    onChange={(event) => handleEventFieldChange("venue_direccion", event.target.value)}
-                                    placeholder="Av. de las Torres 1000"
                                 />
                             </label>
 
@@ -484,30 +445,6 @@ export function EventCustomerPage() {
                                 />
                                 {mediaFileNames.imagen_portada && (
                                     <span className={styles.fileSummary}>{mediaFileNames.imagen_portada}</span>
-                                )}
-                            </label>
-
-                            <label>
-                                Imagen banner
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(event) => void handleMediaFileChange("imagen_banner", event.target.files?.[0])}
-                                />
-                                {mediaFileNames.imagen_banner && (
-                                    <span className={styles.fileSummary}>{mediaFileNames.imagen_banner}</span>
-                                )}
-                            </label>
-
-                            <label>
-                                Video
-                                <input
-                                    type="file"
-                                    accept="video/*"
-                                    onChange={(event) => void handleMediaFileChange("video_url", event.target.files?.[0])}
-                                />
-                                {mediaFileNames.video_url && (
-                                    <span className={styles.fileSummary}>{mediaFileNames.video_url}</span>
                                 )}
                             </label>
 

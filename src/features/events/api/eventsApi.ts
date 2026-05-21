@@ -22,17 +22,10 @@ export type EventCategory = {
 export type CreateEventPayload = {
     titulo: string;
     categoria_id: string;
-    venue_id?: string;
-    venue?: {
-        nombre: string;
-        ciudad: string;
-        direccion?: string;
-    };
+    venue_id: string;
     descripcion?: string;
     descripcion_corta?: string;
     imagen_portada?: string;
-    imagen_banner?: string;
-    video_url?: string;
     artistas?: Array<{ nombre: string }>;
     tags?: string[];
     edad_minima?: number;
