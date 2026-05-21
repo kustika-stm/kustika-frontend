@@ -1,5 +1,5 @@
 # EVENXA - FRONTEND CONTEXT
-
+- Por cada feature, es una rama nueva
 ## Descripción
 Evenxa es una plataforma web para la compra de boletos de conciertos y eventos.
 

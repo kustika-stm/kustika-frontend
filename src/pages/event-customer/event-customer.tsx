@@ -394,12 +394,9 @@ export function EventCustomerPage() {
                                 <input
                                     value={eventForm.venue_id}
                                     onChange={(event) => handleEventFieldChange("venue_id", event.target.value)}
-                                    placeholder="ID del lugar desde backend"
+                                    placeholder="Estadio, foro, salon o recinto"
                                     required
                                 />
-                                <span className={styles.fieldHint}>
-                                    Este ID debe venir del catalogo de lugares del backend.
-                                </span>
                             </label>
 
                             <label>
