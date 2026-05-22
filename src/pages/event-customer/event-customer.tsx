@@ -1,7 +1,7 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { routes } from "../../app/router/routes";
 import { getStoredSession } from "../../entities/session";
-import { eventsApi, type AddTicketTypePayload, type CreateEventPayload, type EventCategory, type ManagedEvent } from "../../features/events/api";
+import { eventsApi, type AddTicketTypePayload, type CreateEventRequest, type EventCategory, type ManagedEvent } from "../../features/events/api";
 import { ApiError } from "../../shared/api";
 import styles from "./event-customer.module.css";
 
@@ -21,6 +21,10 @@ type EventForm = {
 
 type MediaFileNames = {
     imagen_portada: string;
+};
+
+type MediaFiles = {
+    imagen_portada?: File;
 };
 
 type FunctionForm = {
@@ -106,16 +110,6 @@ const optionalNumber = (value: string) => {
     return value === "" ? undefined : Number(value);
 };
 
-const readFileAsDataUrl = (file: File) => {
-    return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
-        reader.addEventListener("error", () => reject(reader.error));
-        reader.readAsDataURL(file);
-    });
-};
-
 const getErrorMessage = (error: unknown) => {
     if (error instanceof ApiError) {
         return error.message;
@@ -128,7 +122,7 @@ const getErrorMessage = (error: unknown) => {
     return "No pudimos completar la accion.";
 };
 
-const buildEventPayload = (form: EventForm): CreateEventPayload => {
+const buildEventPayload = (form: EventForm, files: MediaFiles): CreateEventRequest => {
     const artistas = splitValues(form.artistas).map((nombre) => ({ nombre }));
     const tags = splitValues(form.tags);
 
@@ -144,6 +138,7 @@ const buildEventPayload = (form: EventForm): CreateEventPayload => {
         edad_minima: optionalNumber(form.edad_minima) ?? 0,
         politicas_reembolso: optionalText(form.politicas_reembolso),
         instrucciones_acceso: optionalText(form.instrucciones_acceso),
+        imagen_portada_file: files.imagen_portada,
     };
 };
 
@@ -167,6 +162,7 @@ const buildTicketPayload = (ticket: TicketForm): AddTicketTypePayload => ({
 export function EventCustomerPage() {
     const [session] = useState(() => getStoredSession());
     const [eventForm, setEventForm] = useState(initialEventForm);
+    const [mediaFiles, setMediaFiles] = useState<MediaFiles>({});
     const [mediaFileNames, setMediaFileNames] = useState(initialMediaFileNames);
     const [functionForm, setFunctionForm] = useState(initialFunctionForm);
     const [tickets, setTickets] = useState<TicketForm[]>([createEmptyTicket()]);
@@ -237,21 +233,17 @@ export function EventCustomerPage() {
         setEventForm((current) => ({ ...current, [field]: value }));
     };
 
-    const handleMediaFileChange = async (field: keyof MediaFileNames, file?: File) => {
+    const handleMediaFileChange = (field: keyof MediaFileNames, file?: File) => {
         if (!file) {
             setEventForm((current) => ({ ...current, [field]: "" }));
+            setMediaFiles((current) => ({ ...current, [field]: undefined }));
             setMediaFileNames((current) => ({ ...current, [field]: "" }));
             return;
         }
 
-        try {
-            const dataUrl = await readFileAsDataUrl(file);
-
-            setEventForm((current) => ({ ...current, [field]: dataUrl }));
-            setMediaFileNames((current) => ({ ...current, [field]: file.name }));
-        } catch {
-            setError("No pudimos cargar el archivo seleccionado.");
-        }
+        setEventForm((current) => ({ ...current, [field]: "" }));
+        setMediaFiles((current) => ({ ...current, [field]: file }));
+        setMediaFileNames((current) => ({ ...current, [field]: file.name }));
     };
 
     const handleFunctionFieldChange = (field: keyof FunctionForm, value: string) => {
@@ -266,6 +258,7 @@ export function EventCustomerPage() {
 
     const resetForm = () => {
         setEventForm(initialEventForm);
+        setMediaFiles({});
         setMediaFileNames(initialMediaFileNames);
         setFunctionForm(initialFunctionForm);
         setTickets([createEmptyTicket()]);
@@ -300,7 +293,7 @@ export function EventCustomerPage() {
         setIsSubmitting(true);
 
         try {
-            const createdEvent = await eventsApi.createEvent(token, buildEventPayload(eventForm));
+            const createdEvent = await eventsApi.createEvent(token, buildEventPayload(eventForm, mediaFiles));
             const createdFunction = await eventsApi.addFunction(token, createdEvent.id, {
                 fecha_inicio: functionForm.fecha_inicio,
                 nombre: optionalText(functionForm.nombre),
@@ -438,7 +431,7 @@ export function EventCustomerPage() {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    onChange={(event) => void handleMediaFileChange("imagen_portada", event.target.files?.[0])}
+                                    onChange={(event) => handleMediaFileChange("imagen_portada", event.target.files?.[0])}
                                 />
                                 {mediaFileNames.imagen_portada && (
                                     <span className={styles.fileSummary}>{mediaFileNames.imagen_portada}</span>

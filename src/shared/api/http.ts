@@ -120,8 +120,9 @@ const refreshAccessToken = async () => {
 const sendRequest = (path: string, options: RequestOptions, token?: string) => {
     const { skipAuthRefresh: _skipAuthRefresh, ...requestOptions } = options;
     const headers = new Headers(options.headers);
+    const isFormDataBody = options.body instanceof FormData;
 
-    if (options.body !== undefined) {
+    if (options.body !== undefined && !isFormDataBody) {
         headers.set("Content-Type", "application/json");
     }
 
@@ -132,7 +133,11 @@ const sendRequest = (path: string, options: RequestOptions, token?: string) => {
     return fetch(`${API_BASE_URL}${path}`, {
         ...requestOptions,
         headers,
-        body: options.body === undefined ? undefined : JSON.stringify(options.body),
+        body: options.body === undefined
+            ? undefined
+            : isFormDataBody
+                ? options.body as BodyInit
+                : JSON.stringify(options.body),
     });
 };
 

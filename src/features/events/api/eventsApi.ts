@@ -33,6 +33,10 @@ export type CreateEventPayload = {
     instrucciones_acceso?: string;
 };
 
+export type CreateEventRequest = CreateEventPayload & {
+    imagen_portada_file?: File;
+};
+
 export type AddFunctionPayload = {
     fecha_inicio: string;
     nombre?: string;
@@ -89,6 +93,27 @@ const getCreatedId = (payload: unknown, nestedKey: "evento" | "funcion") => {
     return "";
 };
 
+const createEventBody = (payload: CreateEventRequest) => {
+    if (!payload.imagen_portada_file) {
+        return payload;
+    }
+
+    const { imagen_portada_file: imageFile, ...fields } = payload;
+    const formData = new FormData();
+
+    Object.entries(fields).forEach(([key, value]) => {
+        if (value === undefined) {
+            return;
+        }
+
+        formData.append(key, typeof value === "string" ? value : JSON.stringify(value));
+    });
+
+    formData.append("imagen_portada", imageFile);
+
+    return formData;
+};
+
 export const eventsApi = {
     async getMyEvents(token: string) {
         const response = await apiRequest<ApiData<ManagedEvent[]> | ManagedEvent[]>("/eventos/mis-eventos", {
@@ -99,11 +124,11 @@ export const eventsApi = {
         return unwrapData(response);
     },
 
-    async createEvent(token: string, payload: CreateEventPayload) {
+    async createEvent(token: string, payload: CreateEventRequest) {
         const response = await apiRequest<unknown>("/eventos", {
             method: "POST",
             token,
-            body: payload,
+            body: createEventBody(payload),
         });
 
         const createdEvent = unwrapData(response);

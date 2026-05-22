@@ -3,6 +3,7 @@ export type {
     AddFunctionPayload,
     AddTicketTypePayload,
     CreateEventPayload,
+    CreateEventRequest,
     EventCategory,
     EventStatus,
     ManagedEvent,
