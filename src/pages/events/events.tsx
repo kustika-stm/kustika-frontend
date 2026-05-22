@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { routes } from "../../app/router/routes";
 import { EventSearchBar } from "../../features/event-search";
-import { mockEvents } from "../../entities/event/model/mockEvents";
+import { usePublicEvents } from "../../features/events/model";
 import styles from "./events.module.css";
 
 const statusLabels = {
@@ -21,19 +21,20 @@ const eventStatusLabel = {
 
 export function EventsPage() {
     const searchQuery = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
+    const { events, isLoading, error } = usePublicEvents();
     const [city, setCity] = useState("all");
     const [category, setCategory] = useState("all");
     const [status, setStatus] = useState<StatusFilter>("all");
 
     const cities = useMemo(() => {
-        return ["all", ...Array.from(new Set(mockEvents.map((event) => event.location)))];
-    }, []);
+        return ["all", ...Array.from(new Set(events.map((event) => event.location)))];
+    }, [events]);
 
     const categories = useMemo(() => {
-        return ["all", ...Array.from(new Set(mockEvents.map((event) => event.category)))];
-    }, []);
+        return ["all", ...Array.from(new Set(events.map((event) => event.category)))];
+    }, [events]);
 
-    const filteredEvents = mockEvents.filter((event) => {
+    const filteredEvents = events.filter((event) => {
         const normalizedQuery = searchQuery.toLowerCase();
         const searchableText = [
             event.title,
@@ -112,13 +113,23 @@ export function EventsPage() {
                     </div>
                 </div>
 
-                {filteredEvents.length > 0 ? (
+                {isLoading ? (
+                    <div className={styles.emptyState}>
+                        <h3>Cargando eventos...</h3>
+                        <p>Estamos consultando los eventos publicados.</p>
+                    </div>
+                ) : error ? (
+                    <div className={styles.emptyState}>
+                        <h3>No pudimos cargar los eventos.</h3>
+                        <p>{error}</p>
+                    </div>
+                ) : filteredEvents.length > 0 ? (
                     <div className={styles.list}>
                         {filteredEvents.map((event) => (
                             <article className={styles.eventRow} key={event.id}>
                                 <a
                                     className={styles.eventImage}
-                                    href={routes.eventDetail(event.slug)}
+                                    href={routes.eventDetail(event.id)}
                                     aria-label={`Ver detalle de ${event.title}`}
                                 >
                                     <img src={event.image} alt={event.title} />
@@ -132,7 +143,7 @@ export function EventsPage() {
                                     </div>
 
                                     <h3>
-                                        <a href={routes.eventDetail(event.slug)}>{event.title}</a>
+                                        <a href={routes.eventDetail(event.id)}>{event.title}</a>
                                     </h3>
 
                                     <p>{event.location} - {event.venueName}</p>
@@ -145,7 +156,7 @@ export function EventsPage() {
                                     </div>
                                 </div>
 
-                                <a className={styles.rowCta} href={routes.eventDetail(event.slug)}>
+                                <a className={styles.rowCta} href={routes.eventDetail(event.id)}>
                                     Ver detalles
                                 </a>
                             </article>

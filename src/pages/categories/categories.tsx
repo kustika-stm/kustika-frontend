@@ -1,5 +1,7 @@
 import { routes } from "../../app/router/routes";
-import { mockEvents } from "../../entities/event/model/mockEvents";
+import type { Event } from "../../entities/event/model/event";
+import { usePublicEvents } from "../../features/events/model";
+import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import styles from "./categories.module.css";
 
 type Props = {
@@ -54,8 +56,8 @@ const categories: Category[] = [
 
 const normalize = (value: string) => value.toLowerCase();
 
-const getCategoryEvents = (category: Category) => {
-    return mockEvents.filter((event) => {
+const getCategoryEvents = (category: Category, events: Event[]) => {
+    return events.filter((event) => {
         const searchableText = [
             event.category,
             event.title,
@@ -69,6 +71,7 @@ const getCategoryEvents = (category: Category) => {
 };
 
 export function CategoriesPage({ categoryId }: Props) {
+    const { events, isLoading, error } = usePublicEvents();
     const selectedCategory = categories.find((category) => category.id === categoryId);
     const visibleCategories = selectedCategory ? [selectedCategory] : categories;
 
@@ -89,15 +92,15 @@ export function CategoriesPage({ categoryId }: Props) {
             {!selectedCategory && (
                 <section className={styles.categoryGrid} aria-label="Categorias de eventos">
                     {categories.map((category) => {
-                        const categoryEvents = getCategoryEvents(category);
-                        const coverEvent = categoryEvents[0] ?? mockEvents[0];
+                        const categoryEvents = getCategoryEvents(category, events);
+                        const coverImage = categoryEvents[0]?.image ?? heroImage;
 
                         return (
                             <a
                                 className={styles.categoryCard}
                                 href={routes.categoryDetail(category.id)}
                                 key={category.id}
-                                style={{ backgroundImage: `url(${coverEvent.image})` }}
+                                style={{ backgroundImage: `url(${coverImage})` }}
                             >
                                 <div className={styles.cardShade} />
                                 <div>
@@ -112,7 +115,7 @@ export function CategoriesPage({ categoryId }: Props) {
             )}
 
             {visibleCategories.map((category) => {
-                const categoryEvents = getCategoryEvents(category);
+                const categoryEvents = getCategoryEvents(category, events);
 
                 return (
                     <section className={styles.eventGroup} key={category.id}>
@@ -125,11 +128,21 @@ export function CategoriesPage({ categoryId }: Props) {
                             <a href={`${routes.events}?q=${encodeURIComponent(category.name)}`}>Ver todo</a>
                         </div>
 
-                        {categoryEvents.length > 0 ? (
+                        {isLoading ? (
+                            <div className={styles.emptyState}>
+                                <h3>Cargando eventos...</h3>
+                                <p>Estamos consultando los eventos publicados.</p>
+                            </div>
+                        ) : error ? (
+                            <div className={styles.emptyState}>
+                                <h3>No pudimos cargar eventos.</h3>
+                                <p>{error}</p>
+                            </div>
+                        ) : categoryEvents.length > 0 ? (
                             <div className={styles.eventList}>
                                 {categoryEvents.map((event) => (
                                     <article className={styles.eventRow} key={event.id}>
-                                        <a className={styles.eventImage} href={routes.eventDetail(event.slug)}>
+                                        <a className={styles.eventImage} href={routes.eventDetail(event.id)}>
                                             <img src={event.image} alt={event.title} />
                                         </a>
 
@@ -141,13 +154,13 @@ export function CategoriesPage({ categoryId }: Props) {
                                             </div>
 
                                             <h3>
-                                                <a href={routes.eventDetail(event.slug)}>{event.title}</a>
+                                                <a href={routes.eventDetail(event.id)}>{event.title}</a>
                                             </h3>
 
                                             <p>{event.venueName}</p>
                                         </div>
 
-                                        <a className={styles.eventCta} href={routes.eventDetail(event.slug)}>
+                                        <a className={styles.eventCta} href={routes.eventDetail(event.id)}>
                                             Ver detalles
                                         </a>
                                     </article>

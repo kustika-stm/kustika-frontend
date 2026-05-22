@@ -1,12 +1,13 @@
 import { useRef } from "react";
-import { mockEvents } from "../../../entities/event/model/mockEvents";
 import { EventCard } from "../../../entities/event/ui/EventCard";
+import { usePublicEvents } from "../../../features/events/model";
 import styles from "./event-list.module.css";
 
 import Arrow from "../../../shared/assets/icons/arrow.png";
 
 export function EventList() {
     const listRef = useRef<HTMLDivElement>(null);
+    const { events, isLoading, error } = usePublicEvents();
 
     const scroll = (direction: "left" | "right") => {
         if (!listRef.current) return;
@@ -32,7 +33,10 @@ export function EventList() {
                 </button>
 
                 <div ref={listRef} className={styles.list}>
-                    {mockEvents.map((event) => (
+                    {isLoading && <p>Cargando eventos...</p>}
+                    {!isLoading && error && <p>{error}</p>}
+                    {!isLoading && !error && events.length === 0 && <p>Aun no hay eventos publicados.</p>}
+                    {!isLoading && !error && events.map((event) => (
                         <div key={event.id} className={styles.item}>
                             <EventCard event={event} />
                         </div>

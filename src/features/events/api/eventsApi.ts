@@ -86,7 +86,45 @@ const getCreatedId = (payload: unknown, nestedKey: "evento" | "funcion") => {
     return "";
 };
 
+const getPublicEventsList = (payload: unknown) => {
+    const data = unwrapData(payload);
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (data && typeof data === "object") {
+        const record = data as Record<string, unknown>;
+
+        if (Array.isArray(record.eventos)) {
+            return record.eventos;
+        }
+
+        if (Array.isArray(record.events)) {
+            return record.events;
+        }
+    }
+
+    return [];
+};
+
 export const eventsApi = {
+    async getPublicEvents() {
+        const response = await apiRequest<unknown>("/eventos", {
+            method: "GET",
+        });
+
+        return getPublicEventsList(response);
+    },
+
+    async getPublicEvent(eventId: string) {
+        const response = await apiRequest<unknown>(`/eventos/${encodeURIComponent(eventId)}`, {
+            method: "GET",
+        });
+
+        return unwrapData(response);
+    },
+
     async getMyEvents(token: string) {
         const response = await apiRequest<ApiData<ManagedEvent[]> | ManagedEvent[]>("/eventos/mis-eventos", {
             method: "GET",

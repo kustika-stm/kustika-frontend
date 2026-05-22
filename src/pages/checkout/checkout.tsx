@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { routes } from "../../app/router/routes";
-import { getEventById } from "../../entities/event/model/getEventById";
 import { getStoredSession } from "../../entities/session";
+import { usePublicEvent } from "../../features/events/model";
 import { getMissingProfileFields, isProfileComplete } from "../../features/profile/model";
 import styles from "./checkout.module.css";
 
@@ -59,11 +59,32 @@ const formatPrice = (price: number) => {
 };
 
 export function CheckoutPage({ eventId }: Props) {
-    const event = getEventById(eventId);
+    const { event, isLoading, error } = usePublicEvent(eventId);
     const session = getStoredSession();
     const [selectedTicketId, setSelectedTicketId] = useState("");
     const [ticketQuantity, setTicketQuantity] = useState(1);
     const [paymentMethod, setPaymentMethod] = useState("card");
+
+    if (isLoading) {
+        return (
+            <main className={styles.notFound}>
+                <span>Checkout</span>
+                <h1>Cargando evento.</h1>
+                <p>Estamos consultando la informacion actualizada para tu compra.</p>
+            </main>
+        );
+    }
+
+    if (error) {
+        return (
+            <main className={styles.notFound}>
+                <span>Checkout</span>
+                <h1>No pudimos cargar este evento.</h1>
+                <p>{error}</p>
+                <a href={routes.events}>Volver a eventos</a>
+            </main>
+        );
+    }
 
     if (!event) {
         return (

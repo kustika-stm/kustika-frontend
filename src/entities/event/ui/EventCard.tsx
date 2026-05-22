@@ -8,7 +8,7 @@ type Props = {
 
 export function EventCard({ event }: Props) {
     return (
-        <a className={styles.card} href={routes.eventDetail(event.slug)} aria-label={`Ver detalle de ${event.title}`}>
+        <a className={styles.card} href={routes.eventDetail(event.id)} aria-label={`Ver detalle de ${event.title}`}>
             <div
                 className={styles.image}
                 style={{ backgroundImage: `url(${event.image})` }}

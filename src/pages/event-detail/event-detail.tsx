@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { routes } from "../../app/router/routes";
-import { getEventById } from "../../entities/event/model/getEventById";
 import { getStoredSession } from "../../entities/session";
+import { usePublicEvent } from "../../features/events/model";
 import { isProfileComplete } from "../../features/profile/model";
 import styles from "./event-detail.module.css";
 
@@ -18,7 +18,7 @@ const formatPrice = (price: number) => {
 };
 
 export function EventDetailPage({ eventId }: Props) {
-    const event = getEventById(eventId);
+    const { event, isLoading, error } = usePublicEvent(eventId);
     const buyBoxTriggerRef = useRef<HTMLDivElement>(null);
     const [isBuyBoxCompact, setIsBuyBoxCompact] = useState(false);
 
@@ -59,6 +59,27 @@ export function EventDetailPage({ eventId }: Props) {
             window.removeEventListener("resize", updateBuyBoxState);
         };
     }, [eventId]);
+
+    if (isLoading) {
+        return (
+            <main className={styles.notFound}>
+                <span>Cargando evento</span>
+                <h1>Estamos consultando los detalles.</h1>
+                <p>Un momento, estamos trayendo la informacion actualizada del evento.</p>
+            </main>
+        );
+    }
+
+    if (error) {
+        return (
+            <main className={styles.notFound}>
+                <span>No pudimos cargar el evento</span>
+                <h1>Intentalo de nuevo en unos minutos.</h1>
+                <p>{error}</p>
+                <a href={routes.events}>Volver a eventos</a>
+            </main>
+        );
+    }
 
     if (!event) {
         return (
