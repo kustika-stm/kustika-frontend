@@ -6,4 +6,5 @@ export type {
     EventCategory,
     EventStatus,
     ManagedEvent,
+    UpdateEventPayload,
 } from "./eventsApi";

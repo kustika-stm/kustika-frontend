@@ -33,6 +33,8 @@ export type CreateEventPayload = {
     edad_minima?: number;
 };
 
+export type UpdateEventPayload = Partial<CreateEventPayload> & Pick<CreateEventPayload, "titulo" | "categoria_id" | "nombre_venue">;
+
 export type AddFunctionPayload = {
     fecha_inicio: string;
     nombre?: string;
@@ -125,6 +127,15 @@ export const eventsApi = {
         return unwrapData(response);
     },
 
+    async getManagedEvent(token: string, eventId: string) {
+        const response = await apiRequest<unknown>(`/eventos/${encodeURIComponent(eventId)}`, {
+            method: "GET",
+            token,
+        });
+
+        return unwrapData(response);
+    },
+
     async getMyEvents(token: string) {
         const response = await apiRequest<ApiData<ManagedEvent[]> | ManagedEvent[]>("/eventos/mis-eventos", {
             method: "GET",
@@ -168,6 +179,14 @@ export const eventsApi = {
         }
 
         return { id };
+    },
+
+    updateEvent(token: string, eventId: string, payload: UpdateEventPayload) {
+        return apiRequest(`/eventos/${encodeURIComponent(eventId)}`, {
+            method: "PUT",
+            token,
+            body: payload,
+        });
     },
 
     async addFunction(token: string, eventId: string, payload: AddFunctionPayload) {

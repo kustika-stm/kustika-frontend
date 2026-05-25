@@ -140,6 +140,77 @@ const buildTicketPayload = (ticket: TicketForm): AddTicketTypePayload => ({
     color: optionalText(ticket.color),
 });
 
+const asRecord = (value: unknown): Record<string, unknown> | undefined => {
+    return value && typeof value === "object" && !Array.isArray(value)
+        ? value as Record<string, unknown>
+        : undefined;
+};
+
+const stringValue = (record: Record<string, unknown>, keys: string[]) => {
+    for (const key of keys) {
+        const value = record[key];
+
+        if (typeof value === "string" || typeof value === "number") {
+            return String(value);
+        }
+    }
+
+    return "";
+};
+
+const nestedRecord = (record: Record<string, unknown>, key: string) => asRecord(record[key]);
+
+const getEventRecord = (payload: unknown) => {
+    const record = asRecord(payload);
+
+    if (!record) {
+        return undefined;
+    }
+
+    return nestedRecord(record, "evento") ?? nestedRecord(record, "event") ?? record;
+};
+
+const mapEventToForm = (payload: unknown, fallback?: ManagedEvent): EventForm => {
+    const record = getEventRecord(payload);
+    const categoria = record ? nestedRecord(record, "categoria") : undefined;
+    const venue = record ? nestedRecord(record, "venue") : undefined;
+    const tagsValue = record?.tags;
+    const artistasValue = record?.artistas ?? record?.artists;
+
+    const tags = Array.isArray(tagsValue)
+        ? tagsValue.map((tag) => String(tag)).join(", ")
+        : record ? stringValue(record, ["tags"]) : "";
+    const artistas = Array.isArray(artistasValue)
+        ? artistasValue.map((artist) => {
+            const artistRecord = asRecord(artist);
+
+            return artistRecord ? stringValue(artistRecord, ["nombre", "name"]) : String(artist);
+        }).filter(Boolean).join("\n")
+        : record ? stringValue(record, ["artistas", "artists"]) : "";
+
+    return {
+        titulo: record ? stringValue(record, ["titulo", "title", "nombre", "name"]) : fallback?.titulo ?? "",
+        categoria_id: record
+            ? stringValue(record, ["categoria_id", "category_id"]) || (categoria ? stringValue(categoria, ["id"]) : "")
+            : "",
+        nombre_venue: record
+            ? stringValue(record, ["nombre_venue", "venue_nombre", "venueName"]) || (venue ? stringValue(venue, ["nombre", "name"]) : "")
+            : fallback?.venue_nombre ?? "",
+        direccion_venue: record
+            ? stringValue(record, ["direccion_venue", "venue_direccion", "address"]) || (venue ? stringValue(venue, ["direccion", "address"]) : "")
+            : "",
+        ciudad_venue: record
+            ? stringValue(record, ["ciudad_venue", "venue_ciudad", "city"]) || (venue ? stringValue(venue, ["ciudad", "city"]) : "")
+            : "",
+        descripcion_corta: record ? stringValue(record, ["descripcion_corta", "short_description", "subtitle"]) : "",
+        descripcion: record ? stringValue(record, ["descripcion", "description"]) : "",
+        imagen_portada: record ? stringValue(record, ["imagen_portada", "imagen_url", "image", "cover_image"]) : "",
+        artistas,
+        tags,
+        edad_minima: record ? stringValue(record, ["edad_minima", "minimum_age"]) || "0" : "0",
+    };
+};
+
 export function EventCustomerPage() {
     const [session] = useState(() => getStoredSession());
     const [eventForm, setEventForm] = useState(initialEventForm);
@@ -152,11 +223,14 @@ export function EventCustomerPage() {
     const [categories, setCategories] = useState<EventCategory[]>([]);
     const [categoriesStatus, setCategoriesStatus] = useState("");
     const [isLoadingEvents, setIsLoadingEvents] = useState(true);
+    const [editingEventId, setEditingEventId] = useState("");
+    const [isLoadingSelectedEvent, setIsLoadingSelectedEvent] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [notice, setNotice] = useState("");
     const [error, setError] = useState("");
 
     const token = session?.accessToken;
+    const isEditing = Boolean(editingEventId);
     const validTickets = useMemo(() => {
         return tickets.filter((ticket) => ticket.nombre.trim() && ticket.precio !== "" && ticket.cantidad_total !== "");
     }, [tickets]);
@@ -259,6 +333,32 @@ export function EventCustomerPage() {
         setFunctionForm(initialFunctionForm);
         setTickets([createEmptyTicket()]);
         setPublishNow(false);
+        setEditingEventId("");
+        setIsLoadingSelectedEvent(false);
+    };
+
+    const handleEditEvent = async (managedEvent: ManagedEvent) => {
+        setError("");
+        setNotice("");
+        setEditingEventId(managedEvent.id);
+        setIsLoadingSelectedEvent(true);
+        setMediaFiles({});
+        setMediaFileNames(initialMediaFileNames);
+        setPublishNow(false);
+
+        try {
+            const eventDetail = token
+                ? await eventsApi.getManagedEvent(token, managedEvent.id)
+                : await eventsApi.getPublicEvent(managedEvent.id);
+
+            setEventForm(mapEventToForm(eventDetail, managedEvent));
+        } catch (loadError) {
+            setEventForm(mapEventToForm(undefined, managedEvent));
+            setError(getErrorMessage(loadError));
+        } finally {
+            setIsLoadingSelectedEvent(false);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
     };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -276,12 +376,12 @@ export function EventCustomerPage() {
             return;
         }
 
-        if (!functionForm.fecha_inicio) {
+        if (!isEditing && !functionForm.fecha_inicio) {
             setError("Agrega la fecha y hora de inicio de la funcion.");
             return;
         }
 
-        if (!validTickets.length) {
+        if (!isEditing && !validTickets.length) {
             setError("Agrega al menos un tipo de boleto con nombre, precio y cantidad.");
             return;
         }
@@ -292,6 +392,21 @@ export function EventCustomerPage() {
             const uploadedImageUrl = mediaFiles.imagen_portada
                 ? await eventsApi.uploadImage(token, mediaFiles.imagen_portada)
                 : undefined;
+
+            if (isEditing) {
+                await eventsApi.updateEvent(token, editingEventId, buildEventPayload(eventForm, uploadedImageUrl));
+
+                if (publishNow) {
+                    await eventsApi.publishEvent(token, editingEventId);
+                }
+
+                const nextEvents = await eventsApi.getMyEvents(token);
+                setMyEvents(nextEvents);
+                resetForm();
+                setNotice(publishNow ? "Evento actualizado y publicado correctamente." : "Evento actualizado correctamente.");
+                return;
+            }
+
             const createdEvent = await eventsApi.createEvent(token, buildEventPayload(eventForm, uploadedImageUrl));
             const createdFunction = await eventsApi.addFunction(token, createdEvent.id, {
                 fecha_inicio: functionForm.fecha_inicio,
@@ -335,12 +450,23 @@ export function EventCustomerPage() {
                 <form className={styles.panel} onSubmit={handleSubmit}>
                     <div className={styles.panelHeader}>
                         <div>
-                            <span className={styles.eyebrow}>Nuevo evento</span>
-                            <h2>Flujo de creacion</h2>
+                            <span className={styles.eyebrow}>{isEditing ? "Evento seleccionado" : "Nuevo evento"}</span>
+                            <h2>{isEditing ? "Editar evento" : "Flujo de creacion"}</h2>
                         </div>
-                        <button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? "Guardando..." : publishNow ? "Crear y publicar" : "Guardar borrador"}
-                        </button>
+                        <div className={styles.headerActions}>
+                            {isEditing && (
+                                <button className={styles.neutralButton} type="button" onClick={resetForm} disabled={isSubmitting}>
+                                    Cancelar
+                                </button>
+                            )}
+                            <button type="submit" disabled={isSubmitting || isLoadingSelectedEvent}>
+                                {isSubmitting
+                                    ? "Guardando..."
+                                    : isEditing
+                                        ? "Actualizar evento"
+                                        : publishNow ? "Crear y publicar" : "Guardar borrador"}
+                            </button>
+                        </div>
                     </div>
 
                     {notice && <div className={styles.success}>{notice}</div>}
@@ -453,6 +579,9 @@ export function EventCustomerPage() {
                                 {mediaFileNames.imagen_portada && (
                                     <span className={styles.fileSummary}>{mediaFileNames.imagen_portada}</span>
                                 )}
+                                {isEditing && eventForm.imagen_portada && !mediaFileNames.imagen_portada && (
+                                    <span className={styles.fileSummary}>Imagen actual conservada</span>
+                                )}
                             </label>
 
                             <label>
@@ -476,6 +605,7 @@ export function EventCustomerPage() {
                         </div>
                     </fieldset>
 
+                    {!isEditing && (
                     <fieldset className={styles.formSection}>
                         <legend>Funcion</legend>
 
@@ -518,7 +648,9 @@ export function EventCustomerPage() {
                             </label>
                         </div>
                     </fieldset>
+                    )}
 
+                    {!isEditing && (
                     <fieldset className={styles.formSection}>
                         <div className={styles.sectionTitle}>
                             <legend>Boletos</legend>
@@ -624,6 +756,7 @@ export function EventCustomerPage() {
                             ))}
                         </div>
                     </fieldset>
+                    )}
 
                     <fieldset className={styles.formSection}>
                         <legend>Publicacion</legend>
@@ -634,7 +767,7 @@ export function EventCustomerPage() {
                                 checked={publishNow}
                                 onChange={(event) => setPublishNow(event.target.checked)}
                             />
-                            Publicar al terminar
+                            {isEditing ? "Publicar despues de actualizar" : "Publicar al terminar"}
                         </label>
                     </fieldset>
                 </form>
@@ -660,7 +793,12 @@ export function EventCustomerPage() {
                                         <strong>{event.titulo}</strong>
                                         <p>{[event.categoria, event.venue_nombre].filter(Boolean).join(" - ") || "Sin categoria o venue"}</p>
                                     </div>
-                                    <span className={styles.statusPill}>{event.status}</span>
+                                    <div className={styles.eventActions}>
+                                        <span className={styles.statusPill}>{event.status}</span>
+                                        <button type="button" onClick={() => void handleEditEvent(event)}>
+                                            Editar
+                                        </button>
+                                    </div>
                                 </article>
                             ))}
                         </div>
