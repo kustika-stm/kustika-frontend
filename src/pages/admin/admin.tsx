@@ -94,6 +94,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const alerts = useAlerts();
     const session = getStoredSession();
     const token = session?.accessToken ?? "";
+    const getCurrentToken = useCallback(() => getStoredSession()?.accessToken ?? token, [token]);
     const currentUserId = getTokenUserId(token) ?? session?.user?.id ?? null;
     const displayName = [session?.user?.nombre, session?.user?.apellido_paterno].filter(Boolean).join(" ") || "Administrador";
     const [users, setUsers] = useState<AdminUser[]>([]);
@@ -129,14 +130,16 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     }, [limit, page, total]);
 
     const loadUsers = useCallback(async () => {
-        if (!token || activePage !== "users") {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || activePage !== "users") {
             return;
         }
 
         setIsLoading(true);
 
         try {
-            const response = await adminApi.getUsers(token, page, limit);
+            const response = await adminApi.getUsers(currentToken, page, limit);
 
             setUsers(response.usuarios);
             setTotal(response.total);
@@ -150,21 +153,27 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         } finally {
             setIsLoading(false);
         }
-    }, [activePage, alerts, limit, page, token]);
+    }, [activePage, alerts, getCurrentToken, limit, page]);
 
     useEffect(() => {
-        void loadUsers();
+        const timer = window.setTimeout(() => {
+            void loadUsers();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, [loadUsers]);
 
     const loadEvents = useCallback(async () => {
-        if (!token || activePage !== "events") {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || activePage !== "events") {
             return;
         }
 
         setIsEventsLoading(true);
 
         try {
-            const response = await adminApi.getEvents(token);
+            const response = await adminApi.getEvents(currentToken);
 
             setEvents(response);
         } catch (error) {
@@ -176,21 +185,27 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         } finally {
             setIsEventsLoading(false);
         }
-    }, [activePage, alerts, token]);
+    }, [activePage, alerts, getCurrentToken]);
 
     useEffect(() => {
-        void loadEvents();
+        const timer = window.setTimeout(() => {
+            void loadEvents();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, [loadEvents]);
 
     const loadRequests = useCallback(async () => {
-        if (!token || activePage !== "requests") {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || activePage !== "requests") {
             return;
         }
 
         setIsRequestsLoading(true);
 
         try {
-            const response = await organizerRequestsApi.getRequests(token, requestStatus);
+            const response = await organizerRequestsApi.getRequests(currentToken, requestStatus);
 
             setRequests(response);
         } catch (error) {
@@ -202,60 +217,109 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         } finally {
             setIsRequestsLoading(false);
         }
-    }, [activePage, alerts, requestStatus, token]);
+    }, [activePage, alerts, getCurrentToken, requestStatus]);
 
     useEffect(() => {
-        void loadRequests();
+        const timer = window.setTimeout(() => {
+            void loadRequests();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, [loadRequests]);
 
     useEffect(() => {
-        if (!token || activePage !== "profile") {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || activePage !== "profile") {
             return;
         }
 
         let isMounted = true;
 
-        setIsProfileLoading(true);
+        const timer = window.setTimeout(() => {
+            setIsProfileLoading(true);
 
-        profileApi.getProfile(token)
-            .then((userProfile) => {
-                if (!isMounted) {
-                    return;
-                }
+            profileApi.getProfile(currentToken)
+                .then((userProfile) => {
+                    if (!isMounted) {
+                        return;
+                    }
 
-                const nextProfile = {
-                    ...session?.user,
-                    ...userProfile,
-                };
+                    const currentSession = getStoredSession();
+                    const nextProfile = {
+                        ...currentSession?.user,
+                        ...userProfile,
+                    };
 
-                setProfile(nextProfile);
-                saveSession({
-                    accessToken: session?.accessToken ?? token,
-                    refreshToken: session?.refreshToken ?? "",
-                    user: nextProfile,
-                });
-            })
-            .catch((error) => {
-                if (isMounted) {
-                    alerts.notify({
-                        tone: "error",
-                        title: "Perfil no disponible",
-                        message: error instanceof Error ? error.message : "No pudimos cargar tu perfil.",
+                    setProfile(nextProfile);
+                    saveSession({
+                        accessToken: currentToken,
+                        refreshToken: currentSession?.refreshToken ?? "",
+                        user: nextProfile,
                     });
-                }
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setIsProfileLoading(false);
-                }
-            });
+                })
+                .catch((error) => {
+                    if (isMounted) {
+                        alerts.notify({
+                            tone: "error",
+                            title: "Perfil no disponible",
+                            message: error instanceof Error ? error.message : "No pudimos cargar tu perfil.",
+                        });
+                    }
+                })
+                .finally(() => {
+                    if (isMounted) {
+                        setIsProfileLoading(false);
+                    }
+                });
+        }, 0);
 
         return () => {
             isMounted = false;
+            window.clearTimeout(timer);
         };
-    }, [activePage, alerts, token]);
+    }, [activePage, alerts, getCurrentToken]);
+
+    useEffect(() => {
+        const reloadActivePage = () => {
+            if (document.visibilityState === "hidden") {
+                return;
+            }
+
+            if (activePage === "users") {
+                void loadUsers();
+                return;
+            }
+
+            if (activePage === "events") {
+                void loadEvents();
+                return;
+            }
+
+            if (activePage === "requests") {
+                void loadRequests();
+            }
+        };
+
+        window.addEventListener("focus", reloadActivePage);
+        window.addEventListener("online", reloadActivePage);
+        document.addEventListener("visibilitychange", reloadActivePage);
+
+        return () => {
+            window.removeEventListener("focus", reloadActivePage);
+            window.removeEventListener("online", reloadActivePage);
+            document.removeEventListener("visibilitychange", reloadActivePage);
+        };
+    }, [activePage, loadEvents, loadRequests, loadUsers]);
 
     const handleRoleChange = async (user: AdminUser, rol: AdminUserRole) => {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
+
         if (user.id === currentUserId) {
             alerts.notify({
                 tone: "warning",
@@ -268,7 +332,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         setUpdatingUserId(user.id);
 
         try {
-            const response = await adminApi.updateUserRole(token, user.id, rol);
+            const response = await adminApi.updateUserRole(currentToken, user.id, rol);
 
             alerts.notify({
                 tone: "success",
@@ -288,14 +352,16 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     };
 
     const handleLogout = async () => {
-        if (!token || isLoggingOut) {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || isLoggingOut) {
             return;
         }
 
         setIsLoggingOut(true);
 
         try {
-            await authApi.logout(token);
+            await authApi.logout(currentToken);
         } finally {
             clearSession();
             window.location.assign(routes.login);
@@ -303,7 +369,9 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     };
 
     const handleDeleteAccount = async () => {
-        if (!token || isDeletingAccount) {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || isDeletingAccount) {
             return;
         }
 
@@ -321,7 +389,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         setIsDeletingAccount(true);
 
         try {
-            await profileApi.deleteAccount(token);
+            await profileApi.deleteAccount(currentToken);
             clearSession();
             window.location.assign(routes.login);
         } catch (error) {
@@ -336,10 +404,17 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     };
 
     const handleApproveRequest = async (requestId: string) => {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
+
         setProcessingRequestId(requestId);
 
         try {
-            const response = await organizerRequestsApi.approveRequest(token, requestId);
+            const response = await organizerRequestsApi.approveRequest(currentToken, requestId);
 
             alerts.notify({
                 tone: "success",
@@ -359,6 +434,13 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     };
 
     const handleRejectRequest = async (requestId: string) => {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
+
         const motivo = await alerts.prompt({
             tone: "warning",
             title: "Rechazar solicitud",
@@ -376,7 +458,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         setProcessingRequestId(requestId);
 
         try {
-            const response = await organizerRequestsApi.rejectRequest(token, requestId, motivo.trim());
+            const response = await organizerRequestsApi.rejectRequest(currentToken, requestId, motivo.trim());
 
             alerts.notify({
                 tone: "success",
