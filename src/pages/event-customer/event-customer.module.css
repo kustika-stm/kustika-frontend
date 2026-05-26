@@ -375,6 +375,17 @@
     font-size: 12px;
 }
 
+.eventActions button:disabled {
+    cursor: wait;
+    opacity: 0.64;
+}
+
+.eventActions .dangerButton {
+    border-color: rgba(254, 124, 102, 0.34);
+    background: rgba(254, 124, 102, 0.1);
+    color: #fecaca;
+}
+
 @media (min-width: 720px) {
     .hero {
         grid-template-columns: minmax(0, 1fr) auto;

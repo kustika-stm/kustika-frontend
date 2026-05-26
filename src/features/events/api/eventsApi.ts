@@ -221,6 +221,14 @@ export const eventsApi = {
         });
     },
 
+    cancelEvent(token: string, eventId: string, descripcion?: string) {
+        return apiRequest(`/eventos/${encodeURIComponent(eventId)}/cancelar`, {
+            method: "PUT",
+            token,
+            body: descripcion ? { descripcion } : undefined,
+        });
+    },
+
     async getCategories() {
         const response = await apiRequest<ApiData<EventCategory[]>>("/categorias", {
             method: "GET",

@@ -226,6 +226,7 @@ export function EventCustomerPage() {
     const [editingEventId, setEditingEventId] = useState("");
     const [isLoadingSelectedEvent, setIsLoadingSelectedEvent] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [cancellingEventId, setCancellingEventId] = useState("");
     const [notice, setNotice] = useState("");
     const [error, setError] = useState("");
 
@@ -358,6 +359,43 @@ export function EventCustomerPage() {
         } finally {
             setIsLoadingSelectedEvent(false);
             window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
+
+    const handleCancelEvent = async (managedEvent: ManagedEvent) => {
+        setError("");
+        setNotice("");
+
+        if (!token) {
+            window.location.assign(routes.login);
+            return;
+        }
+
+        const shouldCancel = window.confirm(`Esta accion cancelara "${managedEvent.titulo}". Deseas continuar?`);
+
+        if (!shouldCancel) {
+            return;
+        }
+
+        const cancelDescription = window.prompt("Descripcion opcional de cancelacion:")?.trim();
+
+        setCancellingEventId(managedEvent.id);
+
+        try {
+            await eventsApi.cancelEvent(token, managedEvent.id, cancelDescription || undefined);
+            setMyEvents((current) => current.map((event) => (
+                event.id === managedEvent.id ? { ...event, status: "cancelado" } : event
+            )));
+
+            if (editingEventId === managedEvent.id) {
+                resetForm();
+            }
+
+            setNotice("Evento cancelado correctamente.");
+        } catch (cancelError) {
+            setError(getErrorMessage(cancelError));
+        } finally {
+            setCancellingEventId("");
         }
     };
 
@@ -795,8 +833,22 @@ export function EventCustomerPage() {
                                     </div>
                                     <div className={styles.eventActions}>
                                         <span className={styles.statusPill}>{event.status}</span>
-                                        <button type="button" onClick={() => void handleEditEvent(event)}>
+                                        <button
+                                            type="button"
+                                            onClick={() => void handleEditEvent(event)}
+                                            disabled={Boolean(cancellingEventId)}
+                                        >
                                             Editar
+                                        </button>
+                                        <button
+                                            className={styles.dangerButton}
+                                            type="button"
+                                            onClick={() => void handleCancelEvent(event)}
+                                            disabled={Boolean(cancellingEventId) || event.status === "cancelado"}
+                                        >
+                                            {cancellingEventId === event.id
+                                                ? "Cancelando..."
+                                                : event.status === "cancelado" ? "Cancelado" : "Cancelar"}
                                         </button>
                                     </div>
                                 </article>
