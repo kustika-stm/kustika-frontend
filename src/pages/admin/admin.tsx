@@ -5,6 +5,7 @@ import { adminApi, type AdminUser, type AdminUserRole } from "../../features/adm
 import { authApi } from "../../features/auth/api";
 import { organizerRequestsApi, type OrganizerRequest, type OrganizerRequestStatus } from "../../features/organizers/api";
 import { profileApi } from "../../features/profile/api";
+import { useAlerts } from "../../shared/ui/alerts";
 import trashIcon from "../../shared/assets/icons/basura.png";
 import userIcon from "../../shared/assets/icons/usuario.png";
 import logo from "../../shared/assets/images/logo/imagotipo.png";
@@ -58,6 +59,7 @@ const getTokenUserId = (accessToken?: string) => {
 };
 
 export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
+    const alerts = useAlerts();
     const session = getStoredSession();
     const token = session?.accessToken ?? "";
     const currentUserId = getTokenUserId(token) ?? session?.user?.id ?? null;
@@ -77,9 +79,6 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
-    const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-    const [requestsMessage, setRequestsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-    const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const canGoPrevious = page > 1 && !isLoading;
     const canGoNext = page < pages && !isLoading;
@@ -95,16 +94,12 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         return `${start}-${end} de ${total} usuarios`;
     }, [limit, page, total]);
 
-    const loadUsers = useCallback(async (options?: { keepMessage?: boolean }) => {
+    const loadUsers = useCallback(async () => {
         if (!token || activePage !== "users") {
             return;
         }
 
         setIsLoading(true);
-
-        if (!options?.keepMessage) {
-            setMessage(null);
-        }
 
         try {
             const response = await adminApi.getUsers(token, page, limit);
@@ -113,43 +108,41 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             setTotal(response.total);
             setPages(Math.max(response.pages, 1));
         } catch (error) {
-            setMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos cargar los usuarios.",
+            alerts.notify({
+                tone: "error",
+                title: "Usuarios no disponibles",
+                message: error instanceof Error ? error.message : "No pudimos cargar los usuarios.",
             });
         } finally {
             setIsLoading(false);
         }
-    }, [activePage, limit, page, token]);
+    }, [activePage, alerts, limit, page, token]);
 
     useEffect(() => {
         void loadUsers();
     }, [loadUsers]);
 
-    const loadRequests = useCallback(async (options?: { keepMessage?: boolean }) => {
+    const loadRequests = useCallback(async () => {
         if (!token || activePage !== "requests") {
             return;
         }
 
         setIsRequestsLoading(true);
 
-        if (!options?.keepMessage) {
-            setRequestsMessage(null);
-        }
-
         try {
             const response = await organizerRequestsApi.getRequests(token, requestStatus);
 
             setRequests(response);
         } catch (error) {
-            setRequestsMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos cargar las solicitudes.",
+            alerts.notify({
+                tone: "error",
+                title: "Solicitudes no disponibles",
+                message: error instanceof Error ? error.message : "No pudimos cargar las solicitudes.",
             });
         } finally {
             setIsRequestsLoading(false);
         }
-    }, [activePage, requestStatus, token]);
+    }, [activePage, alerts, requestStatus, token]);
 
     useEffect(() => {
         void loadRequests();
@@ -163,7 +156,6 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         let isMounted = true;
 
         setIsProfileLoading(true);
-        setProfileMessage(null);
 
         profileApi.getProfile(token)
             .then((userProfile) => {
@@ -185,9 +177,10 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             })
             .catch((error) => {
                 if (isMounted) {
-                    setProfileMessage({
-                        type: "error",
-                        text: error instanceof Error ? error.message : "No pudimos cargar tu perfil.",
+                    alerts.notify({
+                        tone: "error",
+                        title: "Perfil no disponible",
+                        message: error instanceof Error ? error.message : "No pudimos cargar tu perfil.",
                     });
                 }
             })
@@ -200,26 +193,34 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         return () => {
             isMounted = false;
         };
-    }, [activePage, token]);
+    }, [activePage, alerts, token]);
 
     const handleRoleChange = async (user: AdminUser, rol: AdminUserRole) => {
         if (user.id === currentUserId) {
-            setMessage({ type: "error", text: "No puedes cambiar tu propio rol." });
+            alerts.notify({
+                tone: "warning",
+                title: "Cambio no permitido",
+                message: "No puedes cambiar tu propio rol.",
+            });
             return;
         }
 
         setUpdatingUserId(user.id);
-        setMessage(null);
 
         try {
             const response = await adminApi.updateUserRole(token, user.id, rol);
 
-            setMessage({ type: "success", text: response.message });
-            await loadUsers({ keepMessage: true });
+            alerts.notify({
+                tone: "success",
+                title: "Rol actualizado",
+                message: response.message,
+            });
+            await loadUsers();
         } catch (error) {
-            setMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos actualizar el rol.",
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos actualizar el rol",
+                message: error instanceof Error ? error.message : "No pudimos actualizar el rol.",
             });
         } finally {
             setUpdatingUserId(null);
@@ -246,23 +247,28 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             return;
         }
 
-        const shouldDelete = window.confirm("Esta accion eliminara tu cuenta de Evenxa. Deseas continuar?");
+        const shouldDelete = await alerts.confirm({
+            tone: "error",
+            title: "Eliminar cuenta",
+            message: "Esta accion eliminara tu cuenta de Evenxa y cerrara tu sesion actual.",
+            confirmLabel: "Eliminar cuenta",
+        });
 
         if (!shouldDelete) {
             return;
         }
 
         setIsDeletingAccount(true);
-        setProfileMessage(null);
 
         try {
             await profileApi.deleteAccount(token);
             clearSession();
             window.location.assign(routes.login);
         } catch (error) {
-            setProfileMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos eliminar tu cuenta.",
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos eliminar tu cuenta",
+                message: error instanceof Error ? error.message : "No pudimos eliminar tu cuenta.",
             });
         } finally {
             setIsDeletingAccount(false);
@@ -271,17 +277,21 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
 
     const handleApproveRequest = async (requestId: string) => {
         setProcessingRequestId(requestId);
-        setRequestsMessage(null);
 
         try {
             const response = await organizerRequestsApi.approveRequest(token, requestId);
 
-            setRequestsMessage({ type: "success", text: response.message });
-            await loadRequests({ keepMessage: true });
+            alerts.notify({
+                tone: "success",
+                title: "Solicitud aprobada",
+                message: response.message,
+            });
+            await loadRequests();
         } catch (error) {
-            setRequestsMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos aprobar la solicitud.",
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos aprobar la solicitud",
+                message: error instanceof Error ? error.message : "No pudimos aprobar la solicitud.",
             });
         } finally {
             setProcessingRequestId(null);
@@ -289,24 +299,36 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     };
 
     const handleRejectRequest = async (requestId: string) => {
-        const motivo = window.prompt("Motivo del rechazo");
+        const motivo = await alerts.prompt({
+            tone: "warning",
+            title: "Rechazar solicitud",
+            message: "Escribe el motivo que se guardara con la solicitud.",
+            label: "Motivo del rechazo",
+            placeholder: "Describe por que no se aprobo la solicitud.",
+            required: true,
+            confirmLabel: "Rechazar",
+        });
 
         if (!motivo?.trim()) {
             return;
         }
 
         setProcessingRequestId(requestId);
-        setRequestsMessage(null);
 
         try {
             const response = await organizerRequestsApi.rejectRequest(token, requestId, motivo.trim());
 
-            setRequestsMessage({ type: "success", text: response.message });
-            await loadRequests({ keepMessage: true });
+            alerts.notify({
+                tone: "success",
+                title: "Solicitud rechazada",
+                message: response.message,
+            });
+            await loadRequests();
         } catch (error) {
-            setRequestsMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos rechazar la solicitud.",
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos rechazar la solicitud",
+                message: error instanceof Error ? error.message : "No pudimos rechazar la solicitud.",
             });
         } finally {
             setProcessingRequestId(null);
@@ -390,12 +412,6 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
 
                     <span className={styles.limitControl}>10 por pagina</span>
                 </div>
-
-                {message && (
-                    <div className={`${styles.message} ${styles[message.type]}`} role="status" aria-live="polite">
-                        {message.text}
-                    </div>
-                )}
 
                 <div className={styles.tableWrap}>
                     <table className={styles.usersTable}>
@@ -526,12 +542,6 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                                 </label>
                             </div>
 
-                            {requestsMessage && (
-                                <div className={`${styles.message} ${styles[requestsMessage.type]}`} role="status" aria-live="polite">
-                                    {requestsMessage.text}
-                                </div>
-                            )}
-
                             <div className={styles.tableWrap}>
                                 <table className={styles.usersTable}>
                                     <thead>
@@ -605,12 +615,6 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                     </>
                 ) : (
                     <section className={styles.profilePanel}>
-                        {profileMessage && (
-                            <div className={`${styles.message} ${styles[profileMessage.type]}`} role="status" aria-live="polite">
-                                {profileMessage.text}
-                            </div>
-                        )}
-
                         <article className={styles.profileHero}>
                             <div className={styles.profileAvatar} aria-hidden="true">
                                 {profileName.slice(0, 2).toUpperCase()}

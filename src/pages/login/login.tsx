@@ -7,15 +7,15 @@ import googleLogo from "../../shared/assets/icons/Google_logo.png";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import logo from "../../shared/assets/images/logo/logo-combinado.png";
+import { useAlerts } from "../../shared/ui/alerts";
 import styles from "./login.module.css";
 
 export function LoginPage() {
+    const alerts = useAlerts();
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
 
     const handleLogin = async (values: LoginFormValues) => {
         setIsLoading(true);
-        setError("");
 
         try {
             const session = await authApi.login(values);
@@ -23,14 +23,14 @@ export function LoginPage() {
             window.location.assign(getRoleHomePath(session.user?.tipo_usuario));
         } catch (requestError) {
             const message = requestError instanceof Error ? requestError.message : "No pudimos iniciar sesion.";
-            setError(message);
+
+            alerts.notify({ tone: "error", title: "No pudimos iniciar sesion", message });
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleGoogleLogin = () => {
-        setError("");
         setIsLoading(true);
         window.location.assign(authApi.getGoogleLoginUrl());
     };
@@ -70,8 +70,6 @@ export function LoginPage() {
                         <h1>Iniciar sesion</h1>
                         <p>Entra a tu cuenta para guardar eventos y continuar tus compras.</p>
                     </div>
-
-                    {error && <p className={`${styles.feedback} ${styles.error}`}>{error}</p>}
 
                     <AuthForm mode="login" onSubmit={handleLogin} isLoading={isLoading} />
 

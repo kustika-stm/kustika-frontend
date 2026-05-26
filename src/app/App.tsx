@@ -20,15 +20,13 @@ export function App() {
     // }
 
     return (
-        <>
+        <AppProviders>
             {!isAuthRoute && !isAdminRoute && <Header />}
 
-            <AppProviders>
-                <AppRouter />
-            </AppProviders>
+            <AppRouter />
 
             {!isAuthRoute && !isAdminRoute && <Footer />}
-        </>
+        </AppProviders>
     );
 }
 

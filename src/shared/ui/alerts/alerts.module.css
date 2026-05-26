@@ -1,0 +1,217 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(0, 0, 0, 0.66);
+    backdrop-filter: blur(10px);
+}
+
+.dialog {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 16px;
+    width: min(100%, 520px);
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.98);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    color: #000;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.info {
+    background: #93c5fd;
+}
+
+.success {
+    background: #86efac;
+}
+
+.warning {
+    background: var(--color-highlight);
+}
+
+.error {
+    background: var(--color-accent);
+}
+
+.content {
+    min-width: 0;
+}
+
+.content h2 {
+    margin: 2px 0 8px;
+    font-size: 22px;
+    line-height: 1.18;
+}
+
+.content p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.promptField {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.promptField textarea {
+    width: 100%;
+    min-height: 112px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: 0;
+    resize: vertical;
+    background: rgba(15, 15, 15, 0.78);
+    color: var(--text-h);
+    font: inherit;
+}
+
+.promptField textarea:focus {
+    border-color: rgba(255, 102, 196, 0.72);
+}
+
+.actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.primaryButton,
+.secondaryButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-weight: 900;
+}
+
+.primaryButton {
+    color: #000;
+}
+
+.secondaryButton {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-h);
+}
+
+.toastStack {
+    position: fixed;
+    top: calc(var(--app-header-height) + 14px);
+    right: 16px;
+    z-index: 1100;
+    display: grid;
+    gap: 10px;
+    width: min(420px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.toast {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: start;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-left-width: 4px;
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.98);
+    box-shadow: 0 18px 54px rgba(0, 0, 0, 0.36);
+    pointer-events: auto;
+}
+
+.toast.info {
+    border-left-color: #93c5fd;
+}
+
+.toast.success {
+    border-left-color: #86efac;
+}
+
+.toast.warning {
+    border-left-color: var(--color-highlight);
+}
+
+.toast.error {
+    border-left-color: var(--color-accent);
+}
+
+.toastIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    color: #000;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.toast strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--text-h);
+    font-size: 14px;
+}
+
+.toast p {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.toast button {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+@media (max-width: 520px) {
+    .dialog {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .toastStack {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
+}

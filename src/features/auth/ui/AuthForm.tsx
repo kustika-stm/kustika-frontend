@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from "react";
+import { type FormEvent } from "react";
+import { useAlerts } from "../../../shared/ui/alerts";
 import styles from "./auth-form.module.css";
 
 export type AuthMode = "login" | "register";
@@ -28,12 +29,11 @@ type Props =
     };
 
 export function AuthForm(props: Props) {
+    const alerts = useAlerts();
     const isRegister = props.mode === "register";
-    const [formError, setFormError] = useState("");
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setFormError("");
 
         const formData = new FormData(event.currentTarget);
         const email = String(formData.get("email") ?? "");
@@ -43,12 +43,20 @@ export function AuthForm(props: Props) {
             const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
             if (password.length < 8) {
-                setFormError("La contrasena debe tener al menos 8 caracteres.");
+                alerts.notify({
+                    tone: "error",
+                    title: "Contrasena invalida",
+                    message: "La contrasena debe tener al menos 8 caracteres.",
+                });
                 return;
             }
 
             if (password !== passwordConfirm) {
-                setFormError("Las contrasenas no coinciden.");
+                alerts.notify({
+                    tone: "error",
+                    title: "Contrasenas distintas",
+                    message: "Las contrasenas no coinciden.",
+                });
                 return;
             }
 
@@ -122,8 +130,6 @@ export function AuthForm(props: Props) {
                     />
                 </label>
             )}
-
-            {formError && <p className={styles.error}>{formError}</p>}
 
             <button className={styles.submit} type="submit" disabled={props.isLoading}>
                 {props.isLoading ? "Procesando..." : isRegister ? "Crear cuenta" : "Iniciar sesion"}

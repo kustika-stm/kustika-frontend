@@ -3,6 +3,7 @@ import { routes } from "../../app/router/routes";
 import { getStoredSession } from "../../entities/session";
 import { eventsApi, type AddTicketTypePayload, type CreateEventPayload, type EventCategory, type ManagedEvent } from "../../features/events/api";
 import { ApiError } from "../../shared/api";
+import { useAlerts } from "../../shared/ui/alerts";
 import styles from "./event-customer.module.css";
 
 type EventForm = {
@@ -212,6 +213,7 @@ const mapEventToForm = (payload: unknown, fallback?: ManagedEvent): EventForm =>
 };
 
 export function EventCustomerPage() {
+    const alerts = useAlerts();
     const [session] = useState(() => getStoredSession());
     const [eventForm, setEventForm] = useState(initialEventForm);
     const [mediaFiles, setMediaFiles] = useState<MediaFiles>({});
@@ -227,8 +229,6 @@ export function EventCustomerPage() {
     const [isLoadingSelectedEvent, setIsLoadingSelectedEvent] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [cancellingEventId, setCancellingEventId] = useState("");
-    const [notice, setNotice] = useState("");
-    const [error, setError] = useState("");
 
     const token = session?.accessToken;
     const isEditing = Boolean(editingEventId);
@@ -269,7 +269,11 @@ export function EventCustomerPage() {
                 }
             } catch (loadError) {
                 if (isMounted) {
-                    setError(getErrorMessage(loadError));
+                    alerts.notify({
+                        tone: "error",
+                        title: "No pudimos cargar tus eventos",
+                        message: getErrorMessage(loadError),
+                    });
                 }
             } finally {
                 if (isMounted) {
@@ -283,7 +287,7 @@ export function EventCustomerPage() {
         return () => {
             isMounted = false;
         };
-    }, [token]);
+    }, [alerts, token]);
 
     const handleEventFieldChange = (field: keyof EventForm, value: string) => {
         setEventForm((current) => ({ ...current, [field]: value }));
@@ -300,18 +304,17 @@ export function EventCustomerPage() {
         if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
             setMediaFiles((current) => ({ ...current, [field]: undefined }));
             setMediaFileNames((current) => ({ ...current, [field]: "" }));
-            setError("La imagen debe ser JPG, PNG o WEBP.");
+            alerts.notify({ tone: "error", title: "Imagen invalida", message: "La imagen debe ser JPG, PNG o WEBP." });
             return;
         }
 
         if (file.size > MAX_IMAGE_SIZE_BYTES) {
             setMediaFiles((current) => ({ ...current, [field]: undefined }));
             setMediaFileNames((current) => ({ ...current, [field]: "" }));
-            setError("La imagen debe pesar 5MB o menos.");
+            alerts.notify({ tone: "error", title: "Imagen muy pesada", message: "La imagen debe pesar 5MB o menos." });
             return;
         }
 
-        setError("");
         setEventForm((current) => ({ ...current, [field]: "" }));
         setMediaFiles((current) => ({ ...current, [field]: file }));
         setMediaFileNames((current) => ({ ...current, [field]: file.name }));
@@ -339,8 +342,6 @@ export function EventCustomerPage() {
     };
 
     const handleEditEvent = async (managedEvent: ManagedEvent) => {
-        setError("");
-        setNotice("");
         setEditingEventId(managedEvent.id);
         setIsLoadingSelectedEvent(true);
         setMediaFiles({});
@@ -355,7 +356,11 @@ export function EventCustomerPage() {
             setEventForm(mapEventToForm(eventDetail, managedEvent));
         } catch (loadError) {
             setEventForm(mapEventToForm(undefined, managedEvent));
-            setError(getErrorMessage(loadError));
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos cargar el evento",
+                message: getErrorMessage(loadError),
+            });
         } finally {
             setIsLoadingSelectedEvent(false);
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -363,26 +368,35 @@ export function EventCustomerPage() {
     };
 
     const handleCancelEvent = async (managedEvent: ManagedEvent) => {
-        setError("");
-        setNotice("");
-
         if (!token) {
             window.location.assign(routes.login);
             return;
         }
 
-        const shouldCancel = window.confirm(`Esta accion cancelara "${managedEvent.titulo}". Deseas continuar?`);
+        const shouldCancel = await alerts.confirm({
+            tone: "warning",
+            title: "Cancelar evento",
+            message: `Esta accion cancelara "${managedEvent.titulo}".`,
+            confirmLabel: "Cancelar evento",
+        });
 
         if (!shouldCancel) {
             return;
         }
 
-        const cancelDescription = window.prompt("Descripcion opcional de cancelacion:")?.trim();
+        const cancelDescription = await alerts.prompt({
+            tone: "warning",
+            title: "Motivo de cancelacion",
+            message: "Puedes agregar una descripcion para explicar la cancelacion.",
+            label: "Descripcion opcional",
+            placeholder: "Ej. El evento se reprogramara por causas de fuerza mayor.",
+            confirmLabel: "Continuar",
+        });
 
         setCancellingEventId(managedEvent.id);
 
         try {
-            await eventsApi.cancelEvent(token, managedEvent.id, cancelDescription || undefined);
+            await eventsApi.cancelEvent(token, managedEvent.id, cancelDescription?.trim() || undefined);
             setMyEvents((current) => current.map((event) => (
                 event.id === managedEvent.id ? { ...event, status: "cancelado" } : event
             )));
@@ -391,9 +405,17 @@ export function EventCustomerPage() {
                 resetForm();
             }
 
-            setNotice("Evento cancelado correctamente.");
+            alerts.notify({
+                tone: "success",
+                title: "Evento cancelado",
+                message: "Evento cancelado correctamente.",
+            });
         } catch (cancelError) {
-            setError(getErrorMessage(cancelError));
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos cancelar el evento",
+                message: getErrorMessage(cancelError),
+            });
         } finally {
             setCancellingEventId("");
         }
@@ -401,8 +423,6 @@ export function EventCustomerPage() {
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError("");
-        setNotice("");
 
         if (!token) {
             window.location.assign(routes.login);
@@ -410,17 +430,21 @@ export function EventCustomerPage() {
         }
 
         if (!eventForm.titulo.trim() || !eventForm.categoria_id.trim() || !eventForm.nombre_venue.trim()) {
-            setError("Completa titulo, categoria y lugar del evento.");
+            alerts.notify({ tone: "error", title: "Datos incompletos", message: "Completa titulo, categoria y lugar del evento." });
             return;
         }
 
         if (!isEditing && !functionForm.fecha_inicio) {
-            setError("Agrega la fecha y hora de inicio de la funcion.");
+            alerts.notify({ tone: "error", title: "Funcion incompleta", message: "Agrega la fecha y hora de inicio de la funcion." });
             return;
         }
 
         if (!isEditing && !validTickets.length) {
-            setError("Agrega al menos un tipo de boleto con nombre, precio y cantidad.");
+            alerts.notify({
+                tone: "error",
+                title: "Boletos incompletos",
+                message: "Agrega al menos un tipo de boleto con nombre, precio y cantidad.",
+            });
             return;
         }
 
@@ -441,7 +465,11 @@ export function EventCustomerPage() {
                 const nextEvents = await eventsApi.getMyEvents(token);
                 setMyEvents(nextEvents);
                 resetForm();
-                setNotice(publishNow ? "Evento actualizado y publicado correctamente." : "Evento actualizado correctamente.");
+                alerts.notify({
+                    tone: "success",
+                    title: "Evento actualizado",
+                    message: publishNow ? "Evento actualizado y publicado correctamente." : "Evento actualizado correctamente.",
+                });
                 return;
             }
 
@@ -464,9 +492,17 @@ export function EventCustomerPage() {
             const nextEvents = await eventsApi.getMyEvents(token);
             setMyEvents(nextEvents);
             resetForm();
-            setNotice(publishNow ? "Evento creado y publicado correctamente." : "Evento guardado como borrador correctamente.");
+            alerts.notify({
+                tone: "success",
+                title: "Evento guardado",
+                message: publishNow ? "Evento creado y publicado correctamente." : "Evento guardado como borrador correctamente.",
+            });
         } catch (submitError) {
-            setError(getErrorMessage(submitError));
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos guardar el evento",
+                message: getErrorMessage(submitError),
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -506,9 +542,6 @@ export function EventCustomerPage() {
                             </button>
                         </div>
                     </div>
-
-                    {notice && <div className={styles.success}>{notice}</div>}
-                    {error && <div className={styles.error}>{error}</div>}
 
                     <fieldset className={styles.formSection}>
                         <legend>Datos principales</legend>

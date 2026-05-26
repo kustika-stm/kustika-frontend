@@ -4,22 +4,20 @@ import { authApi } from "../../features/auth/api";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import logo from "../../shared/assets/images/logo/logo-combinado.png";
+import { useAlerts } from "../../shared/ui/alerts";
 import styles from "../login/login.module.css";
 
 type RecoveryStep = "email" | "code" | "password" | "done";
 
 export function RecoverPasswordPage() {
+    const alerts = useAlerts();
     const [step, setStep] = useState<RecoveryStep>("email");
     const [email, setEmail] = useState("");
     const [codigo, setCodigo] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
 
     const handleRequestCode = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError("");
-        setMessage("");
 
         const formData = new FormData(event.currentTarget);
         const nextEmail = String(formData.get("email") ?? "").trim();
@@ -30,10 +28,15 @@ export function RecoverPasswordPage() {
             await authApi.recoverPassword({ email: nextEmail });
             setEmail(nextEmail);
             setStep("code");
-            setMessage("Te enviamos un codigo de recuperacion a tu correo.");
+            alerts.notify({
+                tone: "success",
+                title: "Codigo enviado",
+                message: "Te enviamos un codigo de recuperacion a tu correo.",
+            });
         } catch (requestError) {
             const nextError = requestError instanceof Error ? requestError.message : "No pudimos enviar el codigo.";
-            setError(nextError);
+
+            alerts.notify({ tone: "error", title: "No pudimos enviar el codigo", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -41,8 +44,6 @@ export function RecoverPasswordPage() {
 
     const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError("");
-        setMessage("");
 
         const formData = new FormData(event.currentTarget);
         const nextCodigo = String(formData.get("codigo") ?? "").trim();
@@ -53,26 +54,30 @@ export function RecoverPasswordPage() {
             await authApi.verifyResetCode({ email, codigo: nextCodigo });
             setCodigo(nextCodigo);
             setStep("password");
-            setMessage("Codigo verificado. Ahora crea tu nueva contrasena.");
+            alerts.notify({
+                tone: "success",
+                title: "Codigo verificado",
+                message: "Ahora crea tu nueva contrasena.",
+            });
         } catch (requestError) {
             const nextError = requestError instanceof Error ? requestError.message : "El codigo no es valido.";
-            setError(nextError);
+
+            alerts.notify({ tone: "error", title: "Codigo invalido", message: nextError });
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleResendCode = async () => {
-        setError("");
-        setMessage("");
         setIsLoading(true);
 
         try {
             await authApi.recoverPassword({ email });
-            setMessage("Te reenviamos el codigo de recuperacion.");
+            alerts.notify({ tone: "success", title: "Codigo reenviado", message: "Te reenviamos el codigo de recuperacion." });
         } catch (requestError) {
             const nextError = requestError instanceof Error ? requestError.message : "No pudimos reenviar el codigo.";
-            setError(nextError);
+
+            alerts.notify({ tone: "error", title: "No pudimos reenviar el codigo", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -80,20 +85,18 @@ export function RecoverPasswordPage() {
 
     const handleResetPassword = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError("");
-        setMessage("");
 
         const formData = new FormData(event.currentTarget);
         const nuevaPassword = String(formData.get("nueva_password") ?? "");
         const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
         if (nuevaPassword.length < 8) {
-            setError("La contrasena debe tener al menos 8 caracteres.");
+            alerts.notify({ tone: "error", title: "Contrasena invalida", message: "La contrasena debe tener al menos 8 caracteres." });
             return;
         }
 
         if (nuevaPassword !== passwordConfirm) {
-            setError("Las contrasenas no coinciden.");
+            alerts.notify({ tone: "error", title: "Contrasenas distintas", message: "Las contrasenas no coinciden." });
             return;
         }
 
@@ -106,10 +109,15 @@ export function RecoverPasswordPage() {
                 nueva_password: nuevaPassword,
             });
             setStep("done");
-            setMessage("Contrasena actualizada. Ya puedes iniciar sesion.");
+            alerts.notify({
+                tone: "success",
+                title: "Contrasena actualizada",
+                message: "Ya puedes iniciar sesion.",
+            });
         } catch (requestError) {
             const nextError = requestError instanceof Error ? requestError.message : "No pudimos cambiar tu contrasena.";
-            setError(nextError);
+
+            alerts.notify({ tone: "error", title: "No pudimos cambiar tu contrasena", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -150,9 +158,6 @@ export function RecoverPasswordPage() {
                         <h1>Recuperar contrasena</h1>
                         <p>Completa los pasos para crear una nueva contrasena.</p>
                     </div>
-
-                    {error && <p className={`${styles.feedback} ${styles.error}`}>{error}</p>}
-                    {message && <p className={`${styles.feedback} ${styles.success}`}>{message}</p>}
 
                     {step === "email" && (
                         <form className={styles.verifyForm} onSubmit={handleRequestCode}>

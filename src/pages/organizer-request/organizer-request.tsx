@@ -1,8 +1,9 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
 import { clearSession, getStoredSession } from "../../entities/session";
 import { organizerRequestsApi, type OrganizerRequest } from "../../features/organizers/api";
 import { ApiError } from "../../shared/api";
+import { useAlerts } from "../../shared/ui/alerts";
 import styles from "./organizer-request.module.css";
 
 const statusLabels: Record<string, string> = {
@@ -14,12 +15,13 @@ const statusLabels: Record<string, string> = {
 const optionalFields = ["descripcion", "telefono_empresa", "email_contacto", "sitio_web"] as const;
 
 export function OrganizerRequestPage() {
+    const alerts = useAlerts();
     const session = getStoredSession();
     const token = session?.accessToken ?? "";
     const [request, setRequest] = useState<OrganizerRequest | null>(null);
     const [isLoading, setIsLoading] = useState(Boolean(token));
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+    const rejectedNoticeId = useRef("");
 
     useEffect(() => {
         if (!token) {
@@ -37,7 +39,11 @@ export function OrganizerRequestPage() {
             .catch((error) => {
                 if (isMounted) {
                     if (error instanceof ApiError && error.status !== 404) {
-                        setMessage({ type: "error", text: error.message });
+                        alerts.notify({
+                            tone: "error",
+                            title: "Solicitud no disponible",
+                            message: error.message,
+                        });
                     }
 
                     setRequest(null);
@@ -52,7 +58,21 @@ export function OrganizerRequestPage() {
         return () => {
             isMounted = false;
         };
-    }, [token]);
+    }, [alerts, token]);
+
+    useEffect(() => {
+        if (request?.status !== "rechazada" || rejectedNoticeId.current === request.id) {
+            return;
+        }
+
+        rejectedNoticeId.current = request.id;
+        alerts.notify({
+            tone: "warning",
+            title: "Solicitud rechazada",
+            message: `Solicitud rechazada${request.motivo_rechazo ? `: ${request.motivo_rechazo}` : "."} Corrige la informacion y vuelve a enviarla.`,
+            durationMs: 6800,
+        });
+    }, [alerts, request]);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -78,25 +98,23 @@ export function OrganizerRequestPage() {
         const emailContacto = String(payload.email_contacto ?? "");
         const sitioWeb = String(payload.sitio_web ?? "");
 
-        setMessage(null);
-
         if (!nombre_empresa || !rfc) {
-            setMessage({ type: "error", text: "Completa el nombre de empresa y RFC." });
+            alerts.notify({ tone: "error", title: "Datos incompletos", message: "Completa el nombre de empresa y RFC." });
             return;
         }
 
         if (telefonoEmpresa && !/^\d{10}$/.test(telefonoEmpresa.replace(/\D/g, ""))) {
-            setMessage({ type: "error", text: "El telefono de empresa debe tener 10 digitos." });
+            alerts.notify({ tone: "error", title: "Telefono invalido", message: "El telefono de empresa debe tener 10 digitos." });
             return;
         }
 
         if (emailContacto && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailContacto)) {
-            setMessage({ type: "error", text: "Escribe un email de contacto valido." });
+            alerts.notify({ tone: "error", title: "Email invalido", message: "Escribe un email de contacto valido." });
             return;
         }
 
         if (sitioWeb && !/^https?:\/\/.+\..+/.test(sitioWeb)) {
-            setMessage({ type: "error", text: "El sitio web debe iniciar con http:// o https://." });
+            alerts.notify({ tone: "error", title: "Sitio web invalido", message: "El sitio web debe iniciar con http:// o https://." });
             return;
         }
 
@@ -109,11 +127,16 @@ export function OrganizerRequestPage() {
             });
 
             setRequest(response.data);
-            setMessage({ type: "success", text: "Solicitud enviada correctamente." });
+            alerts.notify({
+                tone: "success",
+                title: "Solicitud enviada",
+                message: "Solicitud enviada correctamente.",
+            });
         } catch (error) {
-            setMessage({
-                type: "error",
-                text: error instanceof Error ? error.message : "No pudimos enviar tu solicitud.",
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos enviar tu solicitud",
+                message: error instanceof Error ? error.message : "No pudimos enviar tu solicitud.",
             });
         } finally {
             setIsSubmitting(false);
@@ -168,18 +191,6 @@ export function OrganizerRequestPage() {
                             <h2>Datos fiscales</h2>
                         </div>
                     </div>
-
-                    {request?.status === "rechazada" && (
-                        <div className={`${styles.message} ${styles.error}`} role="status" aria-live="polite">
-                            Solicitud rechazada{request.motivo_rechazo ? `: ${request.motivo_rechazo}` : "."} Corrige la informacion y vuelve a enviarla.
-                        </div>
-                    )}
-
-                    {message && (
-                        <div className={`${styles.message} ${styles[message.type]}`} role="status" aria-live="polite">
-                            {message.text}
-                        </div>
-                    )}
 
                     <div className={styles.formGrid}>
                         <label>

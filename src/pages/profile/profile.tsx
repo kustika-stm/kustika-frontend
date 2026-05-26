@@ -9,6 +9,7 @@ import {
     type SessionUser,
 } from "../../entities/session";
 import { ApiError } from "../../shared/api";
+import { useAlerts } from "../../shared/ui/alerts";
 import { profileApi } from "../../features/profile/api";
 import { getMissingProfileFields, isProfileFieldFilled, type RequiredProfileField } from "../../features/profile/model";
 import trashIcon from "../../shared/assets/icons/basura.png";
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export function ProfilePage({ mode = "view" }: Props) {
+    const alerts = useAlerts();
     const session = getStoredSession();
     const accessToken = session?.accessToken;
     const [profile, setProfile] = useState<SessionUser | null>(null);
@@ -27,8 +29,6 @@ export function ProfilePage({ mode = "view" }: Props) {
     const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState(accessToken ? "" : "Inicia sesion para ver tu perfil.");
     const [formError, setFormError] = useState("");
-    const [deleteError, setDeleteError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
     const [hasProfilePhotoError, setHasProfilePhotoError] = useState(false);
     const isEditing = mode === "edit";
     const shouldPromptCompletion = new URLSearchParams(window.location.search).get("complete") === "1";
@@ -138,7 +138,6 @@ export function ProfilePage({ mode = "view" }: Props) {
         const nextMissingFields = getMissingProfileFields(nextProfile);
 
         setFormError("");
-        setSuccessMessage("");
 
         if (nextMissingFields.length > 0) {
             setFormError(`Completa estos campos: ${nextMissingFields.map((field) => field.label).join(", ")}.`);
@@ -173,7 +172,11 @@ export function ProfilePage({ mode = "view" }: Props) {
                     ...updatedProfile,
                 },
             });
-            setSuccessMessage("Tus datos se actualizaron correctamente.");
+            alerts.notify({
+                tone: "success",
+                title: "Perfil actualizado",
+                message: "Tus datos se actualizaron correctamente.",
+            });
             window.location.assign(routes.profile);
         } catch (requestError) {
             const message = requestError instanceof ApiError && requestError.status === 404
@@ -187,17 +190,25 @@ export function ProfilePage({ mode = "view" }: Props) {
 
     const handleDeleteAccount = async () => {
         if (!accessToken) {
-            setDeleteError("Inicia sesion para eliminar tu cuenta.");
+            alerts.notify({
+                tone: "error",
+                title: "Sesion requerida",
+                message: "Inicia sesion para eliminar tu cuenta.",
+            });
             return;
         }
 
-        const shouldDelete = window.confirm("Esta accion eliminara tu cuenta de Evenxa. Deseas continuar?");
+        const shouldDelete = await alerts.confirm({
+            tone: "error",
+            title: "Eliminar cuenta",
+            message: "Esta accion eliminara tu cuenta de Evenxa y cerrara tu sesion actual.",
+            confirmLabel: "Eliminar cuenta",
+        });
 
         if (!shouldDelete) {
             return;
         }
 
-        setDeleteError("");
         setIsDeleting(true);
 
         try {
@@ -206,7 +217,12 @@ export function ProfilePage({ mode = "view" }: Props) {
             window.location.assign(routes.login);
         } catch (requestError) {
             const message = requestError instanceof Error ? requestError.message : "No pudimos eliminar tu cuenta.";
-            setDeleteError(message);
+
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos eliminar tu cuenta",
+                message,
+            });
         } finally {
             setIsDeleting(false);
         }
@@ -233,7 +249,6 @@ export function ProfilePage({ mode = "view" }: Props) {
                     )}
 
                     {formError && <p className={styles.formError}>{formError}</p>}
-                    {successMessage && <p className={styles.formSuccess}>{successMessage}</p>}
 
                     <section className={styles.panel}>
                         <div className={styles.panelHeader}>
@@ -344,7 +359,6 @@ export function ProfilePage({ mode = "view" }: Props) {
                         <h2>Eliminar cuenta</h2>
                         <p>Esta accion borra tu cuenta y cerrara tu sesion actual.</p>
                     </div>
-                    {deleteError && <p className={styles.formError}>{deleteError}</p>}
                     <button type="button" onClick={handleDeleteAccount} disabled={isDeleting}>
                         <img className={styles.deleteIcon} src={trashIcon} alt="" aria-hidden="true" />
                         {isDeleting ? "Eliminando..." : "Eliminar cuenta"}
