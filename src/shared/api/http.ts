@@ -16,9 +16,13 @@ type RefreshResponse = {
     data?: {
         accessToken?: string;
         access_token?: string;
+        refreshToken?: string;
+        refresh_token?: string;
     };
     accessToken?: string;
     access_token?: string;
+    refreshToken?: string;
+    refresh_token?: string;
 };
 
 const SESSION_STORAGE_KEY = "evenxa.session";
@@ -103,6 +107,7 @@ const refreshAccessToken = async () => {
 
     const payload = data.data ?? data;
     const accessToken = payload.accessToken ?? payload.access_token;
+    const refreshToken = payload.refreshToken ?? payload.refresh_token ?? session.refreshToken;
 
     if (!accessToken) {
         clearStoredSession();
@@ -112,15 +117,18 @@ const refreshAccessToken = async () => {
     saveStoredSession({
         ...session,
         accessToken,
+        refreshToken,
     });
 
     return accessToken;
 };
 
 const sendRequest = (path: string, options: RequestOptions, token?: string) => {
-    const { skipAuthRefresh: _skipAuthRefresh, ...requestOptions } = options;
+    const { skipAuthRefresh, ...requestOptions } = options;
     const headers = new Headers(options.headers);
     const isFormDataBody = options.body instanceof FormData;
+
+    void skipAuthRefresh;
 
     if (options.body !== undefined && !isFormDataBody) {
         headers.set("Content-Type", "application/json");
