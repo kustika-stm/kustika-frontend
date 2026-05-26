@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { routes } from "../../app/router/routes";
 import { clearSession, getStoredSession, saveSession, type SessionUser } from "../../entities/session";
-import { adminApi, type AdminUser, type AdminUserRole } from "../../features/admin/api";
+import { adminApi, type AdminEvent, type AdminUser, type AdminUserRole } from "../../features/admin/api";
 import { authApi } from "../../features/auth/api";
 import { organizerRequestsApi, type OrganizerRequest, type OrganizerRequestStatus } from "../../features/organizers/api";
 import { profileApi } from "../../features/profile/api";
@@ -12,7 +12,7 @@ import logo from "../../shared/assets/images/logo/imagotipo.png";
 import styles from "./admin.module.css";
 
 type AdminPageProps = {
-    page?: "users" | "requests" | "profile";
+    page?: "users" | "events" | "requests" | "profile";
 };
 
 const roleOptions: Array<{ value: AdminUserRole; label: string }> = [
@@ -38,6 +38,38 @@ const formatDate = (value: string) =>
         month: "short",
         year: "numeric",
     }).format(new Date(value));
+
+const formatOptionalDate = (value?: string) => {
+    if (!value) {
+        return "Sin fecha";
+    }
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime()) ? value : formatDate(value);
+};
+
+const getStatusClassName = (status: string) => {
+    const normalizedStatus = status.toLowerCase();
+
+    if (normalizedStatus === "publicado") {
+        return styles.publishedStatus;
+    }
+
+    if (normalizedStatus === "borrador") {
+        return styles.draftStatus;
+    }
+
+    if (normalizedStatus === "cancelado" || normalizedStatus === "rechazada") {
+        return styles.cancelledStatus;
+    }
+
+    if (normalizedStatus === "finalizado" || normalizedStatus === "aprobada") {
+        return styles.finishedStatus;
+    }
+
+    return styles.neutralStatus;
+};
 
 const getTokenUserId = (accessToken?: string) => {
     if (!accessToken) {
@@ -65,6 +97,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const currentUserId = getTokenUserId(token) ?? session?.user?.id ?? null;
     const displayName = [session?.user?.nombre, session?.user?.apellido_paterno].filter(Boolean).join(" ") || "Administrador";
     const [users, setUsers] = useState<AdminUser[]>([]);
+    const [events, setEvents] = useState<AdminEvent[]>([]);
     const [requests, setRequests] = useState<OrganizerRequest[]>([]);
     const [requestStatus, setRequestStatus] = useState<OrganizerRequestStatus | "todos">("pendiente");
     const [profile, setProfile] = useState<SessionUser | null>(session?.user ?? null);
@@ -73,6 +106,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const [pages, setPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [isEventsLoading, setIsEventsLoading] = useState(activePage === "events");
     const [isRequestsLoading, setIsRequestsLoading] = useState(activePage === "requests");
     const [isProfileLoading, setIsProfileLoading] = useState(activePage === "profile");
     const [processingRequestId, setProcessingRequestId] = useState<string | null>(null);
@@ -121,6 +155,32 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     useEffect(() => {
         void loadUsers();
     }, [loadUsers]);
+
+    const loadEvents = useCallback(async () => {
+        if (!token || activePage !== "events") {
+            return;
+        }
+
+        setIsEventsLoading(true);
+
+        try {
+            const response = await adminApi.getEvents(token);
+
+            setEvents(response);
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: "Eventos no disponibles",
+                message: error instanceof Error ? error.message : "No pudimos cargar los eventos.",
+            });
+        } finally {
+            setIsEventsLoading(false);
+        }
+    }, [activePage, alerts, token]);
+
+    useEffect(() => {
+        void loadEvents();
+    }, [loadEvents]);
 
     const loadRequests = useCallback(async () => {
         if (!token || activePage !== "requests") {
@@ -337,6 +397,8 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
 
     const profileName = [profile?.nombre, profile?.apellido_paterno, profile?.apellido_materno].filter(Boolean).join(" ") || profile?.email || displayName;
     const pendingRequests = requests.filter((request) => request.status === "pendiente").length;
+    const publishedEvents = events.filter((event) => event.status.toLowerCase() === "publicado").length;
+    const cancelledEvents = events.filter((event) => event.status.toLowerCase() === "cancelado").length;
 
     return (
         <main className={styles.shell}>
@@ -348,15 +410,15 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
 
                 <nav className={styles.sideNav} aria-label="Panel de administracion">
                     <a className={activePage === "users" ? styles.activeNavItem : ""} href={routes.admin}>
-                        <span className={styles.navIcon}>U</span>
                         Usuarios
                     </a>
+                    <a className={activePage === "events" ? styles.activeNavItem : ""} href={routes.adminEvents}>
+                        Eventos
+                    </a>
                     <a className={activePage === "requests" ? styles.activeNavItem : ""} href={routes.adminRequests}>
-                        <span className={styles.navIcon}>S</span>
                         Solicitudes
                     </a>
                     <a className={activePage === "profile" ? styles.activeNavItem : ""} href={routes.adminProfile}>
-                        <span className={styles.navIcon}>P</span>
                         Mi perfil
                     </a>
                 </nav>
@@ -370,7 +432,13 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                 <header className={styles.topbar}>
                     <div>
                         <span>Panel de Control</span>
-                        <h1>{activePage === "profile" ? "Mi perfil" : activePage === "requests" ? "Solicitudes" : "Usuarios"}</h1>
+                        <h1>{
+                            activePage === "profile"
+                                ? "Mi perfil"
+                                : activePage === "requests"
+                                    ? "Solicitudes"
+                                    : activePage === "events" ? "Eventos" : "Usuarios"
+                        }</h1>
                     </div>
 
                     <div className={styles.account}>
@@ -495,6 +563,73 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                     </button>
                 </div>
                 </section>
+                    </>
+                ) : activePage === "events" ? (
+                    <>
+                        <section className={styles.statsGrid} aria-label="Resumen de eventos">
+                            <article>
+                                <span>Total eventos</span>
+                                <strong>{events.length}</strong>
+                            </article>
+                            <article>
+                                <span>Publicados</span>
+                                <strong>{publishedEvents}</strong>
+                            </article>
+                            <article>
+                                <span>Cancelados</span>
+                                <strong>{cancelledEvents}</strong>
+                            </article>
+                        </section>
+
+                        <section className={styles.panel}>
+                            <div className={styles.panelHeader}>
+                                <div>
+                                    <span>Catalogo de eventos</span>
+                                    <h2>Eventos existentes</h2>
+                                </div>
+                                <button type="button" onClick={() => void loadEvents()} disabled={isEventsLoading}>
+                                    {isEventsLoading ? "Cargando" : "Actualizar"}
+                                </button>
+                            </div>
+
+                            <div className={styles.toolbar}>
+                                <p>{events.length} eventos</p>
+                            </div>
+
+                            <div className={styles.eventsList}>
+                                {events.map((event) => (
+                                    <article className={styles.eventRow} key={event.id}>
+                                        <div className={styles.eventMain}>
+                                            <strong>{event.titulo}</strong>
+                                            <p>{[event.categoria, event.venue_nombre, event.ciudad_venue].filter(Boolean).join(" - ") || "Sin categoria o venue"}</p>
+                                        </div>
+                                        <span className={getStatusClassName(event.status)}>{event.status}</span>
+                                        <div className={styles.eventDates}>
+                                            <span>Creado</span>
+                                            <strong>{formatOptionalDate(event.created_at)}</strong>
+                                        </div>
+                                        <div className={styles.eventDates}>
+                                            <span>Inicio</span>
+                                            <strong>{formatOptionalDate(event.fecha_inicio)}</strong>
+                                        </div>
+                                    </article>
+                                ))}
+
+                                {!isEventsLoading && events.length === 0 && (
+                                    <div className={styles.emptyState}>
+                                        <strong>No hay eventos cargados</strong>
+                                        <p>Aun no encontramos eventos para mostrar en el panel.</p>
+                                    </div>
+                                )}
+
+                                {isEventsLoading && (
+                                    <div className={styles.emptyState}>
+                                        <strong>Cargando eventos</strong>
+                                        <p>Estamos consultando el catalogo de eventos existentes.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
                     </>
                 ) : activePage === "requests" ? (
                     <>

@@ -9,6 +9,7 @@ export const routes = {
     eventCustomer: "/panel-eventos",
     organizerRequest: "/solicitud-organizador",
     admin: "/admin",
+    adminEvents: "/admin/eventos",
     adminRequests: "/admin/solicitudes",
     adminProfile: "/admin/perfil",
     profile: "/perfil",

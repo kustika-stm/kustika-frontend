@@ -64,10 +64,16 @@ export function AppRouter() {
         );
     }
 
-    if (pathname === routes.admin || pathname === routes.adminProfile || pathname === routes.adminRequests) {
+    if (pathname === routes.admin || pathname === routes.adminEvents || pathname === routes.adminProfile || pathname === routes.adminRequests) {
         return (
             <RoleAccess allowedRole="admin">
-                <AdminPage page={pathname === routes.adminProfile ? "profile" : pathname === routes.adminRequests ? "requests" : "users"} />
+                <AdminPage page={
+                    pathname === routes.adminProfile
+                        ? "profile"
+                        : pathname === routes.adminRequests
+                            ? "requests"
+                            : pathname === routes.adminEvents ? "events" : "users"
+                } />
             </RoleAccess>
         );
     }
