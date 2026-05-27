@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { routes } from "../../app/router/routes";
 import { getStoredSession } from "../../entities/session";
+import { EventImage } from "../../entities/event/ui/EventImage";
 import { usePublicEvent } from "../../features/events/model";
 import { isProfileComplete } from "../../features/profile/model";
 import styles from "./event-detail.module.css";
@@ -137,7 +138,7 @@ export function EventDetailPage({ eventId }: Props) {
     return (
         <main className={styles.page}>
             <section className={styles.hero}>
-                <img src={event.image} alt={event.title} className={styles.heroImage} />
+                <EventImage src={event.image} alt={event.title} className={styles.heroImage} />
                 <div className={styles.heroOverlay} />
 
                 <div className={styles.heroContent}>
