@@ -1,6 +1,7 @@
 import styles from "./event-card.module.css";
 import type { Event } from "../model/event";
 import { routes } from "../../../app/router/routes";
+import { EventImage } from "./EventImage";
 
 type Props = {
     event: Event;
@@ -9,10 +10,7 @@ type Props = {
 export function EventCard({ event }: Props) {
     return (
         <a className={styles.card} href={routes.eventDetail(event.id)} aria-label={`Ver detalle de ${event.title}`}>
-            <div
-                className={styles.image}
-                style={{ backgroundImage: `url(${event.image})` }}
-            />
+            <EventImage className={styles.image} src={event.image} alt="" aria-hidden="true" />
 
             <div className={styles.overlay} />
 

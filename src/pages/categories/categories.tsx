@@ -1,5 +1,6 @@
 import { routes } from "../../app/router/routes";
 import type { Event } from "../../entities/event/model/event";
+import { EventImage } from "../../entities/event/ui/EventImage";
 import { usePublicEvents } from "../../features/events/model";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import styles from "./categories.module.css";
@@ -100,8 +101,8 @@ export function CategoriesPage({ categoryId }: Props) {
                                 className={styles.categoryCard}
                                 href={routes.categoryDetail(category.id)}
                                 key={category.id}
-                                style={{ backgroundImage: `url(${coverImage})` }}
                             >
+                                <EventImage className={styles.categoryImage} src={coverImage} alt="" aria-hidden="true" />
                                 <div className={styles.cardShade} />
                                 <div>
                                     <span>{categoryEvents.length} evento{categoryEvents.length === 1 ? "" : "s"}</span>
@@ -143,7 +144,7 @@ export function CategoriesPage({ categoryId }: Props) {
                                 {categoryEvents.map((event) => (
                                     <article className={styles.eventRow} key={event.id}>
                                         <a className={styles.eventImage} href={routes.eventDetail(event.id)}>
-                                            <img src={event.image} alt={event.title} />
+                                            <EventImage src={event.image} alt={event.title} />
                                         </a>
 
                                         <div className={styles.eventInfo}>

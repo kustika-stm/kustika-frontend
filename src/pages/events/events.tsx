@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { routes } from "../../app/router/routes";
+import { EventImage } from "../../entities/event/ui/EventImage";
 import { EventSearchBar } from "../../features/event-search";
 import { usePublicEvents } from "../../features/events/model";
 import styles from "./events.module.css";
@@ -132,7 +133,7 @@ export function EventsPage() {
                                     href={routes.eventDetail(event.id)}
                                     aria-label={`Ver detalle de ${event.title}`}
                                 >
-                                    <img src={event.image} alt={event.title} />
+                                    <EventImage src={event.image} alt={event.title} />
                                 </a>
 
                                 <div className={styles.eventInfo}>
