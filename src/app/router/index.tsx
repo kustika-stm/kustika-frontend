@@ -12,6 +12,7 @@ import { OrganizerRequestPage } from "../../pages/organizer-request";
 import { ProfilePage } from "../../pages/profile";
 import { RecoverPasswordPage } from "../../pages/recover-password";
 import { RegisterPage } from "../../pages/register";
+import { RaffleDetailPage } from "../../pages/raffle-detail";
 import { RafflesPage } from "../../pages/raffles";
 import { getRoleHomePath, getSessionRole, getStoredSession, getTokenRole, type UserRole } from "../../entities/session";
 import { routes } from "./routes";
@@ -85,6 +86,12 @@ export function AppRouter() {
 
     if (pathname === routes.raffles) {
         return <RafflesPage />;
+    }
+
+    if (pathname.startsWith(`${routes.raffleDetailBase}/`)) {
+        const raffleId = decodeURIComponent(pathname.replace(`${routes.raffleDetailBase}/`, ""));
+
+        return <RaffleDetailPage raffleId={raffleId} />;
     }
 
     if (pathname === routes.categories) {

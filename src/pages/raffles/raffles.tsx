@@ -1,3 +1,4 @@
+import { routes } from "../../app/router/routes";
 import { raffles, type Raffle, type RaffleStatus } from "../../entities/raffle";
 import styles from "./raffles.module.css";
 
@@ -34,7 +35,7 @@ function FeaturedRaffle({ raffle }: { raffle: Raffle }) {
                 <h2>{raffle.title}</h2>
                 <p>{raffle.description}</p>
                 <Timer value={raffle.endsIn} />
-                <a className={styles.featuredCta} href={`#${raffle.id}`}>
+                <a className={styles.featuredCta} href={routes.raffleDetail(raffle.id)}>
                     Entrar por {raffle.price}
                 </a>
             </div>
@@ -58,7 +59,7 @@ function RaffleCard({ raffle }: { raffle: Raffle }) {
                         <span>Precio</span>
                         <strong>{raffle.price}</strong>
                     </div>
-                    <a href={`#${raffle.id}`}>Entrar ahora</a>
+                    <a href={routes.raffleDetail(raffle.id)}>Entrar ahora</a>
                 </div>
             </div>
         </article>

@@ -5,6 +5,8 @@ export const routes = {
     app: "/app",
     events: "/eventos",
     raffles: "/rifas",
+    raffleDetailBase: "/rifas",
+    raffleDetail: (raffleId: string) => `/rifas/${raffleId}`,
     categories: "/categorias",
     myTickets: "/mis-boletos",
     eventCustomer: "/panel-eventos",

@@ -6,7 +6,9 @@ export type Raffle = {
     subtitle: string;
     description: string;
     price: string;
+    ticketPrice: number;
     entries: string;
+    ticketsSold: string;
     endsIn: string;
     status: RaffleStatus;
     image: string;

@@ -1,2 +1,2 @@
-export { raffles } from "./model";
+export { getRaffleById, raffles } from "./model";
 export type { Raffle, RaffleStatus } from "./model";
