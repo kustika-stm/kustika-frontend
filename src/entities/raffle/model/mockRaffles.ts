@@ -1,0 +1,52 @@
+import cashDropImage from "../../../shared/assets/images/raffles/cash-drop.png";
+import gamingSuiteImage from "../../../shared/assets/images/raffles/gaming-suite.png";
+import ibizaExperienceImage from "../../../shared/assets/images/raffles/ibiza-experience.png";
+import type { Raffle } from "./raffle";
+
+export const raffles: Raffle[] = [
+    {
+        id: "ultimate-ibiza-experience",
+        title: "Ultimate Ibiza Experience",
+        subtitle: "Viaje completo para dos personas",
+        description: "7 dias de lujo, clubs VIP, hotel y acceso a yacht privado.",
+        price: "$19.99",
+        entries: "5,432 entradas",
+        endsIn: "23:59:05",
+        status: "trending",
+        image: ibizaExperienceImage,
+        featured: true,
+    },
+    {
+        id: "next-gen-gaming-suite",
+        title: "Next-Gen Gaming Suite",
+        subtitle: "RTX 4090, monitor 4K y silla premium",
+        description: "Setup completo para jugar, crear contenido y streamear.",
+        price: "$9.99",
+        entries: "2,184 entradas",
+        endsIn: "00:58:47",
+        status: "limited",
+        image: gamingSuiteImage,
+    },
+    {
+        id: "cash-drop-5000",
+        title: "$5,000 Cash Drop",
+        subtitle: "Transferencia directa al ganador",
+        description: "El premio cae directo a tu cuenta para usarlo como quieras.",
+        price: "$4.99",
+        entries: "8,910 entradas",
+        endsIn: "04:58:47",
+        status: "hot",
+        image: cashDropImage,
+    },
+    {
+        id: "festival-all-access",
+        title: "Festival All Access",
+        subtitle: "Abono VIP y backstage",
+        description: "Entradas, transporte local y acceso exclusivo para vivir el festival desde dentro.",
+        price: "$7.99",
+        entries: "1,642 entradas",
+        endsIn: "12:30:19",
+        status: "rare",
+        image: ibizaExperienceImage,
+    },
+];

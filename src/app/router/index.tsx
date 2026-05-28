@@ -12,6 +12,7 @@ import { OrganizerRequestPage } from "../../pages/organizer-request";
 import { ProfilePage } from "../../pages/profile";
 import { RecoverPasswordPage } from "../../pages/recover-password";
 import { RegisterPage } from "../../pages/register";
+import { RafflesPage } from "../../pages/raffles";
 import { getRoleHomePath, getSessionRole, getStoredSession, getTokenRole, type UserRole } from "../../entities/session";
 import { routes } from "./routes";
 
@@ -80,6 +81,10 @@ export function AppRouter() {
 
     if (pathname === routes.events) {
         return <EventsPage />;
+    }
+
+    if (pathname === routes.raffles) {
+        return <RafflesPage />;
     }
 
     if (pathname === routes.categories) {

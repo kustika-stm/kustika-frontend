@@ -109,6 +109,23 @@
     box-shadow: inset 0 0 0 1px rgba(255, 219, 51, 0.08);
 }
 
+.navDesktop .raffleLink,
+.mobileMenu .raffleLink {
+    background: linear-gradient(135deg, #ff3fc7, #fe7c66);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 900;
+    box-shadow:
+        0 10px 22px rgba(255, 63, 199, 0.22),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.navDesktop .raffleLink:hover,
+.mobileMenu .raffleLink:hover {
+    color: #fff;
+    filter: brightness(1.08);
+}
+
 .actions {
     align-items: center;
     justify-content: end;

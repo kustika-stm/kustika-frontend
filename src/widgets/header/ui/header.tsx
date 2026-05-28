@@ -9,6 +9,7 @@ import styles from "./header.module.css";
 const navLinks = [
     { label: "Inicio", href: routes.home },
     { label: "Eventos", href: routes.events },
+    { label: "Rifas", href: routes.raffles, featured: true },
     { label: "Categorias", href: routes.categories },
 ];
 
@@ -109,7 +110,10 @@ export const Header = () => {
                         {visibleNavLinks.map((link) => (
                             <a
                                 href={link.href}
-                                className={isActive(link.href) ? styles.activeLink : ""}
+                                className={[
+                                    isActive(link.href) ? styles.activeLink : "",
+                                    "featured" in link && link.featured ? styles.raffleLink : "",
+                                ].filter(Boolean).join(" ")}
                                 key={link.href}
                             >
                                 {link.label}
@@ -178,7 +182,10 @@ export const Header = () => {
                     {visibleNavLinks.map((link) => (
                         <a
                             href={link.href}
-                            className={isActive(link.href) ? styles.activeLink : ""}
+                            className={[
+                                isActive(link.href) ? styles.activeLink : "",
+                                "featured" in link && link.featured ? styles.raffleLink : "",
+                            ].filter(Boolean).join(" ")}
                             key={link.href}
                         >
                             {link.label}

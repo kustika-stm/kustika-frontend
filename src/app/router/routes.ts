@@ -4,6 +4,7 @@ export const routes = {
     home: "/",
     app: "/app",
     events: "/eventos",
+    raffles: "/rifas",
     categories: "/categorias",
     myTickets: "/mis-boletos",
     eventCustomer: "/panel-eventos",
