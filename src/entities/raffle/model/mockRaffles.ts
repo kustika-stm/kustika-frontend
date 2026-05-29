@@ -6,9 +6,9 @@ import type { Raffle } from "./raffle";
 export const raffles: Raffle[] = [
     {
         id: "ultimate-ibiza-experience",
-        title: "Ultimate Ibiza Experience",
+        title: "Experiencia de lujo en Ibiza",
         subtitle: "Viaje completo para dos personas",
-        description: "7 dias de lujo, clubs VIP, hotel y acceso a yacht privado.",
+        description: "7 días de lujo, clubes VIP, hotel y acceso a yate privado.",
         price: "$19.99",
         ticketPrice: 19.99,
         entries: "5,432 entradas",
@@ -20,9 +20,9 @@ export const raffles: Raffle[] = [
     },
     {
         id: "next-gen-gaming-suite",
-        title: "Next-Gen Gaming Suite",
+        title: "Set gamer de última generación",
         subtitle: "RTX 4090, monitor 4K y silla premium",
-        description: "Setup completo para jugar, crear contenido y streamear.",
+        description: "Equipo completo para jugar, crear contenido y transmitir en vivo.",
         price: "$9.99",
         ticketPrice: 9.99,
         entries: "2,184 entradas",
@@ -33,7 +33,7 @@ export const raffles: Raffle[] = [
     },
     {
         id: "cash-drop-5000",
-        title: "$5,000 Cash Drop",
+        title: "$5,000 en efectivo",
         subtitle: "Transferencia directa al ganador",
         description: "El premio cae directo a tu cuenta para usarlo como quieras.",
         price: "$4.99",
@@ -46,8 +46,8 @@ export const raffles: Raffle[] = [
     },
     {
         id: "festival-all-access",
-        title: "Festival All Access",
-        subtitle: "Abono VIP y backstage",
+        title: "Acceso total al festival",
+        subtitle: "Abono VIP y acceso tras bambalinas",
         description: "Entradas, transporte local y acceso exclusivo para vivir el festival desde dentro.",
         price: "$7.99",
         ticketPrice: 7.99,

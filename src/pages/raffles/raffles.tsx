@@ -3,10 +3,10 @@ import { raffles, type Raffle, type RaffleStatus } from "../../entities/raffle";
 import styles from "./raffles.module.css";
 
 const badgeLabels: Record<RaffleStatus, string> = {
-    trending: "Trending",
-    limited: "Limited",
-    hot: "Hot",
-    rare: "Rare",
+    trending: "En tendencia",
+    limited: "Limitada",
+    hot: "Popular",
+    rare: "Especial",
 };
 
 function RaffleBadge({ status }: { status: RaffleStatus }) {
@@ -16,7 +16,7 @@ function RaffleBadge({ status }: { status: RaffleStatus }) {
 function Timer({ value }: { value: string }) {
     return (
         <span className={styles.timer} aria-label={`Termina en ${value}`}>
-            <span aria-hidden="true">◎</span>
+            <span aria-hidden="true">◉</span>
             {value}
         </span>
     );
@@ -75,7 +75,7 @@ export function RafflesPage() {
             <section className={styles.hero} aria-labelledby="raffles-title">
                 <div>
                     <span>Rifas Evenxa</span>
-                    <h1 id="raffles-title">Gana experiencias, viajes y premios exclusivos.</h1>
+                    <h1 id="raffles-title">Rifas para ganar experiencias únicas.</h1>
                     <p>
                         Compra tu entrada, participa en sorteos activos y sigue el contador antes de que cierre cada rifa.
                     </p>
@@ -83,12 +83,12 @@ export function RafflesPage() {
             </section>
 
             <section className={styles.featuredSection} aria-labelledby="featured-raffle-title">
-                <h2 id="featured-raffle-title"><span aria-hidden="true">★</span> Featured Raffle</h2>
+                <h2 id="featured-raffle-title"><span aria-hidden="true">★</span> Rifa destacada</h2>
                 <FeaturedRaffle raffle={featuredRaffle} />
             </section>
 
             <section className={styles.activeSection} aria-labelledby="active-raffles-title">
-                <h2 id="active-raffles-title">Active Raffles</h2>
+                <h2 id="active-raffles-title">Rifas activas</h2>
                 <div className={styles.raffleGrid}>
                     {activeRaffles.map((raffle) => (
                         <RaffleCard raffle={raffle} key={raffle.id} />

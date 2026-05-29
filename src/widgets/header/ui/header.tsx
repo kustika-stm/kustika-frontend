@@ -10,7 +10,7 @@ const navLinks = [
     { label: "Inicio", href: routes.home },
     { label: "Eventos", href: routes.events },
     { label: "Rifas", href: routes.raffles, featured: true },
-    { label: "Categorias", href: routes.categories },
+    { label: "Categorías", href: routes.categories },
 ];
 
 const authNavLinks = [
@@ -106,7 +106,7 @@ export const Header = () => {
                 </a>
 
                 <div className={styles.navArea}>
-                    <nav className={styles.navDesktop} aria-label="Navegacion principal">
+                    <nav className={styles.navDesktop} aria-label="Navegación principal">
                         {visibleNavLinks.map((link) => (
                             <a
                                 href={link.href}
@@ -152,12 +152,12 @@ export const Header = () => {
                                 disabled={isLoggingOut}
                                 onClick={handleLogout}
                             >
-                                {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
                             </button>
                         </>
                     ) : (
                         <>
-                            <a className={styles.loginLink} href={routes.login}>Iniciar sesion</a>
+                            <a className={styles.loginLink} href={routes.login}>Iniciar sesión</a>
                             <a className={styles.cta} href={routes.register}>Registrarse</a>
                         </>
                     )}
@@ -166,7 +166,7 @@ export const Header = () => {
                 <button
                     className={styles.menuBtn}
                     type="button"
-                    aria-label={open ? "Cerrar menu" : "Abrir menu"}
+                    aria-label={open ? "Cerrar menú" : "Abrir menú"}
                     aria-expanded={open}
                     aria-controls="main-mobile-menu"
                     onClick={() => setOpen(!open)}
@@ -218,7 +218,7 @@ export const Header = () => {
                                 disabled={isLoggingOut}
                                 onClick={handleLogout}
                             >
-                                {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                                {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
                             </button>
                         </>
                     ) : (
@@ -226,7 +226,7 @@ export const Header = () => {
                             <button className={styles.ctaButton} type="button" onClick={handleCreateEvent}>
                                 Hacer evento
                             </button>
-                            <a href={routes.login}>Iniciar sesion</a>
+                            <a href={routes.login}>Iniciar sesión</a>
                             <a className={styles.cta} href={routes.register}>Registrarse</a>
                         </>
                     )}
