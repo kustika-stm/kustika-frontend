@@ -1,7 +1,7 @@
-# EVENXA - FRONTEND CONTEXT
+# KUSTIKA - FRONTEND CONTEXT
 - Por cada feature, es una rama nueva
 ## Descripción
-Evenxa es una plataforma web para la compra de boletos de conciertos y eventos.
+Kustika es una plataforma web para la compra de boletos de conciertos y eventos.
 
 Este chat está enfocado únicamente en el desarrollo del frontend.
 

@@ -19,12 +19,12 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Musica",
         status: "available",
-        organizer: "Evenxa Nights",
+        organizer: "Kustika Nights",
         capacity: 1200,
         tags: ["Electronica", "Visuales", "After"],
         highlights: [
             "Escenario principal con visuales inmersivos",
-            "Acceso digital desde tu cuenta Evenxa",
+            "Acceso digital desde tu cuenta Kustika",
             "Zona de alimentos y barras dentro del venue",
         ],
         schedule: [
@@ -83,12 +83,12 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Experiencias",
         status: "available",
-        organizer: "Evenxa Experiences",
+        organizer: "Kustika Experiences",
         capacity: 180,
         tags: ["Tour", "Urbano", "Noche"],
         highlights: [
             "Ruta nocturna con staff y transporte incluido",
-            "Tres paradas seleccionadas por el equipo Evenxa",
+            "Tres paradas seleccionadas por el equipo Kustika",
             "Pulsera digital y check-in express",
         ],
         schedule: [
@@ -147,7 +147,7 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Festival",
         status: "soon",
-        organizer: "Evenxa Live",
+        organizer: "Kustika Live",
         capacity: 850,
         tags: ["Indie", "Food", "Market"],
         highlights: [
@@ -211,13 +211,13 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Concierto",
         status: "available",
-        organizer: "Evenxa Music",
+        organizer: "Kustika Music",
         capacity: 2200,
         tags: ["Latino", "Baile", "Live"],
         highlights: [
             "Show en vivo con invitados especiales",
             "Pista central y zonas preferentes",
-            "Compra y validacion digital en Evenxa",
+            "Compra y validacion digital en Kustika",
         ],
         schedule: [
             {
@@ -275,7 +275,7 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Comedia",
         status: "available",
-        organizer: "Evenxa Comedy",
+        organizer: "Kustika Comedy",
         capacity: 320,
         tags: ["Comedia", "Standup", "Show"],
         highlights: [
@@ -339,7 +339,7 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Regional",
         status: "available",
-        organizer: "Evenxa Regional",
+        organizer: "Kustika Regional",
         capacity: 1500,
         tags: ["Regional", "Mexico", "Baile"],
         highlights: [
@@ -403,7 +403,7 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Musica latina",
         status: "available",
-        organizer: "Evenxa Latin",
+        organizer: "Kustika Latin",
         capacity: 700,
         tags: ["Latino", "Baile", "Musica"],
         highlights: [
@@ -467,7 +467,7 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Festival",
         status: "soon",
-        organizer: "Evenxa Market",
+        organizer: "Kustika Market",
         capacity: 2000,
         tags: ["Festival", "Food", "Market"],
         highlights: [
@@ -531,11 +531,11 @@ export const mockEvents: Event[] = [
         image: heroImage,
         category: "Experiencias",
         status: "available",
-        organizer: "Evenxa Experiences",
+        organizer: "Kustika Experiences",
         capacity: 120,
         tags: ["Experiencias", "Tour", "Urbano"],
         highlights: [
-            "Recorrido guiado con staff Evenxa",
+            "Recorrido guiado con staff Kustika",
             "Tres paradas sorpresa con activaciones",
             "Transporte incluido durante la ruta",
         ],

@@ -59,7 +59,7 @@ export function EventsPage() {
         <main className={styles.page}>
             <section className={styles.hero}>
                 <div>
-                    <span>Eventos Evenxa</span>
+                    <span>Eventos Kustika</span>
                     <h1>Encuentra tu proxima experiencia</h1>
                     <p>
                         Explora conciertos, festivales y experiencias seleccionadas para vivir la ciudad de otra forma.

@@ -233,7 +233,7 @@ const mapPublicEvent = (item: unknown): Event | null => {
     }
 
     const id = stringValue(record, ["id", "_id", "uuid"]);
-    const title = stringValue(record, ["titulo", "title", "nombre", "name"], "Evento Evenxa");
+    const title = stringValue(record, ["titulo", "title", "nombre", "name"], "Evento Kustika");
     const slug = stringValue(record, ["slug"], slugify(title) || id);
     const startsAt = getEventDate(record);
     const parsedDate = parseDate(startsAt);
@@ -262,10 +262,10 @@ const mapPublicEvent = (item: unknown): Event | null => {
         image: stringValue(record, ["imagen_portada", "imagen_url", "image", "image_url"], heroImage),
         category,
         status: mapStatus(stringValue(record, ["status", "estado"], "publicado")),
-        organizer: stringValue(record, ["organizador", "organizer"], "Evenxa"),
+        organizer: stringValue(record, ["organizador", "organizer"], "Kustika"),
         capacity: numberValue(record, ["capacidad", "capacity"], 0),
         tags,
-        highlights: tags.length ? tags.slice(0, 3) : ["Acceso digital desde tu cuenta Evenxa"],
+        highlights: tags.length ? tags.slice(0, 3) : ["Acceso digital desde tu cuenta Kustika"],
         schedule: getSchedule(record, time),
         ticketTiers: tickets,
         policies: [

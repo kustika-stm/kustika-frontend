@@ -3,13 +3,13 @@ import facebookIcon from "../../../shared/assets/icons/facebook.svg";
 import instagramIcon from "../../../shared/assets/icons/instagram.svg";
 import tiktokIcon from "../../../shared/assets/icons/tiktok.svg";
 import youtubeIcon from "../../../shared/assets/icons/youtube.avif";
-import logo from "../../../shared/assets/images/logo/logo-combinado.png";
+import { kustikaWordmark } from "../../../shared/assets/images/logo";
 import styles from "./footer.module.css";
 
 const socialLinks = [
     {
         label: "Instagram",
-        href: "https://www.instagram.com/evenxamx/",
+        href: "https://www.instagram.com/kustikamx/",
         icon: instagramIcon,
     },
     {
@@ -19,7 +19,7 @@ const socialLinks = [
     },
     {
         label: "TikTok",
-        href: "https://www.tiktok.com/@evenxamx",
+        href: "https://www.tiktok.com/@kustika.mx",
         icon: tiktokIcon,
     },
     {
@@ -34,8 +34,8 @@ export function Footer() {
         <footer className={styles.footer}>
             <div className={styles.container}>
                 <div className={styles.brand}>
-                    <a href={routes.home} aria-label="Evenxa inicio">
-                        <img src={logo} alt="Evenxa" />
+                    <a href={routes.home} aria-label="Kustika inicio">
+                        <img src={kustikaWordmark} alt="Kustika" />
                     </a>
 
                     <p>Vive la experiencia.</p>
@@ -56,7 +56,7 @@ export function Footer() {
                 </div>
 
                 <nav className={styles.column} aria-label="Navegacion secundaria">
-                    <h2>Evenxa</h2>
+                    <h2>Kustika</h2>
                     <a href={routes.events}>Eventos</a>
                     <a href={routes.categories}>Explorar</a>
                     <a href={routes.login}>Iniciar sesion</a>
@@ -66,7 +66,7 @@ export function Footer() {
                 <div className={styles.column}>
                     <h2>Contacto</h2>
                     <p>Queretaro, Mexico</p>
-                    <a href="mailto:Booking@evenxa.com.mx">Booking@evenxa.com.mx</a>
+                    <a href="mailto:Booking@kustika.com.mx">Booking@kustika.com.mx</a>
                     <a href="tel:+524461463538">446 146 3538</a>
                 </div>
 
@@ -77,7 +77,7 @@ export function Footer() {
                 </div>
 
                 <p className={styles.copyright}>
-                    2026 Evenxa. Todos los derechos reservados.
+                    2026 Kustika. Todos los derechos reservados.
                 </p>
             </div>
         </footer>

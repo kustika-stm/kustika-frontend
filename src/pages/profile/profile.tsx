@@ -203,7 +203,7 @@ export function ProfilePage({ mode = "view" }: Props) {
         const shouldDelete = await alerts.confirm({
             tone: "error",
             title: "Eliminar cuenta",
-            message: "Esta accion eliminara tu cuenta de Evenxa y cerrara tu sesion actual.",
+            message: "Esta accion eliminara tu cuenta de Kustika y cerrara tu sesion actual.",
             confirmLabel: "Eliminar cuenta",
         });
 
@@ -238,7 +238,7 @@ export function ProfilePage({ mode = "view" }: Props) {
                     <div>
                         <span className={styles.eyebrow}>Editar perfil</span>
                         <h1>Actualiza tus datos</h1>
-                        <p>Estos datos vienen de tu cuenta registrada en Evenxa.</p>
+                        <p>Estos datos vienen de tu cuenta registrada en Kustika.</p>
                     </div>
                 </section>
 

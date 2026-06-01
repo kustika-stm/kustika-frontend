@@ -3,7 +3,7 @@ import { routes } from "../../app/router/routes";
 import { authApi } from "../../features/auth/api";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
-import logo from "../../shared/assets/images/logo/logo-combinado.png";
+import { kustikaWordmark } from "../../shared/assets/images/logo";
 import { useAlerts } from "../../shared/ui/alerts";
 import styles from "../login/login.module.css";
 
@@ -137,7 +137,7 @@ export function RecoverPasswordPage() {
 
             <section className={styles.shell}>
                 <aside className={styles.media}>
-                    <img src={heroImage} alt="Concierto Evenxa" className={styles.mediaImage} />
+                    <img src={heroImage} alt="Concierto Kustika" className={styles.mediaImage} />
                     <div className={styles.mediaOverlay} />
                     <div className={styles.mediaContent}>
                         <span className={styles.kicker}>Acceso seguro</span>
@@ -149,7 +149,7 @@ export function RecoverPasswordPage() {
                 <section className={styles.panel}>
                     <div className={styles.copy}>
                         <div className={styles.formTopbar}>
-                            <img src={logo} alt="Evenxa" className={styles.formLogo} />
+                            <img src={kustikaWordmark} alt="Kustika" className={styles.formLogo} />
                             <a className={styles.homeLink} href={routes.home}>
                                 <img src={arrowIcon} alt="" aria-hidden="true" />
                                 Volver al inicio

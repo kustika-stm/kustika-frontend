@@ -1,7 +1,7 @@
 import type { AuthSession, UserRole } from "./session";
 import { normalizeRole } from "./roles";
 
-const SESSION_STORAGE_KEY = "evenxa.session";
+const SESSION_STORAGE_KEY = "kustika.session";
 const LEGACY_LOCAL_STORAGE_KEY = "evenxa.session";
 
 export function getStoredSession() {

@@ -25,7 +25,7 @@ type RefreshResponse = {
     refresh_token?: string;
 };
 
-const SESSION_STORAGE_KEY = "evenxa.session";
+const SESSION_STORAGE_KEY = "kustika.session";
 const LEGACY_LOCAL_STORAGE_KEY = "evenxa.session";
 
 export class ApiError extends Error {

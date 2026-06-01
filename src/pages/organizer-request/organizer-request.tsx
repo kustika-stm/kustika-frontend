@@ -154,7 +154,7 @@ export function OrganizerRequestPage() {
                 <section className={styles.hero}>
                     <span className={styles.eyebrow}>Publicar eventos</span>
                     <h1>Inicia sesion para solicitar acceso</h1>
-                    <p>Necesitas una cuenta de Evenxa para pedir aprobacion como organizador.</p>
+                    <p>Necesitas una cuenta de Kustika para pedir aprobacion como organizador.</p>
                     <a className={styles.primaryAction} href={routes.login}>Iniciar sesion</a>
                 </section>
             </main>

@@ -16,8 +16,7 @@ import facebookIcon from "../../shared/assets/icons/facebook.svg";
 import instagramIcon from "../../shared/assets/icons/instagram.svg";
 import tiktokIcon from "../../shared/assets/icons/tiktok.svg";
 import youtubeIcon from "../../shared/assets/icons/youtube.avif";
-import logo from "../../shared/assets/images/logo/logo-combinado.png";
-import imagotipo from "../../shared/assets/images/logo/imagotipo.png";
+import { kustikaMark, kustikaWordmark } from "../../shared/assets/images/logo";
 
 const essenceCards = [
     {
@@ -58,7 +57,7 @@ const sectionRoutes = [
 const socialLinks = [
     {
         label: "Instagram",
-        href: "https://www.instagram.com/evenxamx/",
+        href: "https://www.instagram.com/kustikamx/",
         icon: instagramIcon,
     },
     {
@@ -68,7 +67,7 @@ const socialLinks = [
     },
     {
         label: "TikTok",
-        href: "https://www.tiktok.com/@evenxamx",
+        href: "https://www.tiktok.com/@kustikamx",
         icon: tiktokIcon,
     },
     {
@@ -115,14 +114,14 @@ export function LandingPage() {
 
     return (
         <main className={styles.page}>
-            <nav className={styles.nav} aria-label="Evenxa landing">
+            <nav className={styles.nav} aria-label="Kustika landing">
                 <a
                     href="/inicio"
                     className={styles.brand}
-                    aria-label="Evenxa inicio"
+                    aria-label="Kustika inicio"
                     onClick={(event) => handleSectionNavigation(event, "/inicio", "inicio")}
                 >
-                    <img src={logo} alt="Evenxa" />
+                    <img src={kustikaWordmark} alt="Kustika" />
                 </a>
 
                 <div className={styles.navLinks}>
@@ -196,7 +195,7 @@ export function LandingPage() {
                 </div>
 
                 <div className={styles.heroMark} aria-hidden="true">
-                    <img src={imagotipo} alt="" />
+                    <img src={kustikaMark} alt="" />
                 </div>
             </section>
 
@@ -222,7 +221,7 @@ export function LandingPage() {
 
             <section id="nosotros" className={styles.about}>
                 <div className={styles.sectionTitle}>
-                    <h2>Somos Evenxa</h2>
+                    <h2>Somos Kustika</h2>
                     <span />
                 </div>
 
@@ -267,7 +266,7 @@ export function LandingPage() {
             </section>
 
             <section id="proximos-eventos" className={styles.upcoming}>
-                <h2>Tu próximo evento, con Evenxa</h2>
+                <h2>Tu próximo evento, con Kustika</h2>
 
                 <div
                     className={styles.accessBand}
@@ -288,7 +287,7 @@ export function LandingPage() {
 
             <footer id="contacto" className={styles.footer}>
                 <div className={styles.footerBrand}>
-                    <img src={logo} alt="Evenxa" />
+                    <img src={kustikaWordmark} alt="Kustika" />
 
                     <p>Vive la experiencia</p>
 
@@ -333,8 +332,8 @@ export function LandingPage() {
 
                     <p>Querétaro, México</p>
 
-                    <a href="mailto:Booking@evenxa.com.mx">
-                        Booking@evenxa.com.mx
+                    <a href="mailto:Booking@kustika.com.mx">
+                        Booking@kustika.com.mx
                     </a>
 
                     <a href="tel:+524461463538">
@@ -343,7 +342,7 @@ export function LandingPage() {
                 </div>
 
                 <p className={styles.copyright}>
-                    © 2026 Evenxa. Todos los derechos reservados.
+                    © 2026 Kustika. Todos los derechos reservados.
                 </p>
             </footer>
         </main>

@@ -3,7 +3,7 @@ import { routes } from "../../../app/router/routes";
 import { clearSession, getAuthSessionPhotoUrl, getSessionRole, getStoredSession, getTokenRole } from "../../../entities/session";
 import { authApi } from "../../../features/auth/api";
 import userIcon from "../../../shared/assets/icons/usuario.png";
-import logo from "../../../shared/assets/images/logo/logo-combinado.png";
+import { kustikaWordmark } from "../../../shared/assets/images/logo";
 import styles from "./header.module.css";
 
 const navLinks = [
@@ -102,7 +102,7 @@ export const Header = () => {
         <header className={styles.header}>
             <div className={styles.container}>
                 <a href={routes.home} className={styles.logoLink}>
-                    <img src={logo} alt="Evenxa logo" className={styles.logo} />
+                    <img src={kustikaWordmark} alt="Kustika logo" className={styles.logo} />
                 </a>
 
                 <div className={styles.navArea}>

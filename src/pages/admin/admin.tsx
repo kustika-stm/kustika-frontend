@@ -8,7 +8,7 @@ import { profileApi } from "../../features/profile/api";
 import { useAlerts } from "../../shared/ui/alerts";
 import trashIcon from "../../shared/assets/icons/basura.png";
 import userIcon from "../../shared/assets/icons/usuario.png";
-import logo from "../../shared/assets/images/logo/imagotipo.png";
+import { kustikaMark } from "../../shared/assets/images/logo";
 import styles from "./admin.module.css";
 
 type AdminPageProps = {
@@ -378,7 +378,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         const shouldDelete = await alerts.confirm({
             tone: "error",
             title: "Eliminar cuenta",
-            message: "Esta accion eliminara tu cuenta de Evenxa y cerrara tu sesion actual.",
+            message: "Esta accion eliminara tu cuenta de Kustika y cerrara tu sesion actual.",
             confirmLabel: "Eliminar cuenta",
         });
 
@@ -486,7 +486,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         <main className={styles.shell}>
             <aside className={styles.sidebar}>
                 <div className={styles.brand}>
-                    <img src={logo} alt="Evenxa" />
+                    <img src={kustikaMark} alt="Kustika" />
                     <span>Admin</span>
                 </div>
 

@@ -74,7 +74,7 @@ export function RafflesPage() {
         <main className={styles.page}>
             <section className={styles.hero} aria-labelledby="raffles-title">
                 <div>
-                    <span>Rifas Evenxa</span>
+                    <span>Rifas Kustika</span>
                     <h1 id="raffles-title">Rifas para ganar experiencias únicas.</h1>
                     <p>
                         Compra tu entrada, participa en sorteos activos y sigue el contador antes de que cierre cada rifa.
