@@ -70,6 +70,7 @@ export function GoogleCallbackPage() {
     const session = getSessionFromParams();
 
     if (session) {
+        window.history.replaceState(null, "", routes.googleCallback);
         saveSession(session);
         window.location.replace(getRoleHomePath(session.user?.tipo_usuario));
         return null;
