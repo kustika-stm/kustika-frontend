@@ -16,21 +16,46 @@ type UploadImageResponse = {
     url?: string;
 };
 
-export type RafflePayload = {
+export type CreateRafflePayload = {
     title: string;
     subtitle: string;
     description: string;
-    price: string;
     ticketPrice: number;
     entries: string;
-    ticketsSold: string;
     endsIn: string;
     status: RaffleStatus;
     image: string;
     featured: boolean;
 };
 
-export type UpdateRafflePayload = Partial<RafflePayload>;
+export type UpdateRafflePayload = Partial<CreateRafflePayload>;
+
+const editableRaffleFields = [
+    "title",
+    "subtitle",
+    "description",
+    "ticketPrice",
+    "entries",
+    "endsIn",
+    "status",
+    "image",
+    "featured",
+] as const;
+
+const sanitizeRafflePayload = (payload: Partial<Record<string, unknown>>): UpdateRafflePayload => {
+    return editableRaffleFields.reduce<UpdateRafflePayload>((nextPayload, field) => {
+        const value = payload[field];
+
+        if (value !== undefined) {
+            return {
+                ...nextPayload,
+                [field]: value,
+            };
+        }
+
+        return nextPayload;
+    }, {});
+};
 
 const getUploadedImageUrl = (response: UploadImageResponse) => {
     return response.data?.url ?? response.url ?? "";
@@ -69,21 +94,21 @@ export const rafflesApi = {
         return response.data.map(normalizeRaffle);
     },
 
-    async createAdminRaffle(token: string, payload: RafflePayload) {
+    async createAdminRaffle(token: string, payload: CreateRafflePayload) {
         const response = await apiRequest<RaffleResponse>("/admin/sorteos", {
             method: "POST",
             token,
-            body: payload,
+            body: sanitizeRafflePayload(payload),
         });
 
         return normalizeRaffle(response.data);
     },
 
-    async updateAdminRaffle(token: string, raffleId: string, payload: UpdateRafflePayload) {
+    async updateAdminRaffle(token: string, raffleId: string, payload: Partial<Record<string, unknown>>) {
         const response = await apiRequest<RaffleResponse>(`/admin/sorteos/${encodeURIComponent(raffleId)}`, {
             method: "PUT",
             token,
-            body: payload,
+            body: sanitizeRafflePayload(payload),
         });
 
         return normalizeRaffle(response.data);

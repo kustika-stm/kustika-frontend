@@ -6,7 +6,7 @@ import { adminApi, type AdminEvent, type AdminUser, type AdminUserRole } from ".
 import { authApi } from "../../features/auth/api";
 import { organizerRequestsApi, type OrganizerRequest, type OrganizerRequestStatus } from "../../features/organizers/api";
 import { profileApi } from "../../features/profile/api";
-import { rafflesApi, type RafflePayload } from "../../features/raffles";
+import { rafflesApi, type CreateRafflePayload } from "../../features/raffles";
 import { useAlerts } from "../../shared/ui/alerts";
 import { AdminLayout } from "./ui/AdminLayout";
 import { AdminProfilePanel } from "./ui/AdminProfilePanel";
@@ -18,10 +18,6 @@ import { getTokenUserId, usersPerPage, type AdminPageName } from "./model/adminU
 
 type AdminPageProps = {
     page?: AdminPageName;
-};
-
-const formatTicketPrice = (ticketPrice: number) => {
-    return `$${ticketPrice.toFixed(2)}`;
 };
 
 export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
@@ -511,14 +507,12 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             const image = uploadedImageFile
                 ? await rafflesApi.uploadAdminRaffleImage(currentToken, uploadedImageFile)
                 : existingImage;
-            const payload: RafflePayload = {
+            const payload: CreateRafflePayload = {
                 title,
                 subtitle,
                 description,
-                price: formatTicketPrice(ticketPrice),
                 ticketPrice,
                 entries,
-                ticketsSold: editingRaffle?.ticketsSold ?? "0",
                 endsIn,
                 status,
                 image,
