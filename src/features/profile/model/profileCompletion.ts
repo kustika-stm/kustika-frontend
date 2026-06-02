@@ -10,7 +10,7 @@ export const requiredProfileFields: Array<{
     { key: "apellido_paterno", label: "Apellido paterno" },
     { key: "apellido_materno", label: "Apellido materno" },
     { key: "email", label: "Correo" },
-    { key: "telefono", label: "Telefono" },
+    { key: "telefono", label: "Teléfono" },
 ];
 
 export const isProfileFieldFilled = (value?: string | null) => {

@@ -51,7 +51,7 @@ export function AdminProfilePanel({ profile, profileName, isLoading, isDeletingA
                     </div>
                     <div>
                         <dt>Telefono</dt>
-                        <dd>{profile?.telefono || "Sin telefono"}</dd>
+                        <dd>{profile?.telefono || "Sin teléfono"}</dd>
                     </div>
                 </dl>
             </article>
@@ -60,7 +60,7 @@ export function AdminProfilePanel({ profile, profileName, isLoading, isDeletingA
                 <div>
                     <span>Zona sensible</span>
                     <h2>Eliminar cuenta</h2>
-                    <p>Esta accion elimina tu cuenta y cierra la sesion actual.</p>
+                    <p>Esta acción elimina tu cuenta y cierra la sesión actual.</p>
                 </div>
                 <button type="button" onClick={onDeleteAccount} disabled={isDeletingAccount}>
                     <img src={trashIcon} alt="" aria-hidden="true" />

@@ -55,17 +55,17 @@ export function Footer() {
                     </div>
                 </div>
 
-                <nav className={styles.column} aria-label="Navegacion secundaria">
+                <nav className={styles.column} aria-label="Navegación secundaria">
                     <h2>Kustika</h2>
                     <a href={routes.events}>Eventos</a>
                     <a href={routes.categories}>Explorar</a>
-                    <a href={routes.login}>Iniciar sesion</a>
+                    <a href={routes.login}>Iniciar sesión</a>
                     <a href={routes.register}>Registrarse</a>
                 </nav>
 
                 <div className={styles.column}>
                     <h2>Contacto</h2>
-                    <p>Queretaro, Mexico</p>
+                    <p>Querétaro, México</p>
                     <a href="mailto:Booking@kustika.com.mx">Booking@kustika.com.mx</a>
                     <a href="tel:+524461463538">446 146 3538</a>
                 </div>
@@ -73,7 +73,7 @@ export function Footer() {
                 <div className={styles.column}>
                     <h2>Legal</h2>
                     <a href="#">Aviso de privacidad</a>
-                    <a href="#">Terminos y condiciones</a>
+                    <a href="#">Términos y condiciones</a>
                 </div>
 
                 <p className={styles.copyright}>

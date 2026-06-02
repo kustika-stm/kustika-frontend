@@ -30,13 +30,13 @@ export function RecoverPasswordPage() {
             setStep("code");
             alerts.notify({
                 tone: "success",
-                title: "Codigo enviado",
-                message: "Te enviamos un codigo de recuperacion a tu correo.",
+                title: "Código enviado",
+                message: "Te enviamos un código de recuperación a tu correo.",
             });
         } catch (requestError) {
-            const nextError = requestError instanceof Error ? requestError.message : "No pudimos enviar el codigo.";
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos enviar el código.";
 
-            alerts.notify({ tone: "error", title: "No pudimos enviar el codigo", message: nextError });
+            alerts.notify({ tone: "error", title: "No pudimos enviar el código", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -56,13 +56,13 @@ export function RecoverPasswordPage() {
             setStep("password");
             alerts.notify({
                 tone: "success",
-                title: "Codigo verificado",
-                message: "Ahora crea tu nueva contrasena.",
+                title: "Código verificado",
+                message: "Ahora crea tu nueva contraseña.",
             });
         } catch (requestError) {
-            const nextError = requestError instanceof Error ? requestError.message : "El codigo no es valido.";
+            const nextError = requestError instanceof Error ? requestError.message : "El código no es válido.";
 
-            alerts.notify({ tone: "error", title: "Codigo invalido", message: nextError });
+            alerts.notify({ tone: "error", title: "Código inválido", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -73,11 +73,11 @@ export function RecoverPasswordPage() {
 
         try {
             await authApi.recoverPassword({ email });
-            alerts.notify({ tone: "success", title: "Codigo reenviado", message: "Te reenviamos el codigo de recuperacion." });
+            alerts.notify({ tone: "success", title: "Código reenviado", message: "Te reenviamos el código de recuperación." });
         } catch (requestError) {
-            const nextError = requestError instanceof Error ? requestError.message : "No pudimos reenviar el codigo.";
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos reenviar el código.";
 
-            alerts.notify({ tone: "error", title: "No pudimos reenviar el codigo", message: nextError });
+            alerts.notify({ tone: "error", title: "No pudimos reenviar el código", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -91,12 +91,12 @@ export function RecoverPasswordPage() {
         const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
         if (nuevaPassword.length < 8) {
-            alerts.notify({ tone: "error", title: "Contrasena invalida", message: "La contrasena debe tener al menos 8 caracteres." });
+            alerts.notify({ tone: "error", title: "Contraseña inválida", message: "La contraseña debe tener al menos 8 caracteres." });
             return;
         }
 
         if (nuevaPassword !== passwordConfirm) {
-            alerts.notify({ tone: "error", title: "Contrasenas distintas", message: "Las contrasenas no coinciden." });
+            alerts.notify({ tone: "error", title: "Contraseñas distintas", message: "Las contraseñas no coinciden." });
             return;
         }
 
@@ -111,13 +111,13 @@ export function RecoverPasswordPage() {
             setStep("done");
             alerts.notify({
                 tone: "success",
-                title: "Contrasena actualizada",
-                message: "Ya puedes iniciar sesion.",
+                title: "Contraseña actualizada",
+                message: "Ya puedes iniciar sesión.",
             });
         } catch (requestError) {
-            const nextError = requestError instanceof Error ? requestError.message : "No pudimos cambiar tu contrasena.";
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos cambiar tu contraseña.";
 
-            alerts.notify({ tone: "error", title: "No pudimos cambiar tu contrasena", message: nextError });
+            alerts.notify({ tone: "error", title: "No pudimos cambiar tu contraseña", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -142,7 +142,7 @@ export function RecoverPasswordPage() {
                     <div className={styles.mediaContent}>
                         <span className={styles.kicker}>Acceso seguro</span>
                         <h2>Vuelve a entrar a tu cuenta.</h2>
-                        <p>Recupera tu acceso y continua guardando eventos, boletos y compras.</p>
+                        <p>Recupera tu acceso y continúa guardando eventos, boletos y compras.</p>
                     </div>
                 </aside>
 
@@ -155,18 +155,18 @@ export function RecoverPasswordPage() {
                                 Volver al inicio
                             </a>
                         </div>
-                        <h1>Recuperar contrasena</h1>
-                        <p>Completa los pasos para crear una nueva contrasena.</p>
+                        <h1>Recuperar contraseña</h1>
+                        <p>Completa los pasos para crear una nueva contraseña.</p>
                     </div>
 
                     {step === "email" && (
                         <form className={styles.verifyForm} onSubmit={handleRequestCode}>
                             <label className={styles.verifyField}>
-                                <span>Correo electronico</span>
+                                <span>Correo electrónico</span>
                                 <input name="email" type="email" placeholder="tu@email.com" autoComplete="email" required />
                             </label>
                             <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
-                                Enviar codigo
+                                Enviar código
                             </button>
                         </form>
                     )}
@@ -174,14 +174,14 @@ export function RecoverPasswordPage() {
                     {step === "code" && (
                         <form className={styles.verifyForm} onSubmit={handleVerifyCode}>
                             <label className={styles.verifyField}>
-                                <span>Codigo de recuperacion</span>
-                                <input name="codigo" type="text" placeholder="Codigo recibido" required />
+                                <span>Código de recuperación</span>
+                                <input name="codigo" type="text" placeholder="Código recibido" required />
                             </label>
                             <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
-                                Verificar codigo
+                                Verificar código
                             </button>
                             <button className={styles.secondaryButton} type="button" disabled={isLoading} onClick={handleResendCode}>
-                                Reenviar codigo
+                                Reenviar código
                             </button>
                             <button className={styles.secondaryButton} type="button" onClick={() => setStep("email")}>
                                 Cambiar correo
@@ -192,27 +192,27 @@ export function RecoverPasswordPage() {
                     {step === "password" && (
                         <form className={styles.verifyForm} onSubmit={handleResetPassword}>
                             <label className={styles.verifyField}>
-                                <span>Nueva contrasena</span>
+                                <span>Nueva contraseña</span>
                                 <input name="nueva_password" type="password" autoComplete="new-password" minLength={8} required />
                             </label>
                             <label className={styles.verifyField}>
-                                <span>Confirmar contrasena</span>
+                                <span>Confirmar contraseña</span>
                                 <input name="passwordConfirm" type="password" autoComplete="new-password" minLength={8} required />
                             </label>
                             <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
-                                Cambiar contrasena
+                                Cambiar contraseña
                             </button>
                         </form>
                     )}
 
                     {step === "done" && (
                         <a className={styles.verifySubmit} href={routes.login}>
-                            Iniciar sesion
+                            Iniciar sesión
                         </a>
                     )}
 
                     <p className={styles.switch}>
-                        Recordaste tu contrasena? <a href={routes.login}>Inicia sesion</a>
+                        ¿Recordaste tu contraseña? <a href={routes.login}>Inicia sesión</a>
                     </p>
                 </section>
             </section>

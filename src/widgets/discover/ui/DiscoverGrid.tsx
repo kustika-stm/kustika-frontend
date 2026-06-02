@@ -7,7 +7,7 @@ const categories = [
         className: styles.one,
         href: routes.categoryDetail("musica"),
         label: "Conciertos y noches en vivo",
-        title: "Musica",
+        title: "Música",
     },
     {
         className: styles.two,
@@ -18,8 +18,8 @@ const categories = [
     {
         className: styles.three,
         href: routes.categoryDetail("musica-latina"),
-        label: "Baile y energia",
-        title: "Musica latina",
+        label: "Baile y energía",
+        title: "Música latina",
     },
     {
         className: styles.four,
@@ -33,7 +33,7 @@ export function DiscoverGrid() {
     return (
         <section className={styles.section}>
             <div className={styles.header}>
-                <h2>Explora por categorias</h2>
+                <h2>Explora por categorías</h2>
                 <span>Encuentra eventos por el plan que traes en mente</span>
             </div>
 

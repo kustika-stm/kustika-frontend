@@ -27,7 +27,7 @@ export function ProfilePage({ mode = "view" }: Props) {
     const [isLoading, setIsLoading] = useState(Boolean(accessToken));
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [error, setError] = useState(accessToken ? "" : "Inicia sesion para ver tu perfil.");
+    const [error, setError] = useState(accessToken ? "" : "Inicia sesión para ver tu perfil.");
     const [formError, setFormError] = useState("");
     const [hasProfilePhotoError, setHasProfilePhotoError] = useState(false);
     const isEditing = mode === "edit";
@@ -93,9 +93,9 @@ export function ProfilePage({ mode = "view" }: Props) {
                     <div>
                         <span className={styles.eyebrow}>Mi perfil</span>
                         <h1>No pudimos cargar tu perfil</h1>
-                        <p>{error || "Intenta iniciar sesion nuevamente."}</p>
+                        <p>{error || "Intenta iniciar sesión nuevamente."}</p>
                     </div>
-                    <a className={styles.primaryAction} href={routes.login}>Iniciar sesion</a>
+                    <a className={styles.primaryAction} href={routes.login}>Iniciar sesión</a>
                 </section>
             </main>
         );
@@ -125,7 +125,7 @@ export function ProfilePage({ mode = "view" }: Props) {
         event.preventDefault();
 
         if (!accessToken) {
-            setFormError("Inicia sesion para actualizar tu perfil.");
+            setFormError("Inicia sesión para actualizar tu perfil.");
             return;
         }
 
@@ -147,12 +147,12 @@ export function ProfilePage({ mode = "view" }: Props) {
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextProfile.email)) {
-            setFormError("Escribe un correo valido.");
+            setFormError("Escribe un correo válido.");
             return;
         }
 
         if (!/^\d{10}$/.test(nextProfile.telefono.replace(/\D/g, ""))) {
-            setFormError("Escribe un telefono celular de 10 digitos.");
+            setFormError("Escribe un teléfono celular de 10 dígitos.");
             return;
         }
 
@@ -182,7 +182,7 @@ export function ProfilePage({ mode = "view" }: Props) {
             window.location.assign(routes.profile);
         } catch (requestError) {
             const message = requestError instanceof ApiError && requestError.status === 404
-                ? "El backend no encontro la ruta para actualizar tu perfil."
+                ? "El backend no encontró la ruta para actualizar tu perfil."
                 : requestError instanceof Error ? requestError.message : "No pudimos actualizar tu perfil.";
             setFormError(message);
         } finally {
@@ -194,8 +194,8 @@ export function ProfilePage({ mode = "view" }: Props) {
         if (!accessToken) {
             alerts.notify({
                 tone: "error",
-                title: "Sesion requerida",
-                message: "Inicia sesion para eliminar tu cuenta.",
+                title: "Sesión requerida",
+                message: "Inicia sesión para eliminar tu cuenta.",
             });
             return;
         }
@@ -203,7 +203,7 @@ export function ProfilePage({ mode = "view" }: Props) {
         const shouldDelete = await alerts.confirm({
             tone: "error",
             title: "Eliminar cuenta",
-            message: "Esta accion eliminara tu cuenta de Kustika y cerrara tu sesion actual.",
+            message: "Esta acción eliminará tu cuenta de Kustika y cerrará tu sesión actual.",
             confirmLabel: "Eliminar cuenta",
         });
 
@@ -256,7 +256,7 @@ export function ProfilePage({ mode = "view" }: Props) {
                         <div className={styles.panelHeader}>
                             <div>
                                 <span className={styles.eyebrow}>Cuenta</span>
-                                <h2>Informacion personal</h2>
+                            <h2>Información personal</h2>
                             </div>
                         </div>
 
@@ -278,7 +278,7 @@ export function ProfilePage({ mode = "view" }: Props) {
                                 <input name="email" type="email" defaultValue={profile.email} required />
                             </label>
                             <label className={isMissingField("telefono") ? styles.missingField : ""}>
-                                Telefono
+                                Teléfono
                                 <input name="telefono" type="tel" defaultValue={profile.telefono ?? ""} inputMode="numeric" required />
                             </label>
                         </div>
@@ -303,7 +303,7 @@ export function ProfilePage({ mode = "view" }: Props) {
                 <div>
                     <span className={styles.eyebrow}>Mi perfil</span>
                     <h1>{displayName}</h1>
-                    <p>Administra tus datos de cuenta, revisa tus accesos y manten tu informacion lista para futuras compras.</p>
+                    <p>Administra tus datos de cuenta, revisa tus accesos y mantén tu información lista para futuras compras.</p>
                 </div>
 
                 <a className={styles.primaryAction} href={routes.myTickets}>Ver mis boletos</a>
@@ -316,7 +316,7 @@ export function ProfilePage({ mode = "view" }: Props) {
                         <p>
                             {hasMissingFields
                                 ? `Te falta agregar: ${missingFieldNames}.`
-                                : "Revisa que tu informacion este completa antes de comprar boletos."}
+                                : "Revisa que tu información esté completa antes de comprar boletos."}
                         </p>
                         <a href={routes.editProfile}>Editar perfil</a>
                     </div>
@@ -349,8 +349,8 @@ export function ProfilePage({ mode = "view" }: Props) {
                             <dd>{profile.email}</dd>
                         </div>
                         <div className={fieldCardClassName("telefono")}>
-                            <dt>Telefono</dt>
-                            <dd>{profile.telefono || "Sin telefono"}</dd>
+                            <dt>Teléfono</dt>
+                            <dd>{profile.telefono || "Sin teléfono"}</dd>
                         </div>
                     </dl>
                 </article>
@@ -359,7 +359,7 @@ export function ProfilePage({ mode = "view" }: Props) {
                     <div>
                         <span className={styles.eyebrow}>Zona sensible</span>
                         <h2>Eliminar cuenta</h2>
-                        <p>Esta accion borra tu cuenta y cerrara tu sesion actual.</p>
+                        <p>Esta acción borra tu cuenta y cerrará tu sesión actual.</p>
                     </div>
                     <button type="button" onClick={handleDeleteAccount} disabled={isDeleting}>
                         <img className={styles.deleteIcon} src={trashIcon} alt="" aria-hidden="true" />

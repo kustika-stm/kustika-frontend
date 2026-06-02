@@ -109,7 +109,7 @@ const getErrorMessage = (error: unknown) => {
         return error.message;
     }
 
-    return "No pudimos completar la accion.";
+    return "No pudimos completar la acción.";
 };
 
 const buildEventPayload = (form: EventForm, imageUrl?: string): CreateEventPayload => {
@@ -304,7 +304,7 @@ export function EventCustomerPage() {
         if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
             setMediaFiles((current) => ({ ...current, [field]: undefined }));
             setMediaFileNames((current) => ({ ...current, [field]: "" }));
-            alerts.notify({ tone: "error", title: "Imagen invalida", message: "La imagen debe ser JPG, PNG o WEBP." });
+            alerts.notify({ tone: "error", title: "Imagen inválida", message: "La imagen debe ser JPG, PNG o WEBP." });
             return;
         }
 
@@ -376,7 +376,7 @@ export function EventCustomerPage() {
         const shouldCancel = await alerts.confirm({
             tone: "warning",
             title: "Cancelar evento",
-            message: `Esta accion cancelara "${managedEvent.titulo}".`,
+            message: `Esta acción cancelará "${managedEvent.titulo}".`,
             confirmLabel: "Cancelar evento",
         });
 
@@ -386,10 +386,10 @@ export function EventCustomerPage() {
 
         const cancelDescription = await alerts.prompt({
             tone: "warning",
-            title: "Motivo de cancelacion",
-            message: "Puedes agregar una descripcion para explicar la cancelacion.",
-            label: "Descripcion opcional",
-            placeholder: "Ej. El evento se reprogramara por causas de fuerza mayor.",
+            title: "Motivo de cancelación",
+            message: "Puedes agregar una descripción para explicar la cancelación.",
+            label: "Descripción opcional",
+            placeholder: "Ej. El evento se reprogramará por causas de fuerza mayor.",
             confirmLabel: "Continuar",
         });
 
@@ -430,12 +430,12 @@ export function EventCustomerPage() {
         }
 
         if (!eventForm.titulo.trim() || !eventForm.categoria_id.trim() || !eventForm.nombre_venue.trim()) {
-            alerts.notify({ tone: "error", title: "Datos incompletos", message: "Completa titulo, categoria y lugar del evento." });
+            alerts.notify({ tone: "error", title: "Datos incompletos", message: "Completa título, categoría y lugar del evento." });
             return;
         }
 
         if (!isEditing && !functionForm.fecha_inicio) {
-            alerts.notify({ tone: "error", title: "Funcion incompleta", message: "Agrega la fecha y hora de inicio de la funcion." });
+            alerts.notify({ tone: "error", title: "Función incompleta", message: "Agrega la fecha y hora de inicio de la función." });
             return;
         }
 
@@ -514,7 +514,7 @@ export function EventCustomerPage() {
                 <div>
                     <span className={styles.eyebrow}>Panel de eventos</span>
                     <h1>Publica y administra tus eventos</h1>
-                    <p>Crea el evento, agrega la primera funcion y configura los boletos antes de publicarlo.</p>
+                    <p>Crea el evento, agrega la primera función y configura los boletos antes de publicarlo.</p>
                 </div>
 
                 <a className={styles.secondaryAction} href={routes.profile}>Ver perfil</a>
@@ -525,7 +525,7 @@ export function EventCustomerPage() {
                     <div className={styles.panelHeader}>
                         <div>
                             <span className={styles.eyebrow}>{isEditing ? "Evento seleccionado" : "Nuevo evento"}</span>
-                            <h2>{isEditing ? "Editar evento" : "Flujo de creacion"}</h2>
+                            <h2>{isEditing ? "Editar evento" : "Flujo de creación"}</h2>
                         </div>
                         <div className={styles.headerActions}>
                             {isEditing && (
@@ -548,7 +548,7 @@ export function EventCustomerPage() {
 
                         <div className={styles.formGrid}>
                             <label>
-                                Titulo
+                                Título
                                 <input
                                     value={eventForm.titulo}
                                     onChange={(event) => handleEventFieldChange("titulo", event.target.value)}
@@ -557,7 +557,7 @@ export function EventCustomerPage() {
                             </label>
 
                             <label>
-                                Categoria
+                                Categoría
                                 <select
                                     value={eventForm.categoria_id}
                                     onChange={(event) => handleEventFieldChange("categoria_id", event.target.value)}
@@ -565,7 +565,7 @@ export function EventCustomerPage() {
                                     required
                                 >
                                     <option value="">
-                                        {categories.length ? "Selecciona una categoria" : "Categorias no disponibles"}
+                                        {categories.length ? "Selecciona una categoría" : "Categorías no disponibles"}
                                     </option>
                                     {categories.map((category) => (
                                         <option value={category.id} key={category.id}>{category.nombre}</option>
@@ -573,7 +573,7 @@ export function EventCustomerPage() {
                                 </select>
                                 {categoriesStatus && (
                                     <span className={styles.fieldHint}>
-                                        No pudimos cargar categorias desde /categorias: {categoriesStatus}
+                                        No pudimos cargar categorías desde /categorias: {categoriesStatus}
                                     </span>
                                 )}
                             </label>
@@ -583,13 +583,13 @@ export function EventCustomerPage() {
                                 <input
                                     value={eventForm.nombre_venue}
                                     onChange={(event) => handleEventFieldChange("nombre_venue", event.target.value)}
-                                    placeholder="Estadio, foro, salon o recinto"
+                                    placeholder="Estadio, foro, salón o recinto"
                                     required
                                 />
                             </label>
 
                             <label>
-                                Edad minima
+                                Edad mínima
                                 <input
                                     type="number"
                                     min="0"
@@ -599,16 +599,16 @@ export function EventCustomerPage() {
                             </label>
 
                             <label>
-                                Ciudad del venue
+                                Ciudad del recinto
                                 <input
                                     value={eventForm.ciudad_venue}
                                     onChange={(event) => handleEventFieldChange("ciudad_venue", event.target.value)}
-                                    placeholder="Queretaro"
+                                    placeholder="Querétaro"
                                 />
                             </label>
 
                             <label>
-                                Direccion del venue
+                                Dirección del recinto
                                 <input
                                     value={eventForm.direccion_venue}
                                     onChange={(event) => handleEventFieldChange("direccion_venue", event.target.value)}
@@ -617,16 +617,16 @@ export function EventCustomerPage() {
                             </label>
 
                             <label className={styles.fullField}>
-                                Descripcion corta
+                                Descripción corta
                                 <input
                                     value={eventForm.descripcion_corta}
                                     onChange={(event) => handleEventFieldChange("descripcion_corta", event.target.value)}
-                                    placeholder="Resumen para cards y listados"
+                                    placeholder="Resumen para tarjetas y listados"
                                 />
                             </label>
 
                             <label className={styles.fullField}>
-                                Descripcion
+                                Descripción
                                 <textarea
                                     rows={5}
                                     value={eventForm.descripcion}
@@ -641,7 +641,7 @@ export function EventCustomerPage() {
 
                         <div className={styles.formGrid}>
                             <label>
-                                Imagen portada
+                                Imagen de portada
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/webp"
@@ -660,7 +660,7 @@ export function EventCustomerPage() {
                                 <input
                                     value={eventForm.tags}
                                     onChange={(event) => handleEventFieldChange("tags", event.target.value)}
-                                    placeholder="reggaeton, musica"
+                                    placeholder="reguetón, música"
                                 />
                             </label>
 
@@ -670,7 +670,7 @@ export function EventCustomerPage() {
                                     rows={3}
                                     value={eventForm.artistas}
                                     onChange={(event) => handleEventFieldChange("artistas", event.target.value)}
-                                    placeholder="Un artista por linea o separados por coma"
+                                    placeholder="Un artista por línea o separados por coma"
                                 />
                             </label>
                         </div>
@@ -678,15 +678,15 @@ export function EventCustomerPage() {
 
                     {!isEditing && (
                     <fieldset className={styles.formSection}>
-                        <legend>Funcion</legend>
+                        <legend>Función</legend>
 
                         <div className={styles.formGrid}>
                             <label>
-                                Nombre de funcion
+                                Nombre de la función
                                 <input
                                     value={functionForm.nombre}
                                     onChange={(event) => handleFunctionFieldChange("nombre", event.target.value)}
-                                    placeholder="Funcion Viernes"
+                                    placeholder="Función Viernes"
                                 />
                             </label>
 
@@ -784,7 +784,7 @@ export function EventCustomerPage() {
                                         </label>
 
                                         <label>
-                                            Cargo servicio
+                                            Cargo por servicio
                                             <input
                                                 type="number"
                                                 min="0"
@@ -795,7 +795,7 @@ export function EventCustomerPage() {
                                         </label>
 
                                         <label>
-                                            Max por orden
+                                            Máximo por orden
                                             <input
                                                 type="number"
                                                 min="1"
@@ -830,7 +830,7 @@ export function EventCustomerPage() {
                     )}
 
                     <fieldset className={styles.formSection}>
-                        <legend>Publicacion</legend>
+                        <legend>Publicación</legend>
 
                         <label className={styles.publishToggle}>
                             <input
@@ -838,7 +838,7 @@ export function EventCustomerPage() {
                                 checked={publishNow}
                                 onChange={(event) => setPublishNow(event.target.checked)}
                             />
-                            {isEditing ? "Publicar despues de actualizar" : "Publicar al terminar"}
+                            {isEditing ? "Publicar después de actualizar" : "Publicar al terminar"}
                         </label>
                     </fieldset>
                 </form>
@@ -862,7 +862,7 @@ export function EventCustomerPage() {
                                 <article className={styles.eventItem} key={event.id}>
                                     <div>
                                         <strong>{event.titulo}</strong>
-                                        <p>{[event.categoria, event.venue_nombre].filter(Boolean).join(" - ") || "Sin categoria o venue"}</p>
+                                        <p>{[event.categoria, event.venue_nombre].filter(Boolean).join(" - ") || "Sin categoría o recinto"}</p>
                                     </div>
                                     <div className={styles.eventActions}>
                                         <span className={styles.statusPill}>{event.status}</span>
@@ -889,8 +889,8 @@ export function EventCustomerPage() {
                         </div>
                     ) : (
                         <div className={styles.emptyState}>
-                            <strong>Aun no tienes eventos</strong>
-                            <p>Crea tu primer borrador con funcion y boletos para publicarlo cuando este listo.</p>
+                            <strong>Aún no tienes eventos</strong>
+                            <p>Crea tu primer borrador con función y boletos para publicarlo cuando esté listo.</p>
                         </div>
                     )}
                 </aside>

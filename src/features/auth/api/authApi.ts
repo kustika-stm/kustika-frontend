@@ -81,7 +81,7 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
     const refreshToken = payload.refreshToken ?? payload.refresh_token;
 
     if (!accessToken || !refreshToken) {
-        throw new Error("El backend no regreso tokens de sesion.");
+        throw new Error("El backend no regresó tokens de sesión.");
     }
 
     const tokenRole = getTokenRole(accessToken);

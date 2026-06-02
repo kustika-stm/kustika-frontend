@@ -22,8 +22,8 @@ export function RegisterPage() {
             setPendingEmail(values.email);
             alerts.notify({
                 tone: "success",
-                title: "Codigo enviado",
-                message: "Te enviamos un codigo al correo. Tienes 15 minutos para verificarlo.",
+                title: "Código enviado",
+                message: "Te enviamos un código al correo. Tienes 15 minutos para verificarlo.",
             });
         } catch (requestError) {
             const nextError = requestError instanceof Error ? requestError.message : "No pudimos crear la cuenta.";
@@ -47,13 +47,13 @@ export function RegisterPage() {
             alerts.notify({
                 tone: "success",
                 title: "Correo verificado",
-                message: "Ya puedes iniciar sesion.",
+                message: "Ya puedes iniciar sesión.",
             });
             window.setTimeout(() => window.location.assign(routes.login), 900);
         } catch (requestError) {
-            const nextError = requestError instanceof Error ? requestError.message : "No pudimos verificar el codigo.";
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos verificar el código.";
 
-            alerts.notify({ tone: "error", title: "No pudimos verificar el codigo", message: nextError });
+            alerts.notify({ tone: "error", title: "No pudimos verificar el código", message: nextError });
         } finally {
             setIsLoading(false);
         }
@@ -64,11 +64,11 @@ export function RegisterPage() {
 
         try {
             await authApi.resendCode({ email: pendingEmail });
-            alerts.notify({ tone: "success", title: "Codigo reenviado", message: "Te enviamos un codigo nuevo." });
+            alerts.notify({ tone: "success", title: "Código reenviado", message: "Te enviamos un código nuevo." });
         } catch (requestError) {
-            const nextError = requestError instanceof Error ? requestError.message : "No pudimos reenviar el codigo.";
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos reenviar el código.";
 
-            alerts.notify({ tone: "error", title: "No pudimos reenviar el codigo", message: nextError });
+            alerts.notify({ tone: "error", title: "No pudimos reenviar el código", message: nextError });
         } finally {
             setIsResending(false);
         }
@@ -83,7 +83,7 @@ export function RegisterPage() {
                     <div className={styles.mediaContent}>
                         <span className={styles.kicker}>Accesos digitales</span>
                         <h2>Compra boletos con una cuenta lista para crecer.</h2>
-                        <p>Este espacio quedo preparado para imagen ahora y video despues.</p>
+                        <p>Este espacio quedó preparado para imagen ahora y video después.</p>
                     </div>
                 </aside>
 
@@ -97,13 +97,13 @@ export function RegisterPage() {
                             </a>
                         </div>
                         <h1>Crear cuenta</h1>
-                        <p>Registrate para comprar boletos y recibir tus accesos digitales.</p>
+                        <p>Regístrate para comprar boletos y recibir tus accesos digitales.</p>
                     </div>
 
                     {pendingEmail ? (
                         <form className={styles.verifyForm} onSubmit={handleVerifyEmail}>
                             <label className={styles.verifyField}>
-                                <span>Codigo de verificacion</span>
+                                <span>Código de verificación</span>
                                 <input
                                     name="codigo"
                                     type="text"
@@ -127,7 +127,7 @@ export function RegisterPage() {
                                 disabled={isResending}
                                 onClick={handleResendCode}
                             >
-                                {isResending ? "Enviando..." : "Reenviar codigo"}
+                                {isResending ? "Enviando..." : "Reenviar código"}
                             </button>
                         </form>
                     ) : (
@@ -135,7 +135,7 @@ export function RegisterPage() {
                     )}
 
                     <p className={styles.switch}>
-                        Ya tienes cuenta? <a href={routes.login}>Inicia sesion</a>
+                        ¿Ya tienes cuenta? <a href={routes.login}>Inicia sesión</a>
                     </p>
                 </section>
             </section>

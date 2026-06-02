@@ -45,8 +45,8 @@ export function AuthForm(props: Props) {
             if (password.length < 8) {
                 alerts.notify({
                     tone: "error",
-                    title: "Contrasena invalida",
-                    message: "La contrasena debe tener al menos 8 caracteres.",
+                    title: "Contraseña inválida",
+                    message: "La contraseña debe tener al menos 8 caracteres.",
                 });
                 return;
             }
@@ -54,8 +54,8 @@ export function AuthForm(props: Props) {
             if (password !== passwordConfirm) {
                 alerts.notify({
                     tone: "error",
-                    title: "Contrasenas distintas",
-                    message: "Las contrasenas no coinciden.",
+                    title: "Contraseñas distintas",
+                    message: "Las contraseñas no coinciden.",
                 });
                 return;
             }
@@ -85,32 +85,32 @@ export function AuthForm(props: Props) {
 
                     <label className={styles.field}>
                         <span>Apellido paterno</span>
-                        <input name="apellido_paterno" type="text" placeholder="Ej. Garcia" autoComplete="family-name" required />
+                        <input name="apellido_paterno" type="text" placeholder="Ej. García" autoComplete="family-name" required />
                     </label>
 
                     <label className={styles.field}>
                         <span>Apellido materno</span>
-                        <input name="apellido_materno" type="text" placeholder="Ej. Lopez" required />
+                        <input name="apellido_materno" type="text" placeholder="Ej. López" required />
                     </label>
 
                     <label className={styles.field}>
-                        <span>Telefono</span>
+                        <span>Teléfono</span>
                         <input name="telefono" type="tel" placeholder="4421234567" autoComplete="tel" required />
                     </label>
                 </>
             )}
 
             <label className={styles.field}>
-                <span>Correo electronico</span>
+                <span>Correo electrónico</span>
                 <input name="email" type="email" placeholder="tu@email.com" autoComplete="email" required />
             </label>
 
             <label className={styles.field}>
-                <span>Contrasena</span>
+                <span>Contraseña</span>
                 <input
                     name="password"
                     type="password"
-                    placeholder="Tu contrasena"
+                    placeholder="Tu contraseña"
                     autoComplete={isRegister ? "new-password" : "current-password"}
                     minLength={8}
                     required
@@ -119,11 +119,11 @@ export function AuthForm(props: Props) {
 
             {isRegister && (
                 <label className={styles.field}>
-                    <span>Confirmar contrasena</span>
+                    <span>Confirmar contraseña</span>
                     <input
                         name="passwordConfirm"
                         type="password"
-                        placeholder="Repite tu contrasena"
+                        placeholder="Repite tu contraseña"
                         autoComplete="new-password"
                         minLength={8}
                         required
@@ -132,7 +132,7 @@ export function AuthForm(props: Props) {
             )}
 
             <button className={styles.submit} type="submit" disabled={props.isLoading}>
-                {props.isLoading ? "Procesando..." : isRegister ? "Crear cuenta" : "Iniciar sesion"}
+                {props.isLoading ? "Procesando..." : isRegister ? "Crear cuenta" : "Iniciar sesión"}
             </button>
         </form>
     );

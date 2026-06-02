@@ -84,7 +84,7 @@ export function GoogleCallbackPage() {
                     Volver al inicio
                 </a>
                 <h1>No pudimos completar el inicio con Google</h1>
-                <p>El backend no regreso los tokens de sesion al frontend.</p>
+                <p>El backend no regresó los tokens de sesión al frontend.</p>
             </section>
         </main>
     );

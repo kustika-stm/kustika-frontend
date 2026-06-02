@@ -19,38 +19,38 @@ type Category = {
 const categories: Category[] = [
     {
         id: "musica",
-        name: "Musica",
-        description: "Conciertos, sesiones en vivo y noches con energia sonora.",
-        searchTerms: ["musica", "electronica", "indie", "live", "concierto", "festival"],
+        name: "Música",
+        description: "Conciertos, sesiones en vivo y noches con energía sonora.",
+        searchTerms: ["música", "musica", "electrónica", "electronica", "indie", "live", "concierto", "festival"],
     },
     {
         id: "musica-latina",
-        name: "Musica latina",
+        name: "Música latina",
         description: "Ritmos latinos, baile y experiencias para celebrar.",
         searchTerms: ["latino", "baile", "mestiza", "concierto"],
     },
     {
         id: "regional",
         name: "Regional",
-        description: "Eventos con identidad local, fiesta y sonidos de raiz.",
-        searchTerms: ["regional", "festival", "mexico"],
+        description: "Eventos con identidad local, fiesta y sonidos de raíz.",
+        searchTerms: ["regional", "festival", "méxico", "mexico"],
     },
     {
         id: "comedia",
         name: "Comedia",
-        description: "Noches para reir, compartir y descubrir talento en vivo.",
+        description: "Noches para reír, compartir y descubrir talento en vivo.",
         searchTerms: ["comedia", "standup", "show"],
     },
     {
         id: "experiencias",
         name: "Experiencias",
-        description: "Tours, rutas y planes especiales fuera del formato clasico.",
+        description: "Tours, rutas y planes especiales fuera del formato clásico.",
         searchTerms: ["experiencias", "tour", "urbano", "noche"],
     },
     {
         id: "festival",
         name: "Festival",
-        description: "Lineups, comida, mercado y eventos para pasar el dia completo.",
+        description: "Lineups, comida, mercado y eventos para pasar el día completo.",
         searchTerms: ["festival", "food", "market", "indie"],
     },
 ];
@@ -80,18 +80,18 @@ export function CategoriesPage({ categoryId }: Props) {
         <main className={styles.page}>
             <section className={styles.hero}>
                 <div>
-                    <span>Categorias</span>
+                    <span>Categorías</span>
                     <h1>{selectedCategory ? selectedCategory.name : "Explora por tipo de evento"}</h1>
                     <p>
                         {selectedCategory
                             ? selectedCategory.description
-                            : "Encuentra experiencias por genero, energia y plan. Entra a una categoria para ver eventos relacionados."}
+                            : "Encuentra experiencias por género, energía y plan. Entra a una categoría para ver eventos relacionados."}
                     </p>
                 </div>
             </section>
 
             {!selectedCategory && (
-                <section className={styles.categoryGrid} aria-label="Categorias de eventos">
+                <section className={styles.categoryGrid} aria-label="Categorías de eventos">
                     {categories.map((category) => {
                         const categoryEvents = getCategoryEvents(category, events);
                         const coverImage = categoryEvents[0]?.image ?? heroImage;
@@ -169,7 +169,7 @@ export function CategoriesPage({ categoryId }: Props) {
                             </div>
                         ) : (
                             <div className={styles.emptyState}>
-                                <h3>Aun no hay eventos en esta categoria.</h3>
+                                <h3>Aún no hay eventos en esta categoría.</h3>
                                 <p>Pronto agregaremos nuevas experiencias.</p>
                             </div>
                         )}

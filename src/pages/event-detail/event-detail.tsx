@@ -66,7 +66,7 @@ export function EventDetailPage({ eventId }: Props) {
             <main className={styles.notFound}>
                 <span>Cargando evento</span>
                 <h1>Estamos consultando los detalles.</h1>
-                <p>Un momento, estamos trayendo la informacion actualizada del evento.</p>
+                <p>Un momento, estamos trayendo la información actualizada del evento.</p>
             </main>
         );
     }
@@ -75,7 +75,7 @@ export function EventDetailPage({ eventId }: Props) {
         return (
             <main className={styles.notFound}>
                 <span>No pudimos cargar el evento</span>
-                <h1>Intentalo de nuevo en unos minutos.</h1>
+                <h1>Inténtalo de nuevo en unos minutos.</h1>
                 <p>{error}</p>
                 <a href={routes.events}>Volver a eventos</a>
             </main>
@@ -87,7 +87,7 @@ export function EventDetailPage({ eventId }: Props) {
             <main className={styles.notFound}>
                 <span>Evento no encontrado</span>
                 <h1>No encontramos este evento.</h1>
-                <p>Puede que el enlace haya cambiado o que el evento ya no este disponible.</p>
+                <p>Puede que el enlace haya cambiado o que el evento ya no esté disponible.</p>
                 <a href={routes.home}>Volver a eventos</a>
             </main>
         );
@@ -104,7 +104,7 @@ export function EventDetailPage({ eventId }: Props) {
                 <p>{primaryTicket.description}</p>
             </div>
 
-            <div className={styles.eventFacts} aria-label="Fecha, hora y ubicacion del evento">
+            <div className={styles.eventFacts} aria-label="Fecha, hora y ubicación del evento">
                 <div>
                     <span>Fecha</span>
                     <strong>{event.date}</strong>
@@ -150,7 +150,7 @@ export function EventDetailPage({ eventId }: Props) {
                         <p>{event.subtitle}</p>
                     </div>
 
-                    <div className={styles.heroMeta} aria-label="Informacion principal del evento">
+                    <div className={styles.heroMeta} aria-label="Información principal del evento">
                         <div>
                             <span>Fecha</span>
                             <strong>{event.date}</strong>
@@ -213,7 +213,7 @@ export function EventDetailPage({ eventId }: Props) {
                             </div>
                             <div>
                                 <span className={styles.eyebrow}>Estado</span>
-                                <strong>{event.status === "available" ? "Disponible" : event.status === "soon" ? "Proximamente" : "Agotado"}</strong>
+                                <strong>{event.status === "available" ? "Disponible" : event.status === "soon" ? "Próximamente" : "Agotado"}</strong>
                             </div>
                         </div>
                     </section>
