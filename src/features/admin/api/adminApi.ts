@@ -76,6 +76,24 @@ const getArrayPayload = (payload: unknown) => {
     return [];
 };
 
+const mergeRecords = (summary: unknown, detail: unknown) => {
+    const summaryRecord = asRecord(summary);
+    const detailRecord = asRecord(unwrapData(detail));
+
+    if (!summaryRecord) {
+        return detailRecord ?? detail;
+    }
+
+    if (!detailRecord) {
+        return summary;
+    }
+
+    return {
+        ...summaryRecord,
+        ...detailRecord,
+    };
+};
+
 const stringValue = (record: Record<string, unknown>, keys: string[]) => {
     for (const key of keys) {
         const value = record[key];
@@ -92,6 +110,38 @@ const nestedName = (record: Record<string, unknown>, key: string) => {
     const nested = asRecord(record[key]);
 
     return nested ? stringValue(nested, ["nombre", "name", "titulo", "title"]) : "";
+};
+
+const asArray = (value: unknown) => Array.isArray(value) ? value : [];
+
+const getFunctionRecords = (record: Record<string, unknown>) => {
+    const fromArrays = [
+        ...asArray(record.funciones),
+        ...asArray(record.functions),
+        ...asArray(record.horarios),
+    ];
+    const fromSingles = [
+        asRecord(record.funcion),
+        asRecord(record.function),
+        asRecord(record.proxima_funcion),
+        asRecord(record.nextFunction),
+    ].filter((item): item is Record<string, unknown> => Boolean(item));
+
+    return [...fromArrays, ...fromSingles]
+        .map(asRecord)
+        .filter((item): item is Record<string, unknown> => Boolean(item));
+};
+
+const getEventStartDate = (record: Record<string, unknown>) => {
+    const directDate = stringValue(record, ["fecha_inicio", "fecha", "date", "starts_at", "startDate"]);
+
+    if (directDate) {
+        return directDate;
+    }
+
+    const functionRecord = getFunctionRecords(record)[0];
+
+    return functionRecord ? stringValue(functionRecord, ["fecha_inicio", "fecha", "date", "starts_at", "startDate"]) : "";
 };
 
 const mapAdminEvent = (item: unknown): AdminEvent | null => {
@@ -116,8 +166,30 @@ const mapAdminEvent = (item: unknown): AdminEvent | null => {
         venue_nombre: nestedName(record, "venue") || stringValue(record, ["venue_nombre", "nombre_venue", "venueName", "venue"]),
         ciudad_venue: stringValue(record, ["ciudad_venue", "ciudad", "city"]),
         created_at: stringValue(record, ["created_at", "createdAt"]),
-        fecha_inicio: stringValue(record, ["fecha_inicio", "fecha", "date"]),
+        fecha_inicio: getEventStartDate(record),
     };
+};
+
+const hydrateAdminEvents = async (events: unknown[], token: string) => {
+    return Promise.all(events.map(async (event) => {
+        const record = asRecord(event);
+        const eventId = record ? stringValue(record, ["id", "_id", "uuid"]) : "";
+
+        if (!eventId) {
+            return event;
+        }
+
+        try {
+            const detail = await apiRequest<unknown>(`/eventos/${encodeURIComponent(eventId)}`, {
+                method: "GET",
+                token,
+            });
+
+            return mergeRecords(event, detail);
+        } catch {
+            return event;
+        }
+    }));
 };
 
 export const adminApi = {
@@ -150,14 +222,18 @@ export const adminApi = {
                 token,
             });
 
-            return getArrayPayload(response).map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
+            const hydratedEvents = await hydrateAdminEvents(getArrayPayload(response), token);
+
+            return hydratedEvents.map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
         } catch {
             const response = await apiRequest<unknown>("/eventos", {
                 method: "GET",
                 token,
             });
 
-            return getArrayPayload(response).map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
+            const hydratedEvents = await hydrateAdminEvents(getArrayPayload(response), token);
+
+            return hydratedEvents.map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
         }
     },
 };
