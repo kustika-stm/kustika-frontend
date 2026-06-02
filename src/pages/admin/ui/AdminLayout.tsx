@@ -49,7 +49,7 @@ export function AdminLayout({ activePage, displayName, isLoggingOut, onLogout, c
                 </nav>
 
                 <button className={styles.sidebarLogout} type="button" onClick={onLogout} disabled={isLoggingOut}>
-                    {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
+                    {isLoggingOut ? "Cerrando..." : "Cerrar sesión"}
                 </button>
             </aside>
 

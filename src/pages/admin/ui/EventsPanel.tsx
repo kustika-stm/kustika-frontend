@@ -48,7 +48,7 @@ export function EventsPanel({ events, isLoading, publishedEvents, cancelledEvent
                         <article className={styles.eventRow} key={event.id}>
                             <div className={styles.eventMain}>
                                 <strong>{event.titulo}</strong>
-                                <p>{[event.categoria, event.venue_nombre, event.ciudad_venue].filter(Boolean).join(" - ") || "Sin categoria o venue"}</p>
+                                <p>{[event.categoria, event.venue_nombre, event.ciudad_venue].filter(Boolean).join(" - ") || "Sin categoría o recinto"}</p>
                             </div>
                             <span className={getStatusClassName(styles, event.status)}>{event.status}</span>
                             <div className={styles.eventDates}>
@@ -65,14 +65,14 @@ export function EventsPanel({ events, isLoading, publishedEvents, cancelledEvent
                     {!isLoading && events.length === 0 && (
                         <div className={styles.emptyState}>
                             <strong>No hay eventos cargados</strong>
-                            <p>Aun no encontramos eventos para mostrar en el panel.</p>
+                            <p>Aún no encontramos eventos para mostrar en el panel.</p>
                         </div>
                     )}
 
                     {isLoading && (
                         <div className={styles.emptyState}>
                             <strong>Cargando eventos</strong>
-                            <p>Estamos consultando el catalogo de eventos existentes.</p>
+                            <p>Estamos consultando el catálogo de eventos existentes.</p>
                         </div>
                     )}
                 </div>

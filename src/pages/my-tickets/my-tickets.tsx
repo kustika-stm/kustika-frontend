@@ -83,7 +83,7 @@ export function MyTicketsPage() {
                     <span className={styles.eyebrow}>Mis boletos</span>
                     <h1>Tus e-tickets en un solo lugar</h1>
                     <p>
-                        Consulta tus accesos digitales, revisa el codigo de entrada y vuelve al detalle del evento cuando lo necesites.
+                        Consulta tus accesos digitales, revisa el código de entrada y vuelve al detalle del evento cuando lo necesites.
                     </p>
                 </div>
 
@@ -97,7 +97,7 @@ export function MyTicketsPage() {
                 <div className={styles.sectionHeader}>
                     <div>
                         <h2 id="active-tickets-title">Proximos accesos</h2>
-                        <p>Ten listo tu e-ticket para entrar mas rapido al venue.</p>
+                        <p>Ten listo tu boleto digital para entrar más rápido al recinto.</p>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@ export function MyTicketsPage() {
                 <div className={styles.sectionHeader}>
                     <div>
                         <h2 id="past-tickets-title">Historial</h2>
-                        <p>Boletos usados o compras que ya no estan activas.</p>
+                        <p>Boletos usados o compras que ya no están activas.</p>
                     </div>
                 </div>
 

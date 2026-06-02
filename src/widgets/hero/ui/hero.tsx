@@ -26,7 +26,7 @@ export function Hero() {
                         </a>
 
                         <a className={styles.secondary} href={routes.categories}>
-                            Ver categorias
+                            Ver categorías
                         </a>
                     </div>
                 </div>

@@ -6,32 +6,32 @@ export const mockEvents: Event[] = [
         id: "evt-neon-eclipse-2026",
         slug: "neon-eclipse",
         title: "Neon Eclipse",
-        subtitle: "Una noche de electronica, visuales inmersivos y energia al limite.",
+        subtitle: "Una noche de electrónica, visuales inmersivos y energía al límite.",
         description:
-            "Neon Eclipse reune DJs nacionales, barras invitadas y una produccion visual de alto impacto para vivir una noche completa en la ciudad.",
-        location: "Queretaro",
+            "Neon Eclipse reúne DJs nacionales, barras invitadas y una producción visual de alto impacto para vivir una noche completa en la ciudad.",
+        location: "Querétaro",
         venueName: "Distrito Vivo",
         address: "Av. Constituyentes 102, Centro",
-        city: "Queretaro",
+        city: "Querétaro",
         date: "24 Oct 2026",
         time: "20:00",
         price: 890,
         image: heroImage,
-        category: "Musica",
+        category: "Música",
         status: "available",
         organizer: "Kustika Nights",
         capacity: 1200,
-        tags: ["Electronica", "Visuales", "After"],
+        tags: ["Electrónica", "Visuales", "After"],
         highlights: [
             "Escenario principal con visuales inmersivos",
             "Acceso digital desde tu cuenta Kustika",
-            "Zona de alimentos y barras dentro del venue",
+            "Zona de alimentos y barras dentro del recinto",
         ],
         schedule: [
             {
                 time: "20:00",
                 label: "Apertura de puertas",
-                description: "Ingreso general, activacion de barras y zona de foto.",
+                description: "Ingreso general, activación de barras y zona de foto.",
             },
             {
                 time: "21:30",
@@ -41,7 +41,7 @@ export const mockEvents: Event[] = [
             {
                 time: "23:00",
                 label: "Show principal",
-                description: "Presentacion central con produccion audiovisual completa.",
+                description: "Presentación central con producción audiovisual completa.",
             },
         ],
         ticketTiers: [
@@ -61,7 +61,7 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Evento para mayores de 18 anos.",
+            "Evento para mayores de 18 años.",
             "El boleto digital se valida una sola vez en acceso.",
             "No se permite el ingreso con alimentos o bebidas externas.",
         ],
@@ -70,13 +70,13 @@ export const mockEvents: Event[] = [
         id: "evt-midnight-city-tour-2026",
         slug: "midnight-city-tour",
         title: "Midnight City Tour",
-        subtitle: "Recorre la ciudad de noche con musica, paradas sorpresa y crew invitado.",
+        subtitle: "Recorre la ciudad de noche con música, paradas sorpresa y equipo invitado.",
         description:
             "Midnight City Tour combina transporte, experiencias urbanas y una ruta curada por hotspots de la CDMX para descubrir la ciudad de otra forma.",
         location: "CDMX",
         venueName: "Punto Reforma",
-        address: "Paseo de la Reforma 222, Juarez",
-        city: "Ciudad de Mexico",
+        address: "Paseo de la Reforma 222, Juárez",
+        city: "Ciudad de México",
         date: "12 Nov 2026",
         time: "19:30",
         price: 1200,
@@ -95,7 +95,7 @@ export const mockEvents: Event[] = [
             {
                 time: "19:30",
                 label: "Check-in",
-                description: "Validacion de boletos y entrega de pulseras.",
+                description: "Validación de boletos y entrega de pulseras.",
             },
             {
                 time: "20:15",
@@ -126,7 +126,7 @@ export const mockEvents: Event[] = [
         ],
         policies: [
             "Presentate 30 minutos antes de la salida.",
-            "El itinerario puede ajustarse por clima o transito.",
+            "El itinerario puede ajustarse por clima o tránsito.",
             "La compra no incluye consumos personales.",
         ],
     },
@@ -134,7 +134,7 @@ export const mockEvents: Event[] = [
         id: "evt-solar-sessions-2026",
         slug: "solar-sessions",
         title: "Solar Sessions",
-        subtitle: "Tarde de musica independiente, gastronomia y mercado creativo.",
+        subtitle: "Tarde de música independiente, gastronomía y mercado creativo.",
         description:
             "Solar Sessions es un encuentro al aire libre con bandas emergentes, marcas locales y espacios para convivir antes del atardecer.",
         location: "Guadalajara",
@@ -152,14 +152,14 @@ export const mockEvents: Event[] = [
         tags: ["Indie", "Food", "Market"],
         highlights: [
             "Lineup curado con proyectos emergentes",
-            "Mercado local y area gastronomica",
+            "Mercado local y área gastronómica",
             "Ambiente al aire libre con acceso familiar",
         ],
         schedule: [
             {
                 time: "16:00",
                 label: "Apertura",
-                description: "Ingreso, mercado creativo y food court.",
+                description: "Ingreso, mercado creativo y zona gastronómica.",
             },
             {
                 time: "18:00",
@@ -189,18 +189,18 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Menores de edad ingresan acompanados por un adulto.",
-            "No se permite reingreso despues de validar el boleto.",
-            "Evento sujeto a lineamientos del venue.",
+            "Menores de edad ingresan acompañados por un adulto.",
+            "No se permite reingreso después de validar el boleto.",
+            "Evento sujeto a lineamientos del recinto.",
         ],
     },
     {
         id: "evt-mestiza-live-2026",
         slug: "mestiza-live",
         title: "Mestiza Live",
-        subtitle: "Ritmos latinos, baile y una produccion pensada para celebrar.",
+        subtitle: "Ritmos latinos, baile y una producción pensada para celebrar.",
         description:
-            "Mestiza Live junta musica latina, invitados especiales y una pista amplia para una experiencia vibrante de principio a fin.",
+            "Mestiza Live junta música latina, invitados especiales y una pista amplia para una experiencia vibrante de principio a fin.",
         location: "Monterrey",
         venueName: "Arena Barrio",
         address: "Calz. Madero 410, Centro",
@@ -217,18 +217,18 @@ export const mockEvents: Event[] = [
         highlights: [
             "Show en vivo con invitados especiales",
             "Pista central y zonas preferentes",
-            "Compra y validacion digital en Kustika",
+            "Compra y validación digital en Kustika",
         ],
         schedule: [
             {
                 time: "21:00",
                 label: "Puertas",
-                description: "Apertura del venue y acceso a zonas.",
+                description: "Apertura del recinto y acceso a zonas.",
             },
             {
                 time: "22:00",
                 label: "DJ set",
-                description: "Musica previa al show principal.",
+                description: "Música previa al show principal.",
             },
             {
                 time: "23:15",
@@ -254,8 +254,8 @@ export const mockEvents: Event[] = [
         ],
         policies: [
             "Acceso permitido solo con boleto vigente.",
-            "No se hacen cambios de zona el dia del evento.",
-            "El venue puede negar acceso por incumplir reglas internas.",
+            "No se hacen cambios de zona el día del evento.",
+            "El recinto puede negar el acceso por incumplir reglas internas.",
         ],
     },
     {
@@ -264,11 +264,11 @@ export const mockEvents: Event[] = [
         title: "Risas al Centro",
         subtitle: "Stand up, invitados sorpresa y una noche de comedia sin filtro.",
         description:
-            "Risas al Centro reune comediantes emergentes y nombres invitados en un formato cercano, rapido y perfecto para cerrar la semana.",
+            "Risas al Centro reúne comediantes emergentes y nombres invitados en un formato cercano, rápido y perfecto para cerrar la semana.",
         location: "CDMX",
         venueName: "Foro Roma",
         address: "C. Durango 88, Roma Norte",
-        city: "Ciudad de Mexico",
+        city: "Ciudad de México",
         date: "18 Dic 2026",
         time: "20:30",
         price: 420,
@@ -287,7 +287,7 @@ export const mockEvents: Event[] = [
             {
                 time: "20:30",
                 label: "Ingreso",
-                description: "Apertura de puertas y asignacion de zonas.",
+                description: "Apertura de puertas y asignación de zonas.",
             },
             {
                 time: "21:00",
@@ -317,7 +317,7 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Evento recomendado para mayores de 18 anos.",
+            "Evento recomendado para mayores de 18 años.",
             "Se recomienda llegar 20 minutos antes.",
             "No se permite grabar el show completo.",
         ],
@@ -328,7 +328,7 @@ export const mockEvents: Event[] = [
         title: "Norte Vivo",
         subtitle: "Regional, banda invitada y una noche para cantar fuerte.",
         description:
-            "Norte Vivo celebra sonidos regionales con artistas invitados, pista amplia y una produccion pensada para bailar y cantar de principio a fin.",
+            "Norte Vivo celebra sonidos regionales con artistas invitados, pista amplia y una producción pensada para bailar y cantar de principio a fin.",
         location: "Monterrey",
         venueName: "Patio Acero",
         address: "Av. Fundidora 501, Obrera",
@@ -341,11 +341,11 @@ export const mockEvents: Event[] = [
         status: "available",
         organizer: "Kustika Regional",
         capacity: 1500,
-        tags: ["Regional", "Mexico", "Baile"],
+        tags: ["Regional", "México", "Baile"],
         highlights: [
             "Escenario principal con artistas regionales",
-            "Zona de baile y barras dentro del venue",
-            "Accesos digitales para entrada rapida",
+            "Zona de baile y barras dentro del recinto",
+            "Accesos digitales para entrada rápida",
         ],
         schedule: [
             {
@@ -361,7 +361,7 @@ export const mockEvents: Event[] = [
             {
                 time: "00:00",
                 label: "Show estelar",
-                description: "Presentacion principal de Norte Vivo.",
+                description: "Presentación principal de Norte Vivo.",
             },
         ],
         ticketTiers: [
@@ -381,9 +381,9 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Evento para mayores de 18 anos.",
+            "Evento para mayores de 18 años.",
             "No se permiten objetos punzocortantes.",
-            "El acceso puede negarse por incumplir reglas del venue.",
+            "El acceso puede negarse por incumplir reglas del recinto.",
         ],
     },
     {
@@ -392,7 +392,7 @@ export const mockEvents: Event[] = [
         title: "Sabor Latino",
         subtitle: "Salsa, urbano latino y una pista encendida toda la noche.",
         description:
-            "Sabor Latino mezcla musica en vivo, DJ sets y dinamicas de baile para una experiencia latina con energia continua.",
+            "Sabor Latino mezcla música en vivo, DJ sets y dinámicas de baile para una experiencia latina con energía continua.",
         location: "Guadalajara",
         venueName: "Terraza Chapultepec",
         address: "Av. Chapultepec Sur 180, Americana",
@@ -401,21 +401,21 @@ export const mockEvents: Event[] = [
         time: "20:00",
         price: 540,
         image: heroImage,
-        category: "Musica latina",
+        category: "Música latina",
         status: "available",
         organizer: "Kustika Latin",
         capacity: 700,
-        tags: ["Latino", "Baile", "Musica"],
+        tags: ["Latino", "Baile", "Música"],
         highlights: [
             "DJ set latino y banda invitada",
             "Pista abierta para baile social",
-            "Zona gastronomica con sabores latinos",
+            "Zona gastronómica con sabores latinos",
         ],
         schedule: [
             {
                 time: "20:00",
                 label: "Apertura",
-                description: "Ingreso y activacion de food court.",
+                description: "Ingreso y activación de zona gastronómica.",
             },
             {
                 time: "21:00",
@@ -425,7 +425,7 @@ export const mockEvents: Event[] = [
             {
                 time: "22:00",
                 label: "Live set",
-                description: "Musica en vivo y DJ set latino.",
+                description: "Música en vivo y DJ set latino.",
             },
         ],
         ticketTiers: [
@@ -445,9 +445,9 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Menores de edad ingresan acompanados por un adulto.",
-            "No se permite reingreso despues del check-in.",
-            "La programacion puede cambiar sin previo aviso.",
+            "Menores de edad ingresan acompañados por un adulto.",
+            "No se permite reingreso después del check-in.",
+            "La programación puede cambiar sin previo aviso.",
         ],
     },
     {
@@ -456,11 +456,11 @@ export const mockEvents: Event[] = [
         title: "Bazar Sonoro",
         subtitle: "Festival de proyectos locales, comida y mercado creativo.",
         description:
-            "Bazar Sonoro une musica independiente, marcas locales, food trucks y espacios para convivir al aire libre durante todo el dia.",
-        location: "Queretaro",
+            "Bazar Sonoro une música independiente, marcas locales, food trucks y espacios para convivir al aire libre durante todo el día.",
+        location: "Querétaro",
         venueName: "Parque Alameda",
-        address: "Centro Historico, Alameda Hidalgo",
-        city: "Queretaro",
+        address: "Centro Histórico, Alameda Hidalgo",
+        city: "Querétaro",
         date: "24 Ene 2027",
         time: "13:00",
         price: 390,
@@ -473,13 +473,13 @@ export const mockEvents: Event[] = [
         highlights: [
             "Mercado creativo con marcas locales",
             "Escenario alternativo con bandas emergentes",
-            "Zona familiar y area gastronomica",
+            "Zona familiar y área gastronómica",
         ],
         schedule: [
             {
                 time: "13:00",
                 label: "Apertura",
-                description: "Ingreso, bazar y zona gastronomica.",
+                description: "Ingreso, bazar y zona gastronómica.",
             },
             {
                 time: "16:00",
@@ -509,9 +509,9 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Evento pet friendly en zonas senaladas.",
+            "Evento pet friendly en zonas señaladas.",
             "No se permite ingresar con bebidas externas.",
-            "El acceso esta sujeto al aforo permitido.",
+            "El acceso está sujeto al aforo permitido.",
         ],
     },
     {
@@ -520,11 +520,11 @@ export const mockEvents: Event[] = [
         title: "Ruta Secreta",
         subtitle: "Una experiencia urbana con paradas sorpresa y crew invitado.",
         description:
-            "Ruta Secreta lleva a los asistentes por espacios ocultos de la ciudad con musica, dinamicas y momentos sorpresa durante el recorrido.",
+            "Ruta Secreta lleva a los asistentes por espacios ocultos de la ciudad con música, dinámicas y momentos sorpresa durante el recorrido.",
         location: "CDMX",
         venueName: "Punto Condesa",
         address: "Av. Tamaulipas 120, Condesa",
-        city: "Ciudad de Mexico",
+        city: "Ciudad de México",
         date: "31 Ene 2027",
         time: "18:30",
         price: 1100,
@@ -543,7 +543,7 @@ export const mockEvents: Event[] = [
             {
                 time: "18:30",
                 label: "Check-in",
-                description: "Validacion de boletos y briefing inicial.",
+                description: "Validación de boletos y presentación inicial.",
             },
             {
                 time: "19:00",
@@ -573,7 +573,7 @@ export const mockEvents: Event[] = [
             },
         ],
         policies: [
-            "Presentate 30 minutos antes del inicio.",
+            "Preséntate 30 minutos antes del inicio.",
             "La ruta puede ajustarse por clima o movilidad.",
             "La compra no incluye consumos personales.",
         ],

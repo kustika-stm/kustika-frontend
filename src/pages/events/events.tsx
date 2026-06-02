@@ -8,7 +8,7 @@ import styles from "./events.module.css";
 const statusLabels = {
     all: "Todos",
     available: "Disponibles",
-    soon: "Proximamente",
+    soon: "Próximamente",
     "sold-out": "Agotados",
 } as const;
 
@@ -16,7 +16,7 @@ type StatusFilter = keyof typeof statusLabels;
 
 const eventStatusLabel = {
     available: "Disponible",
-    soon: "Proximamente",
+    soon: "Próximamente",
     "sold-out": "Agotado",
 } as const;
 
@@ -84,7 +84,7 @@ export function EventsPage() {
                 </label>
 
                 <label>
-                    Categoria
+                    Categoría
                     <select value={category} onChange={(event) => setCategory(event.target.value)}>
                         {categories.map((option) => (
                             <option value={option} key={option}>
@@ -166,7 +166,7 @@ export function EventsPage() {
                 ) : (
                     <div className={styles.emptyState}>
                         <h3>No encontramos eventos con esos filtros.</h3>
-                        <p>Prueba otra ciudad, categoria o estado.</p>
+                        <p>Prueba otra ciudad, categoría o estado.</p>
                     </div>
                 )}
             </section>

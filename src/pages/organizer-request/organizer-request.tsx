@@ -69,7 +69,7 @@ export function OrganizerRequestPage() {
         alerts.notify({
             tone: "warning",
             title: "Solicitud rechazada",
-            message: `Solicitud rechazada${request.motivo_rechazo ? `: ${request.motivo_rechazo}` : "."} Corrige la informacion y vuelve a enviarla.`,
+            message: `Solicitud rechazada${request.motivo_rechazo ? `: ${request.motivo_rechazo}` : "."} Corrige la información y vuelve a enviarla.`,
             durationMs: 6800,
         });
     }, [alerts, request]);
@@ -104,17 +104,17 @@ export function OrganizerRequestPage() {
         }
 
         if (telefonoEmpresa && !/^\d{10}$/.test(telefonoEmpresa.replace(/\D/g, ""))) {
-            alerts.notify({ tone: "error", title: "Telefono invalido", message: "El telefono de empresa debe tener 10 digitos." });
+            alerts.notify({ tone: "error", title: "Teléfono inválido", message: "El teléfono de empresa debe tener 10 dígitos." });
             return;
         }
 
         if (emailContacto && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailContacto)) {
-            alerts.notify({ tone: "error", title: "Email invalido", message: "Escribe un email de contacto valido." });
+            alerts.notify({ tone: "error", title: "Email inválido", message: "Escribe un email de contacto válido." });
             return;
         }
 
         if (sitioWeb && !/^https?:\/\/.+\..+/.test(sitioWeb)) {
-            alerts.notify({ tone: "error", title: "Sitio web invalido", message: "El sitio web debe iniciar con http:// o https://." });
+            alerts.notify({ tone: "error", title: "Sitio web inválido", message: "El sitio web debe iniciar con http:// o https://." });
             return;
         }
 
@@ -153,9 +153,9 @@ export function OrganizerRequestPage() {
             <main className={styles.page}>
                 <section className={styles.hero}>
                     <span className={styles.eyebrow}>Publicar eventos</span>
-                    <h1>Inicia sesion para solicitar acceso</h1>
-                    <p>Necesitas una cuenta de Kustika para pedir aprobacion como organizador.</p>
-                    <a className={styles.primaryAction} href={routes.login}>Iniciar sesion</a>
+                    <h1>Inicia sesión para solicitar acceso</h1>
+                    <p>Necesitas una cuenta de Kustika para pedir aprobación como organizador.</p>
+                    <a className={styles.primaryAction} href={routes.login}>Iniciar sesión</a>
                 </section>
             </main>
         );
@@ -173,13 +173,13 @@ export function OrganizerRequestPage() {
             <section className={styles.hero}>
                 <span className={styles.eyebrow}>Publicar eventos</span>
                 <h1>Solicita acceso como organizador</h1>
-                <p>Envianos los datos de tu empresa. Un administrador revisara la solicitud y, si es aprobada, tu proximo inicio de sesion tendra permisos para publicar eventos.</p>
+                <p>Envíanos los datos de tu empresa. Un administrador revisará la solicitud y, si es aprobada, tu próximo inicio de sesión tendrá permisos para publicar eventos.</p>
             </section>
 
             <nav className={styles.steps} aria-label="Progreso de solicitud">
                 <span className={currentStep === 1 ? styles.currentStep : styles.doneStep}>1. Registro</span>
-                <span className={currentStep === 2 ? styles.currentStep : currentStep > 2 ? styles.doneStep : ""}>2. Revision</span>
-                <span className={currentStep === 3 ? styles.currentStep : ""}>3. Activacion</span>
+                <span className={currentStep === 2 ? styles.currentStep : currentStep > 2 ? styles.doneStep : ""}>2. Revisión</span>
+                <span className={currentStep === 3 ? styles.currentStep : ""}>3. Activación</span>
             </nav>
 
             <section className={styles.layout}>
@@ -202,11 +202,11 @@ export function OrganizerRequestPage() {
                             <input name="rfc" type="text" defaultValue={request?.rfc ?? ""} disabled={!canSubmitRequest} required />
                         </label>
                         <label className={styles.fullField}>
-                            Descripcion
+                            Descripción
                             <textarea name="descripcion" rows={4} defaultValue={request?.descripcion ?? ""} disabled={!canSubmitRequest} />
                         </label>
                         <label>
-                            Telefono de empresa
+                            Teléfono de empresa
                             <input name="telefono_empresa" type="tel" inputMode="numeric" defaultValue={request?.telefono_empresa ?? ""} disabled={!canSubmitRequest} />
                         </label>
                         <label>
@@ -245,12 +245,12 @@ export function OrganizerRequestPage() {
                             <strong>{request.nombre_empresa}</strong>
                             <p>{request.rfc}</p>
                             {request.status === "pendiente" && (
-                                <p>Tu solicitud esta en revision. Te avisaremos cuando cambie de estado.</p>
+                                <p>Tu solicitud está en revisión. Te avisaremos cuando cambie de estado.</p>
                             )}
                         </div>
                     ) : (
                         <div className={styles.emptyState}>
-                            <strong>Aun no has enviado solicitud</strong>
+                            <strong>Aún no has enviado solicitud</strong>
                             <p>Completa el formulario para que el equipo admin pueda revisarla.</p>
                         </div>
                     )}
@@ -261,7 +261,7 @@ export function OrganizerRequestPage() {
                 <section className={styles.panel}>
                     <div className={styles.panelHeader}>
                         <div>
-                            <span className={styles.eyebrow}>Activacion</span>
+                            <span className={styles.eyebrow}>Activación</span>
                             <h2>Cuenta aprobada</h2>
                         </div>
                     </div>
@@ -269,7 +269,7 @@ export function OrganizerRequestPage() {
                     <div className={styles.statusCard}>
                         <span className={styles.aprobada}>Aprobada</span>
                         <strong>{request?.nombre_empresa}</strong>
-                        <p>Tu solicitud fue aprobada. Para convertir tu cuenta a event manager necesitas iniciar sesion de nuevo y recibir un token actualizado.</p>
+                        <p>Tu solicitud fue aprobada. Para convertir tu cuenta a administrador de eventos necesitas iniciar sesión de nuevo y recibir un token actualizado.</p>
                         <button type="button" onClick={handleRefreshAccess}>Actualizar acceso</button>
                     </div>
                 </section>

@@ -35,7 +35,7 @@ export function EventList() {
                 <div ref={listRef} className={styles.list}>
                     {isLoading && <p>Cargando eventos...</p>}
                     {!isLoading && error && <p>{error}</p>}
-                    {!isLoading && !error && events.length === 0 && <p>Aun no hay eventos publicados.</p>}
+                    {!isLoading && !error && events.length === 0 && <p>Aún no hay eventos publicados.</p>}
                     {!isLoading && !error && events.map((event) => (
                         <div key={event.id} className={styles.item}>
                             <EventCard event={event} />

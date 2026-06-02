@@ -349,7 +349,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         const shouldDelete = await alerts.confirm({
             tone: "error",
             title: "Eliminar cuenta",
-            message: "Esta accion eliminara tu cuenta de Kustika y cerrara tu sesion actual.",
+            message: "Esta acción eliminará tu cuenta de Kustika y cerrará tu sesión actual.",
             confirmLabel: "Eliminar cuenta",
         });
 
@@ -482,7 +482,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         if (ticketPrice < 0) {
             alerts.notify({
                 tone: "error",
-                title: "Precio invalido",
+                title: "Precio inválido",
                 message: "El precio numerico debe ser mayor o igual a 0.",
             });
             return;
@@ -531,13 +531,13 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             alerts.notify({
                 tone: "success",
                 title: editingRaffle ? "Sorteo actualizado" : "Sorteo creado",
-                message: editingRaffle ? "Los cambios se guardaron correctamente." : "El sorteo ya esta disponible en el catalogo.",
+                message: editingRaffle ? "Los cambios se guardaron correctamente." : "El sorteo ya está disponible en el catálogo.",
             });
         } catch (error) {
             alerts.notify({
                 tone: "error",
                 title: editingRaffle ? "No pudimos actualizar el sorteo" : "No pudimos crear el sorteo",
-                message: error instanceof Error ? error.message : "Intentalo nuevamente en unos momentos.",
+                message: error instanceof Error ? error.message : "Inténtalo nuevamente en unos momentos.",
             });
         } finally {
             setProcessingRaffleId(null);
@@ -555,7 +555,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         const shouldDelete = await alerts.confirm({
             tone: "error",
             title: "Eliminar sorteo",
-            message: `Esta accion eliminara "${raffle.title}" del catalogo.`,
+            message: `Esta acción eliminará "${raffle.title}" del catálogo.`,
             confirmLabel: "Eliminar",
         });
 
@@ -582,7 +582,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             alerts.notify({
                 tone: "error",
                 title: "No pudimos eliminar el sorteo",
-                message: error instanceof Error ? error.message : "Intentalo nuevamente en unos momentos.",
+                message: error instanceof Error ? error.message : "Inténtalo nuevamente en unos momentos.",
             });
         } finally {
             setProcessingRaffleId(null);

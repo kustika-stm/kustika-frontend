@@ -124,7 +124,7 @@ export function RafflesPanel({
                             <input name="subtitle" type="text" placeholder="Viaje completo para dos personas" defaultValue={editingRaffle?.subtitle ?? ""} required />
                         </label>
                         <label className={styles.fullField}>
-                            Descripcion
+                            Descripción
                             <textarea name="description" rows={4} placeholder="Describe el premio y lo que incluye." defaultValue={editingRaffle?.description ?? ""} required />
                         </label>
                         <label>
@@ -200,7 +200,7 @@ export function RafflesPanel({
                         {isLoading && (
                             <div className={styles.emptyState}>
                                 <strong>Cargando sorteos</strong>
-                                <p>Estamos consultando el catalogo de sorteos.</p>
+                                <p>Estamos consultando el catálogo de sorteos.</p>
                             </div>
                         )}
 

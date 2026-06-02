@@ -16,36 +16,36 @@ const mexicoStates = [
     "Campeche",
     "Chiapas",
     "Chihuahua",
-    "Ciudad de Mexico",
+    "Ciudad de México",
     "Coahuila",
     "Colima",
     "Durango",
-    "Estado de Mexico",
+    "Estado de México",
     "Guanajuato",
     "Guerrero",
     "Hidalgo",
     "Jalisco",
-    "Michoacan",
+    "Michoacán",
     "Morelos",
     "Nayarit",
-    "Nuevo Leon",
+    "Nuevo León",
     "Oaxaca",
     "Puebla",
-    "Queretaro",
+    "Querétaro",
     "Quintana Roo",
-    "San Luis Potosi",
+    "San Luis Potosí",
     "Sinaloa",
     "Sonora",
     "Tabasco",
     "Tamaulipas",
     "Tlaxcala",
     "Veracruz",
-    "Yucatan",
+    "Yucatán",
     "Zacatecas",
 ];
 
 const paymentMethods = [
-    { id: "card", label: "Tarjeta", hint: "Credito o debito" },
+    { id: "card", label: "Tarjeta", hint: "Crédito o débito" },
     { id: "transfer", label: "Transferencia", hint: "Referencia bancaria" },
     { id: "cash", label: "Efectivo", hint: "Pago en tienda aliada" },
 ];
@@ -70,7 +70,7 @@ export function CheckoutPage({ eventId }: Props) {
             <main className={styles.notFound}>
                 <span>Checkout</span>
                 <h1>Cargando evento.</h1>
-                <p>Estamos consultando la informacion actualizada para tu compra.</p>
+                <p>Estamos consultando la información actualizada para tu compra.</p>
             </main>
         );
     }
@@ -91,7 +91,7 @@ export function CheckoutPage({ eventId }: Props) {
             <main className={styles.notFound}>
                 <span>Checkout</span>
                 <h1>No encontramos este evento.</h1>
-                <p>Puede que el enlace haya cambiado o que el evento ya no este disponible.</p>
+                <p>Puede que el enlace haya cambiado o que el evento ya no esté disponible.</p>
                 <a href={routes.home}>Volver a eventos</a>
             </main>
         );
@@ -101,9 +101,9 @@ export function CheckoutPage({ eventId }: Props) {
         return (
             <main className={styles.notFound}>
                 <span>Compra segura</span>
-                <h1>Inicia sesion para comprar.</h1>
+                <h1>Inicia sesión para comprar.</h1>
                 <p>Necesitamos validar tu cuenta antes de generar tus boletos.</p>
-                <a href={routes.login}>Iniciar sesion</a>
+                <a href={routes.login}>Iniciar sesión</a>
             </main>
         );
     }
@@ -116,7 +116,7 @@ export function CheckoutPage({ eventId }: Props) {
                 <section className={styles.profileGate}>
                     <span className={styles.eyebrow}>Completa tus datos</span>
                     <h1>Antes de comprar necesitamos tu perfil completo.</h1>
-                    <p>Te falta agregar: {missingFields}. Cuando termines, podras continuar con tu compra.</p>
+                    <p>Te falta agregar: {missingFields}. Cuando termines, podrás continuar con tu compra.</p>
                     <a href={`${routes.profile}?complete=1`}>Completar perfil</a>
                 </section>
             </main>
@@ -220,11 +220,11 @@ export function CheckoutPage({ eventId }: Props) {
                             </label>
                             <label>
                                 Apellido paterno
-                                <input type="text" name="lastName" placeholder="Ej. Garcia" />
+                                <input type="text" name="lastName" placeholder="Ej. García" />
                             </label>
                             <label>
                                 Apellido materno
-                                <input type="text" name="secondLastName" placeholder="Ej. Lopez" />
+                                <input type="text" name="secondLastName" placeholder="Ej. López" />
                             </label>
                             <label>
                                 Correo
@@ -235,8 +235,8 @@ export function CheckoutPage({ eventId }: Props) {
                                 <input type="email" name="emailConfirm" placeholder="Repite tu correo" />
                             </label>
                             <label>
-                                Telefono celular
-                                <input type="tel" name="phone" placeholder="+52 10 digitos" />
+                                Teléfono celular
+                                <input type="tel" name="phone" placeholder="+52 10 dígitos" />
                             </label>
                             <label>
                                 Ciudad
@@ -255,7 +255,7 @@ export function CheckoutPage({ eventId }: Props) {
                             </label>
                             <label className={styles.fullField}>
                                 Nombre para mostrar en boleto
-                                <input type="text" name="ticketName" placeholder="Puede ser tu nombre o el de quien asistira" />
+                                <input type="text" name="ticketName" placeholder="Puede ser tu nombre o el de quien asistirá" />
                             </label>
                         </div>
                     </section>

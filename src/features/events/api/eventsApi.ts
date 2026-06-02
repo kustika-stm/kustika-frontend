@@ -200,7 +200,7 @@ export const eventsApi = {
         const id = getCreatedId(createdFunction, "funcion");
 
         if (!id) {
-            throw new Error("El backend no regreso el ID de la funcion creada.");
+            throw new Error("El backend no regresó el ID de la función creada.");
         }
 
         return { id };

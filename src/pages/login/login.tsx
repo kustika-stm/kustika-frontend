@@ -22,9 +22,9 @@ export function LoginPage() {
             saveSession(session);
             window.location.assign(getRoleHomePath(session.user?.tipo_usuario));
         } catch (requestError) {
-            const message = requestError instanceof Error ? requestError.message : "No pudimos iniciar sesion.";
+            const message = requestError instanceof Error ? requestError.message : "No pudimos iniciar sesión.";
 
-            alerts.notify({ tone: "error", title: "No pudimos iniciar sesion", message });
+            alerts.notify({ tone: "error", title: "No pudimos iniciar sesión", message });
         } finally {
             setIsLoading(false);
         }
@@ -42,7 +42,7 @@ export function LoginPage() {
                     <div className={styles.loadingDialog}>
                         <span className={styles.spinner} aria-hidden="true" />
                         <strong>Cargando perfil</strong>
-                        <p>Estamos validando tu cuenta y preparando tu sesion.</p>
+                        <p>Estamos validando tu cuenta y preparando tu sesión.</p>
                     </div>
                 </div>
             )}
@@ -52,9 +52,9 @@ export function LoginPage() {
                     <img src={heroImage} alt="Concierto Kustika" className={styles.mediaImage} />
                     <div className={styles.mediaOverlay} />
                     <div className={styles.mediaContent}>
-                        <span className={styles.kicker}>Eventos sin friccion</span>
-                        <h2>Tu proxima noche empieza aqui.</h2>
-                        <p>Guarda favoritos, compra rapido y lleva tus boletos digitales contigo.</p>
+                        <span className={styles.kicker}>Eventos sin fricción</span>
+                        <h2>Tu próxima noche empieza aquí.</h2>
+                        <p>Guarda favoritos, compra rápido y lleva tus boletos digitales contigo.</p>
                     </div>
                 </aside>
 
@@ -67,7 +67,7 @@ export function LoginPage() {
                                 Volver al inicio
                             </a>
                         </div>
-                        <h1>Iniciar sesion</h1>
+                        <h1>Iniciar sesión</h1>
                         <p>Entra a tu cuenta para guardar eventos y continuar tus compras.</p>
                     </div>
 
@@ -88,11 +88,11 @@ export function LoginPage() {
                     </button>
 
                     <p className={styles.switch}>
-                        Olvidaste tu contrasena? <a href={routes.recoverPassword}>Recuperala aqui</a>
+                        ¿Olvidaste tu contraseña? <a href={routes.recoverPassword}>Recupérala aquí</a>
                     </p>
 
                     <p className={styles.switch}>
-                        Aun no tienes cuenta? <a href={routes.register}>Registrate</a>
+                        ¿Aún no tienes cuenta? <a href={routes.register}>Regístrate</a>
                     </p>
                 </section>
             </section>

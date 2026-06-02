@@ -90,7 +90,7 @@ export function UsersPanel({
                                             <span>{user.email}</span>
                                             {isCurrentUser && <small>Tu cuenta</small>}
                                         </td>
-                                        <td>{user.telefono || "Sin telefono"}</td>
+                                        <td>{user.telefono || "Sin teléfono"}</td>
                                         <td>
                                             <div className={styles.statusList}>
                                                 <span className={user.is_active ? styles.activeBadge : styles.inactiveBadge}>
@@ -125,7 +125,7 @@ export function UsersPanel({
                     {!isLoading && users.length === 0 && (
                         <div className={styles.emptyState}>
                             <strong>No hay usuarios cargados</strong>
-                            <p>Aun no hay cuentas para mostrar en esta pagina.</p>
+                            <p>Aún no hay cuentas para mostrar en esta página.</p>
                         </div>
                     )}
 

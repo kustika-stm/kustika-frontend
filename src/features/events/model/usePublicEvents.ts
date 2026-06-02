@@ -212,8 +212,8 @@ const getSchedule = (record: EventRecord, time: string): EventScheduleItem[] => 
 
             return {
                 time: parsedDate ? timeFormatter.format(parsedDate) : stringValue(itemRecord, ["hora", "time"], time),
-                label: stringValue(itemRecord, ["nombre", "name"], `Funcion ${index + 1}`),
-                description: "Funcion programada del evento.",
+                label: stringValue(itemRecord, ["nombre", "name"], `Función ${index + 1}`),
+                description: "Función programada del evento.",
             };
         })
         .filter((item): item is EventScheduleItem => Boolean(item));
@@ -238,7 +238,7 @@ const mapPublicEvent = (item: unknown): Event | null => {
     const startsAt = getEventDate(record);
     const parsedDate = parseDate(startsAt);
     const category = getNestedName(record, "categoria") || stringValue(record, ["categoria_nombre", "categoria", "category"], "Evento");
-    const venueName = stringValue(record, ["nombre_venue", "venue_nombre", "venueName", "venue"], "Venue por confirmar");
+    const venueName = stringValue(record, ["nombre_venue", "venue_nombre", "venueName", "venue"], "Recinto por confirmar");
     const city = stringValue(record, ["ciudad_venue", "ciudad", "city"], "");
     const tickets = getTickets(record);
     const price = Math.min(...tickets.map((ticket) => ticket.price).filter((ticketPrice) => ticketPrice >= 0));
@@ -251,10 +251,10 @@ const mapPublicEvent = (item: unknown): Event | null => {
         slug: slug || id,
         title,
         subtitle: stringValue(record, ["descripcion_corta", "subtitle"], artists.length ? artists.join(", ") : category),
-        description: stringValue(record, ["descripcion", "description"], "Muy pronto tendremos mas detalles de este evento."),
+        description: stringValue(record, ["descripcion", "description"], "Muy pronto tendremos más detalles de este evento."),
         location: city || venueName,
         venueName,
-        address: stringValue(record, ["direccion_venue", "direccion", "address"], "Direccion por confirmar"),
+        address: stringValue(record, ["direccion_venue", "direccion", "address"], "Dirección por confirmar"),
         city: city || "Ciudad por confirmar",
         date: parsedDate ? monthFormatter.format(parsedDate).replace(".", "") : "Fecha por confirmar",
         time,
@@ -270,7 +270,7 @@ const mapPublicEvent = (item: unknown): Event | null => {
         ticketTiers: tickets,
         policies: [
             "El boleto digital se valida una sola vez en acceso.",
-            "Consulta las indicaciones del venue antes de asistir.",
+            "Consulta las indicaciones del recinto antes de asistir.",
         ],
     };
 };
