@@ -1,2 +1,2 @@
 export { rafflesApi } from "./api";
-export type { RafflePayload, UpdateRafflePayload } from "./api";
+export type { CreateRafflePayload, UpdateRafflePayload } from "./api";
