@@ -612,6 +612,86 @@
     resize: vertical;
 }
 
+.adminEventForm {
+    display: grid;
+    gap: 22px;
+}
+
+.adminEventForm fieldset {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+}
+
+.adminEventForm legend,
+.sectionTitle legend {
+    margin-bottom: 10px;
+    color: var(--text-h);
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.fieldHint {
+    color: #ffb3c1;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: none;
+}
+
+.sectionTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.sectionTitle button {
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-h);
+    font-weight: 900;
+}
+
+.ticketStack {
+    display: grid;
+    gap: 12px;
+}
+
+.ticketCard {
+    display: grid;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.54);
+}
+
+.ticketHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ticketHeader strong {
+    color: var(--text-h);
+}
+
+.ticketHeader button {
+    min-height: 34px;
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 92, 122, 0.38);
+    border-radius: var(--radius-md);
+    background: rgba(255, 92, 122, 0.12);
+    color: #ffb3c1;
+    font-weight: 900;
+}
+
 .formGrid input:focus,
 .formGrid select:focus,
 .formGrid textarea:focus {

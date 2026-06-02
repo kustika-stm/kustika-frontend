@@ -37,6 +37,24 @@ const asArray = (value: unknown): unknown[] => {
     return Array.isArray(value) ? value : [];
 };
 
+const mergeRecords = (summary: unknown, detail: unknown) => {
+    const summaryRecord = asRecord(summary);
+    const detailRecord = asRecord(detail);
+
+    if (!summaryRecord) {
+        return detail;
+    }
+
+    if (!detailRecord) {
+        return summary;
+    }
+
+    return {
+        ...summaryRecord,
+        ...detailRecord,
+    };
+};
+
 const decodeApiText = (value: string) => {
     return value
         .replaceAll("&amp;", "&")
@@ -103,16 +121,35 @@ const getNestedName = (record: EventRecord, key: string) => {
     return nested ? stringValue(nested, ["nombre", "name", "titulo", "title"]) : "";
 };
 
+const getFunctionRecords = (record: EventRecord) => {
+    const fromArrays = [
+        ...asArray(record.funciones),
+        ...asArray(record.functions),
+        ...asArray(record.horarios),
+        ...asArray(record.schedule),
+    ];
+    const fromSingles = [
+        asRecord(record.funcion),
+        asRecord(record.function),
+        asRecord(record.proxima_funcion),
+        asRecord(record.nextFunction),
+    ].filter((item): item is EventRecord => Boolean(item));
+
+    return [...fromArrays, ...fromSingles]
+        .map(asRecord)
+        .filter((item): item is EventRecord => Boolean(item));
+};
+
 const getEventDate = (record: EventRecord) => {
-    const directDate = stringValue(record, ["fecha_inicio", "fecha", "date"]);
+    const directDate = stringValue(record, ["fecha_inicio", "fecha", "date", "starts_at", "startDate"]);
 
     if (directDate) {
         return directDate;
     }
 
-    const functionRecord = asRecord(asArray(record.funciones)[0]);
+    const functionRecord = getFunctionRecords(record)[0];
 
-    return functionRecord ? stringValue(functionRecord, ["fecha_inicio", "fecha", "date"]) : "";
+    return functionRecord ? stringValue(functionRecord, ["fecha_inicio", "fecha", "date", "starts_at", "startDate"]) : "";
 };
 
 const mapStatus = (status: string): Event["status"] => {
@@ -155,11 +192,11 @@ const getArtists = (record: EventRecord) => {
 };
 
 const getTickets = (record: EventRecord): EventTicketTier[] => {
-    const functionTickets = asArray(record.funciones).flatMap((item) => {
-        const functionRecord = asRecord(item);
-
-        return functionRecord ? asArray(functionRecord.tipos_boleto) : [];
-    });
+    const functionTickets = getFunctionRecords(record).flatMap((functionRecord) => [
+        ...asArray(functionRecord.tipos_boleto),
+        ...asArray(functionRecord.ticketTypes),
+        ...asArray(functionRecord.boletos),
+    ]);
     const rawTickets = [
         ...asArray(record.tipos_boleto),
         ...asArray(record.ticketTiers),
@@ -199,14 +236,8 @@ const getTickets = (record: EventRecord): EventTicketTier[] => {
 };
 
 const getSchedule = (record: EventRecord, time: string): EventScheduleItem[] => {
-    const schedule = asArray(record.funciones)
-        .map((item, index) => {
-            const itemRecord = asRecord(item);
-
-            if (!itemRecord) {
-                return null;
-            }
-
+    const schedule = getFunctionRecords(record)
+        .map((itemRecord, index) => {
             const startsAt = stringValue(itemRecord, ["fecha_inicio", "fecha", "date"]);
             const parsedDate = parseDate(startsAt);
 
@@ -290,7 +321,23 @@ export function usePublicEvents(): PublicEventsState {
 
             try {
                 const response = await eventsApi.getPublicEvents();
-                const events = response.map(mapPublicEvent).filter((event): event is Event => Boolean(event));
+                const hydratedResponse = await Promise.all(response.map(async (item) => {
+                    const record = asRecord(item);
+                    const eventId = record ? stringValue(record, ["id", "_id", "uuid"]) : "";
+
+                    if (!eventId) {
+                        return item;
+                    }
+
+                    try {
+                        const detail = await eventsApi.getPublicEvent(eventId);
+
+                        return mergeRecords(item, detail);
+                    } catch {
+                        return item;
+                    }
+                }));
+                const events = hydratedResponse.map(mapPublicEvent).filter((event): event is Event => Boolean(event));
 
                 if (isMounted) {
                     setState({ events, isLoading: false, error: "" });
