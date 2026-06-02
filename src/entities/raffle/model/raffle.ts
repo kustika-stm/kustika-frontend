@@ -12,5 +12,7 @@ export type Raffle = {
     endsIn: string;
     status: RaffleStatus;
     image: string;
-    featured?: boolean;
+    featured: boolean;
+    createdAt?: string;
+    updatedAt?: string;
 };

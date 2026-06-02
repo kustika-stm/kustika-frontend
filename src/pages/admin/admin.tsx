@@ -1,110 +1,27 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
+import type { Raffle, RaffleStatus } from "../../entities/raffle";
 import { clearSession, getStoredSession, saveSession, type SessionUser } from "../../entities/session";
-import { raffles as mockRaffles, type Raffle, type RaffleStatus } from "../../entities/raffle";
 import { adminApi, type AdminEvent, type AdminUser, type AdminUserRole } from "../../features/admin/api";
 import { authApi } from "../../features/auth/api";
 import { organizerRequestsApi, type OrganizerRequest, type OrganizerRequestStatus } from "../../features/organizers/api";
 import { profileApi } from "../../features/profile/api";
+import { rafflesApi, type RafflePayload } from "../../features/raffles";
 import { useAlerts } from "../../shared/ui/alerts";
-import trashIcon from "../../shared/assets/icons/basura.png";
-import userIcon from "../../shared/assets/icons/usuario.png";
-import { kustikaMark } from "../../shared/assets/images/logo";
-import styles from "./admin.module.css";
+import { AdminLayout } from "./ui/AdminLayout";
+import { AdminProfilePanel } from "./ui/AdminProfilePanel";
+import { EventsPanel } from "./ui/EventsPanel";
+import { RafflesPanel } from "./ui/RafflesPanel";
+import { RequestsPanel } from "./ui/RequestsPanel";
+import { UsersPanel } from "./ui/UsersPanel";
+import { getTokenUserId, usersPerPage, type AdminPageName } from "./model/adminUtils";
 
 type AdminPageProps = {
-    page?: "users" | "events" | "raffles" | "requests" | "profile";
+    page?: AdminPageName;
 };
 
-const roleOptions: Array<{ value: AdminUserRole; label: string }> = [
-    { value: "customer", label: "Customer" },
-    { value: "event_manager", label: "Event manager" },
-    { value: "admin", label: "Admin" },
-];
-
-const usersPerPage = 10;
-const requestStatusOptions: Array<{ value: OrganizerRequestStatus | "todos"; label: string }> = [
-    { value: "todos", label: "Todas" },
-    { value: "pendiente", label: "Pendientes" },
-    { value: "aprobada", label: "Aprobadas" },
-    { value: "rechazada", label: "Rechazadas" },
-];
-
-const raffleStatusOptions: Array<{ value: RaffleStatus; label: string }> = [
-    { value: "trending", label: "En tendencia" },
-    { value: "limited", label: "Limitada" },
-    { value: "hot", label: "Popular" },
-    { value: "rare", label: "Especial" },
-];
-
-const getFullName = (user: AdminUser) =>
-    [user.nombre, user.apellido_paterno, user.apellido_materno].filter(Boolean).join(" ") || "Sin nombre";
-
-const formatDate = (value: string) =>
-    new Intl.DateTimeFormat("es-MX", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    }).format(new Date(value));
-
-const formatOptionalDate = (value?: string) => {
-    if (!value) {
-        return "Sin fecha";
-    }
-
-    const date = new Date(value);
-
-    return Number.isNaN(date.getTime()) ? value : formatDate(value);
-};
-
-const getStatusClassName = (status: string) => {
-    const normalizedStatus = status.toLowerCase();
-
-    if (normalizedStatus === "publicado") {
-        return styles.publishedStatus;
-    }
-
-    if (normalizedStatus === "borrador") {
-        return styles.draftStatus;
-    }
-
-    if (normalizedStatus === "cancelado" || normalizedStatus === "rechazada") {
-        return styles.cancelledStatus;
-    }
-
-    if (normalizedStatus === "finalizado" || normalizedStatus === "aprobada") {
-        return styles.finishedStatus;
-    }
-
-    return styles.neutralStatus;
-};
-
-const getTokenUserId = (accessToken?: string) => {
-    if (!accessToken) {
-        return null;
-    }
-
-    try {
-        const payload = accessToken.split(".")[1];
-        const decodedPayload = JSON.parse(window.atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as {
-            id?: string;
-            sub?: string;
-            user_id?: string;
-        };
-
-        return decodedPayload.id ?? decodedPayload.sub ?? decodedPayload.user_id ?? null;
-    } catch {
-        return null;
-    }
-};
-
-const createSlug = (value: string) => {
-    return value
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "") || `sorteo-${Date.now()}`;
+const formatTicketPrice = (ticketPrice: number) => {
+    return `$${ticketPrice.toFixed(2)}`;
 };
 
 export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
@@ -116,7 +33,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const displayName = [session?.user?.nombre, session?.user?.apellido_paterno].filter(Boolean).join(" ") || "Administrador";
     const [users, setUsers] = useState<AdminUser[]>([]);
     const [events, setEvents] = useState<AdminEvent[]>([]);
-    const [raffleList, setRaffleList] = useState<Raffle[]>(mockRaffles);
+    const [raffleList, setRaffleList] = useState<Raffle[]>([]);
     const [requests, setRequests] = useState<OrganizerRequest[]>([]);
     const [requestStatus, setRequestStatus] = useState<OrganizerRequestStatus | "todos">("pendiente");
     const [profile, setProfile] = useState<SessionUser | null>(session?.user ?? null);
@@ -126,9 +43,12 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isEventsLoading, setIsEventsLoading] = useState(activePage === "events");
+    const [isRafflesLoading, setIsRafflesLoading] = useState(activePage === "raffles");
     const [isRequestsLoading, setIsRequestsLoading] = useState(activePage === "requests");
     const [isProfileLoading, setIsProfileLoading] = useState(activePage === "profile");
     const [processingRequestId, setProcessingRequestId] = useState<string | null>(null);
+    const [processingRaffleId, setProcessingRaffleId] = useState<string | null>(null);
+    const [editingRaffle, setEditingRaffle] = useState<Raffle | null>(null);
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
@@ -173,14 +93,6 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         }
     }, [activePage, alerts, getCurrentToken, limit, page]);
 
-    useEffect(() => {
-        const timer = window.setTimeout(() => {
-            void loadUsers();
-        }, 0);
-
-        return () => window.clearTimeout(timer);
-    }, [loadUsers]);
-
     const loadEvents = useCallback(async () => {
         const currentToken = getCurrentToken();
 
@@ -205,13 +117,29 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         }
     }, [activePage, alerts, getCurrentToken]);
 
-    useEffect(() => {
-        const timer = window.setTimeout(() => {
-            void loadEvents();
-        }, 0);
+    const loadRaffles = useCallback(async () => {
+        const currentToken = getCurrentToken();
 
-        return () => window.clearTimeout(timer);
-    }, [loadEvents]);
+        if (!currentToken || activePage !== "raffles") {
+            return;
+        }
+
+        setIsRafflesLoading(true);
+
+        try {
+            const response = await rafflesApi.getAdminRaffles(currentToken);
+
+            setRaffleList(response);
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: "Sorteos no disponibles",
+                message: error instanceof Error ? error.message : "No pudimos cargar los sorteos.",
+            });
+        } finally {
+            setIsRafflesLoading(false);
+        }
+    }, [activePage, alerts, getCurrentToken]);
 
     const loadRequests = useCallback(async () => {
         const currentToken = getCurrentToken();
@@ -236,6 +164,30 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             setIsRequestsLoading(false);
         }
     }, [activePage, alerts, getCurrentToken, requestStatus]);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            void loadUsers();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
+    }, [loadUsers]);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            void loadEvents();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
+    }, [loadEvents]);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            void loadRaffles();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
+    }, [loadRaffles]);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -314,6 +266,11 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                 return;
             }
 
+            if (activePage === "raffles") {
+                void loadRaffles();
+                return;
+            }
+
             if (activePage === "requests") {
                 void loadRequests();
             }
@@ -328,7 +285,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             window.removeEventListener("online", reloadActivePage);
             document.removeEventListener("visibilitychange", reloadActivePage);
         };
-    }, [activePage, loadEvents, loadRequests, loadUsers]);
+    }, [activePage, loadEvents, loadRaffles, loadRequests, loadUsers]);
 
     const handleRoleChange = async (user: AdminUser, rol: AdminUserRole) => {
         const currentToken = getCurrentToken();
@@ -495,6 +452,149 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         }
     };
 
+    const handleSubmitRaffle = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
+
+        const formData = new FormData(event.currentTarget);
+        const title = String(formData.get("title") ?? "").trim();
+        const subtitle = String(formData.get("subtitle") ?? "").trim();
+        const description = String(formData.get("description") ?? "").trim();
+        const ticketPrice = Number(formData.get("ticketPrice"));
+        const entries = String(formData.get("entries") ?? "").trim();
+        const endsIn = String(formData.get("endsIn") ?? "").trim();
+        const status = String(formData.get("status") ?? "trending") as RaffleStatus;
+        const existingImage = String(formData.get("image") ?? "").trim();
+        const imageFile = formData.get("imageFile");
+        const featured = formData.get("featured") === "on";
+
+        if (!title || !subtitle || !description || !entries || !endsIn || !Number.isFinite(ticketPrice)) {
+            alerts.notify({
+                tone: "error",
+                title: "Sorteo incompleto",
+                message: "Completa todos los datos requeridos del sorteo.",
+            });
+            return;
+        }
+
+        if (ticketPrice < 0) {
+            alerts.notify({
+                tone: "error",
+                title: "Precio invalido",
+                message: "El precio numerico debe ser mayor o igual a 0.",
+            });
+            return;
+        }
+
+        const uploadedImageFile = imageFile instanceof File && imageFile.size > 0 ? imageFile : null;
+        const shouldUseExistingImage = Boolean(editingRaffle && existingImage);
+
+        if (!uploadedImageFile && !shouldUseExistingImage) {
+            alerts.notify({
+                tone: "error",
+                title: "Imagen requerida",
+                message: "Sube una imagen para el sorteo.",
+            });
+            return;
+        }
+
+        const form = event.currentTarget;
+        setProcessingRaffleId(editingRaffle?.id ?? "new");
+
+        try {
+            const image = uploadedImageFile
+                ? await rafflesApi.uploadAdminRaffleImage(currentToken, uploadedImageFile)
+                : existingImage;
+            const payload: RafflePayload = {
+                title,
+                subtitle,
+                description,
+                price: formatTicketPrice(ticketPrice),
+                ticketPrice,
+                entries,
+                ticketsSold: editingRaffle?.ticketsSold ?? "0",
+                endsIn,
+                status,
+                image,
+                featured,
+            };
+
+            if (editingRaffle) {
+                await rafflesApi.updateAdminRaffle(currentToken, editingRaffle.id, payload);
+            } else {
+                await rafflesApi.createAdminRaffle(currentToken, payload);
+            }
+
+            await loadRaffles();
+            form.reset();
+            setEditingRaffle(null);
+            alerts.notify({
+                tone: "success",
+                title: editingRaffle ? "Sorteo actualizado" : "Sorteo creado",
+                message: editingRaffle ? "Los cambios se guardaron correctamente." : "El sorteo ya esta disponible en el catalogo.",
+            });
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: editingRaffle ? "No pudimos actualizar el sorteo" : "No pudimos crear el sorteo",
+                message: error instanceof Error ? error.message : "Intentalo nuevamente en unos momentos.",
+            });
+        } finally {
+            setProcessingRaffleId(null);
+        }
+    };
+
+    const handleDeleteRaffle = async (raffle: Raffle) => {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
+
+        const shouldDelete = await alerts.confirm({
+            tone: "error",
+            title: "Eliminar sorteo",
+            message: `Esta accion eliminara "${raffle.title}" del catalogo.`,
+            confirmLabel: "Eliminar",
+        });
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        setProcessingRaffleId(raffle.id);
+
+        try {
+            const response = await rafflesApi.deleteAdminRaffle(currentToken, raffle.id);
+
+            if (editingRaffle?.id === raffle.id) {
+                setEditingRaffle(null);
+            }
+
+            await loadRaffles();
+            alerts.notify({
+                tone: "success",
+                title: "Sorteo eliminado",
+                message: response.message,
+            });
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos eliminar el sorteo",
+                message: error instanceof Error ? error.message : "Intentalo nuevamente en unos momentos.",
+            });
+        } finally {
+            setProcessingRaffleId(null);
+        }
+    };
+
     const profileName = [profile?.nombre, profile?.apellido_paterno, profile?.apellido_materno].filter(Boolean).join(" ") || profile?.email || displayName;
     const pendingRequests = requests.filter((request) => request.status === "pendiente").length;
     const publishedEvents = events.filter((event) => event.status.toLowerCase() === "publicado").length;
@@ -506,578 +606,80 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         return totalTickets + (Number.isFinite(ticketCount) ? ticketCount : 0);
     }, 0);
 
-    const handleCreateRaffle = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const formData = new FormData(event.currentTarget);
-        const title = String(formData.get("title") ?? "").trim();
-        const subtitle = String(formData.get("subtitle") ?? "").trim();
-        const description = String(formData.get("description") ?? "").trim();
-        const price = String(formData.get("price") ?? "").trim();
-        const ticketPrice = Number(formData.get("ticketPrice"));
-        const entries = String(formData.get("entries") ?? "").trim();
-        const ticketsSold = String(formData.get("ticketsSold") ?? "").trim();
-        const endsIn = String(formData.get("endsIn") ?? "").trim();
-        const status = String(formData.get("status") ?? "trending") as RaffleStatus;
-        const image = String(formData.get("image") ?? "").trim() || mockRaffles[0].image;
-        const featured = formData.get("featured") === "on";
-
-        if (!title || !subtitle || !description || !price || !entries || !ticketsSold || !endsIn || !Number.isFinite(ticketPrice)) {
-            alerts.notify({
-                tone: "error",
-                title: "Sorteo incompleto",
-                message: "Completa todos los datos principales del sorteo mock.",
-            });
-            return;
-        }
-
-        const nextRaffle: Raffle = {
-            id: createSlug(title),
-            title,
-            subtitle,
-            description,
-            price,
-            ticketPrice,
-            entries,
-            ticketsSold,
-            endsIn,
-            status,
-            image,
-            featured,
-        };
-
-        setRaffleList((currentRaffles) => [
-            nextRaffle,
-            ...currentRaffles.map((raffle) => featured ? { ...raffle, featured: false } : raffle),
-        ]);
-        event.currentTarget.reset();
-        alerts.notify({
-            tone: "success",
-            title: "Sorteo mock creado",
-            message: "Se agrego al panel local. Cuando exista endpoint, conectamos este formulario a la API.",
-        });
-    };
-
     return (
-        <main className={styles.shell}>
-            <aside className={styles.sidebar}>
-                <div className={styles.brand}>
-                    <img src={kustikaMark} alt="Kustika" />
-                    <span>Admin</span>
-                </div>
+        <AdminLayout
+            activePage={activePage}
+            displayName={displayName}
+            isLoggingOut={isLoggingOut}
+            onLogout={handleLogout}
+        >
+            {activePage === "users" && (
+                <UsersPanel
+                    users={users}
+                    total={total}
+                    page={page}
+                    pages={pages}
+                    pageLabel={pageLabel}
+                    isLoading={isLoading}
+                    currentUserId={currentUserId}
+                    updatingUserId={updatingUserId}
+                    canGoPrevious={canGoPrevious}
+                    canGoNext={canGoNext}
+                    setPage={setPage}
+                    onRefresh={() => void loadUsers()}
+                    onRoleChange={(user, role) => void handleRoleChange(user, role)}
+                />
+            )}
 
-                <nav className={styles.sideNav} aria-label="Panel de administracion">
-                    <a className={activePage === "users" ? styles.activeNavItem : ""} href={routes.admin}>
-                        Usuarios
-                    </a>
-                    <a className={activePage === "events" ? styles.activeNavItem : ""} href={routes.adminEvents}>
-                        Eventos
-                    </a>
-                    <a className={activePage === "raffles" ? styles.activeNavItem : ""} href={routes.adminRaffles}>
-                        Sorteos
-                    </a>
-                    <a className={activePage === "requests" ? styles.activeNavItem : ""} href={routes.adminRequests}>
-                        Solicitudes
-                    </a>
-                    <a className={activePage === "profile" ? styles.activeNavItem : ""} href={routes.adminProfile}>
-                        Mi perfil
-                    </a>
-                </nav>
+            {activePage === "events" && (
+                <EventsPanel
+                    events={events}
+                    isLoading={isEventsLoading}
+                    publishedEvents={publishedEvents}
+                    cancelledEvents={cancelledEvents}
+                    onRefresh={() => void loadEvents()}
+                />
+            )}
 
-                <button className={styles.sidebarLogout} type="button" onClick={handleLogout} disabled={isLoggingOut}>
-                    {isLoggingOut ? "Cerrando..." : "Cerrar sesion"}
-                </button>
-            </aside>
+            {activePage === "raffles" && (
+                <RafflesPanel
+                    raffles={raffleList}
+                    featuredRaffles={featuredRaffles}
+                    totalRaffleTickets={totalRaffleTickets}
+                    editingRaffle={editingRaffle}
+                    isLoading={isRafflesLoading}
+                    processingRaffleId={processingRaffleId}
+                    onSubmitRaffle={(event) => void handleSubmitRaffle(event)}
+                    onEditRaffle={setEditingRaffle}
+                    onCancelEdit={() => setEditingRaffle(null)}
+                    onDeleteRaffle={(raffle) => void handleDeleteRaffle(raffle)}
+                    onRefresh={() => void loadRaffles()}
+                />
+            )}
 
-            <section className={styles.workspace}>
-                <header className={styles.topbar}>
-                    <div>
-                        <span>Panel de Control</span>
-                        <h1>{
-                            activePage === "profile"
-                                ? "Mi perfil"
-                                : activePage === "requests"
-                                    ? "Solicitudes"
-                                    : activePage === "raffles"
-                                        ? "Sorteos"
-                                        : activePage === "events" ? "Eventos" : "Usuarios"
-                        }</h1>
-                    </div>
+            {activePage === "requests" && (
+                <RequestsPanel
+                    requests={requests}
+                    requestStatus={requestStatus}
+                    isLoading={isRequestsLoading}
+                    pendingRequests={pendingRequests}
+                    processingRequestId={processingRequestId}
+                    onStatusChange={setRequestStatus}
+                    onRefresh={() => void loadRequests()}
+                    onApprove={(requestId) => void handleApproveRequest(requestId)}
+                    onReject={(requestId) => void handleRejectRequest(requestId)}
+                />
+            )}
 
-                    <div className={styles.account}>
-                        <img src={userIcon} alt="" aria-hidden="true" />
-                        <strong>{displayName}</strong>
-                    </div>
-                </header>
-
-                {activePage === "users" ? (
-                    <>
-                        <section className={styles.statsGrid} aria-label="Resumen de usuarios">
-                    <article>
-                        <span>Total usuarios</span>
-                        <strong>{total}</strong>
-                    </article>
-                    <article>
-                        <span>Pagina actual</span>
-                        <strong>{page}</strong>
-                    </article>
-                    <article>
-                        <span>Por pagina</span>
-                        <strong>{usersPerPage}</strong>
-                    </article>
-                </section>
-
-                <section className={styles.panel}>
-                    <div className={styles.panelHeader}>
-                    <div>
-                        <span>Administracion de accesos</span>
-                        <h2>Cuentas registradas</h2>
-                    </div>
-                    <button type="button" onClick={() => void loadUsers()} disabled={isLoading}>
-                        {isLoading ? "Cargando" : "Actualizar"}
-                    </button>
-                </div>
-
-                <div className={styles.toolbar}>
-                    <p>{pageLabel}</p>
-
-                    <span className={styles.limitControl}>10 por pagina</span>
-                </div>
-
-                <div className={styles.tableWrap}>
-                    <table className={styles.usersTable}>
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Telefono</th>
-                                <th>Estado</th>
-                                <th>Creado</th>
-                                <th>Rol</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user) => {
-                                const isCurrentUser = user.id === currentUserId;
-                                const isUpdating = updatingUserId === user.id;
-
-                                return (
-                                    <tr key={user.id}>
-                                        <td>
-                                            <strong>{getFullName(user)}</strong>
-                                            <span>{user.email}</span>
-                                            {isCurrentUser && <small>Tu cuenta</small>}
-                                        </td>
-                                        <td>{user.telefono || "Sin telefono"}</td>
-                                        <td>
-                                            <div className={styles.statusList}>
-                                                <span className={user.is_active ? styles.activeBadge : styles.inactiveBadge}>
-                                                    {user.is_active ? "Activo" : "Inactivo"}
-                                                </span>
-                                                <span className={user.email_verified ? styles.activeBadge : styles.inactiveBadge}>
-                                                    {user.email_verified ? "Verificado" : "Sin verificar"}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td>{formatDate(user.created_at)}</td>
-                                        <td>
-                                            <select
-                                                value={user.rol}
-                                                disabled={isCurrentUser || isUpdating || isLoading}
-                                                onChange={(event) => {
-                                                    void handleRoleChange(user, event.target.value as AdminUserRole);
-                                                }}
-                                                aria-label={`Cambiar rol de ${getFullName(user)}`}
-                                            >
-                                                {roleOptions.map((role) => (
-                                                    <option key={role.value} value={role.value}>
-                                                        {role.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-
-                    {!isLoading && users.length === 0 && (
-                        <div className={styles.emptyState}>
-                            <strong>No hay usuarios cargados</strong>
-                            <p>Aun no hay cuentas para mostrar en esta pagina.</p>
-                        </div>
-                    )}
-
-                    {isLoading && (
-                        <div className={styles.emptyState}>
-                            <strong>Cargando usuarios</strong>
-                            <p>Estamos consultando el panel de administracion.</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className={styles.pagination}>
-                    <button type="button" disabled={!canGoPrevious} onClick={() => setPage((currentPage) => currentPage - 1)}>
-                        Anterior
-                    </button>
-                    <span>Pagina {page} de {pages}</span>
-                    <button type="button" disabled={!canGoNext} onClick={() => setPage((currentPage) => currentPage + 1)}>
-                        Siguiente
-                    </button>
-                </div>
-                </section>
-                    </>
-                ) : activePage === "events" ? (
-                    <>
-                        <section className={styles.statsGrid} aria-label="Resumen de eventos">
-                            <article>
-                                <span>Total eventos</span>
-                                <strong>{events.length}</strong>
-                            </article>
-                            <article>
-                                <span>Publicados</span>
-                                <strong>{publishedEvents}</strong>
-                            </article>
-                            <article>
-                                <span>Cancelados</span>
-                                <strong>{cancelledEvents}</strong>
-                            </article>
-                        </section>
-
-                        <section className={styles.panel}>
-                            <div className={styles.panelHeader}>
-                                <div>
-                                    <span>Catalogo de eventos</span>
-                                    <h2>Eventos existentes</h2>
-                                </div>
-                                <button type="button" onClick={() => void loadEvents()} disabled={isEventsLoading}>
-                                    {isEventsLoading ? "Cargando" : "Actualizar"}
-                                </button>
-                            </div>
-
-                            <div className={styles.toolbar}>
-                                <p>{events.length} eventos</p>
-                            </div>
-
-                            <div className={styles.eventsList}>
-                                {events.map((event) => (
-                                    <article className={styles.eventRow} key={event.id}>
-                                        <div className={styles.eventMain}>
-                                            <strong>{event.titulo}</strong>
-                                            <p>{[event.categoria, event.venue_nombre, event.ciudad_venue].filter(Boolean).join(" - ") || "Sin categoria o venue"}</p>
-                                        </div>
-                                        <span className={getStatusClassName(event.status)}>{event.status}</span>
-                                        <div className={styles.eventDates}>
-                                            <span>Creado</span>
-                                            <strong>{formatOptionalDate(event.created_at)}</strong>
-                                        </div>
-                                        <div className={styles.eventDates}>
-                                            <span>Inicio</span>
-                                            <strong>{formatOptionalDate(event.fecha_inicio)}</strong>
-                                        </div>
-                                    </article>
-                                ))}
-
-                                {!isEventsLoading && events.length === 0 && (
-                                    <div className={styles.emptyState}>
-                                        <strong>No hay eventos cargados</strong>
-                                        <p>Aun no encontramos eventos para mostrar en el panel.</p>
-                                    </div>
-                                )}
-
-                                {isEventsLoading && (
-                                    <div className={styles.emptyState}>
-                                        <strong>Cargando eventos</strong>
-                                        <p>Estamos consultando el catalogo de eventos existentes.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </section>
-                    </>
-                ) : activePage === "raffles" ? (
-                    <>
-                        <section className={styles.statsGrid} aria-label="Resumen de sorteos">
-                            <article>
-                                <span>Total sorteos</span>
-                                <strong>{raffleList.length}</strong>
-                            </article>
-                            <article>
-                                <span>Destacados</span>
-                                <strong>{featuredRaffles}</strong>
-                            </article>
-                            <article>
-                                <span>Boletos vendidos</span>
-                                <strong>{totalRaffleTickets.toLocaleString("es-MX")}</strong>
-                            </article>
-                        </section>
-
-                        <section className={styles.raffleLayout}>
-                            <form className={`${styles.panel} ${styles.raffleForm}`} onSubmit={handleCreateRaffle}>
-                                <div className={styles.panelHeader}>
-                                    <div>
-                                        <span>Sorteos mock</span>
-                                        <h2>Crear sorteo</h2>
-                                    </div>
-                                </div>
-
-                                <div className={styles.formGrid}>
-                                    <label>
-                                        Titulo
-                                        <input name="title" type="text" placeholder="Experiencia de lujo en Ibiza" required />
-                                    </label>
-                                    <label>
-                                        Subtitulo
-                                        <input name="subtitle" type="text" placeholder="Viaje completo para dos personas" required />
-                                    </label>
-                                    <label className={styles.fullField}>
-                                        Descripcion
-                                        <textarea name="description" rows={4} placeholder="Describe el premio y lo que incluye." required />
-                                    </label>
-                                    <label>
-                                        Precio visible
-                                        <input name="price" type="text" placeholder="$19.99" required />
-                                    </label>
-                                    <label>
-                                        Precio numerico
-                                        <input name="ticketPrice" type="number" min="0" step="0.01" placeholder="19.99" required />
-                                    </label>
-                                    <label>
-                                        Entradas
-                                        <input name="entries" type="text" placeholder="5,432 entradas" required />
-                                    </label>
-                                    <label>
-                                        Boletos vendidos
-                                        <input name="ticketsSold" type="text" placeholder="15,203" required />
-                                    </label>
-                                    <label>
-                                        Termina en
-                                        <input name="endsIn" type="text" placeholder="23:59:05" required />
-                                    </label>
-                                    <label>
-                                        Estado
-                                        <select name="status" defaultValue="trending">
-                                            {raffleStatusOptions.map((option) => (
-                                                <option value={option.value} key={option.value}>
-                                                    {option.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                    <label className={styles.fullField}>
-                                        URL de imagen
-                                        <input name="image" type="url" placeholder="Opcional: se usa una imagen mock si lo dejas vacio" />
-                                    </label>
-                                    <label className={styles.checkboxField}>
-                                        <input name="featured" type="checkbox" />
-                                        Marcar como sorteo destacado
-                                    </label>
-                                </div>
-
-                                <div className={styles.formActions}>
-                                    <button type="submit">Crear sorteo mock</button>
-                                </div>
-                            </form>
-
-                            <section className={`${styles.panel} ${styles.rafflePreviewPanel}`}>
-                                <div className={styles.panelHeader}>
-                                    <div>
-                                        <span>Catalogo local</span>
-                                        <h2>Sorteos creados</h2>
-                                    </div>
-                                </div>
-
-                                <div className={styles.rafflePreviewList}>
-                                    {raffleList.map((raffle) => (
-                                        <article className={styles.rafflePreview} key={raffle.id}>
-                                            <img src={raffle.image} alt="" aria-hidden="true" />
-                                            <div>
-                                                <span>{raffle.featured ? "Destacado" : raffleStatusOptions.find((option) => option.value === raffle.status)?.label}</span>
-                                                <strong>{raffle.title}</strong>
-                                                <p>{raffle.subtitle}</p>
-                                                <small>{raffle.price} / boleto - {raffle.ticketsSold} vendidos</small>
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
-                            </section>
-                        </section>
-                    </>
-                ) : activePage === "requests" ? (
-                    <>
-                        <section className={styles.statsGrid} aria-label="Resumen de solicitudes">
-                            <article>
-                                <span>Solicitudes visibles</span>
-                                <strong>{requests.length}</strong>
-                            </article>
-                            <article>
-                                <span>Pendientes</span>
-                                <strong>{pendingRequests}</strong>
-                            </article>
-                            <article>
-                                <span>Filtro</span>
-                                <strong>{requestStatus === "todos" ? "Todas" : requestStatus}</strong>
-                            </article>
-                        </section>
-
-                        <section className={styles.panel}>
-                            <div className={styles.panelHeader}>
-                                <div>
-                                    <span>Solicitudes de organizadores</span>
-                                    <h2>Accesos para publicar eventos</h2>
-                                </div>
-                                <button type="button" onClick={() => void loadRequests()} disabled={isRequestsLoading}>
-                                    {isRequestsLoading ? "Cargando" : "Actualizar"}
-                                </button>
-                            </div>
-
-                            <div className={styles.toolbar}>
-                                <p>{requests.length} solicitudes</p>
-
-                                <label className={styles.limitControl}>
-                                    Estado
-                                    <select
-                                        value={requestStatus}
-                                        onChange={(event) => setRequestStatus(event.target.value as OrganizerRequestStatus | "todos")}
-                                    >
-                                        {requestStatusOptions.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                            </div>
-
-                            <div className={styles.tableWrap}>
-                                <table className={styles.usersTable}>
-                                    <thead>
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th>Solicitante</th>
-                                            <th>RFC</th>
-                                            <th>Estado</th>
-                                            <th>Fecha</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {requests.map((request) => {
-                                            const isProcessing = processingRequestId === request.id;
-                                            const isPending = request.status === "pendiente";
-
-                                            return (
-                                                <tr key={request.id}>
-                                                    <td>
-                                                        <strong>{request.nombre_empresa}</strong>
-                                                    </td>
-                                                    <td>
-                                                        <strong>{[request.nombre, request.apellido_paterno].filter(Boolean).join(" ") || request.email}</strong>
-                                                        <span>{request.email}</span>
-                                                    </td>
-                                                    <td>{request.rfc}</td>
-                                                    <td>
-                                                        <span className={styles[request.status]}>{request.status}</span>
-                                                    </td>
-                                                    <td>{formatDate(request.created_at)}</td>
-                                                    <td>
-                                                        <div className={styles.rowActions}>
-                                                            <button
-                                                                type="button"
-                                                                disabled={!isPending || isProcessing}
-                                                                onClick={() => void handleApproveRequest(request.id)}
-                                                            >
-                                                                Aprobar
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                disabled={!isPending || isProcessing}
-                                                                onClick={() => void handleRejectRequest(request.id)}
-                                                            >
-                                                                Rechazar
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-
-                                {!isRequestsLoading && requests.length === 0 && (
-                                    <div className={styles.emptyState}>
-                                        <strong>No hay solicitudes</strong>
-                                        <p>No encontramos solicitudes con el filtro seleccionado.</p>
-                                    </div>
-                                )}
-
-                                {isRequestsLoading && (
-                                    <div className={styles.emptyState}>
-                                        <strong>Cargando solicitudes</strong>
-                                        <p>Estamos consultando las solicitudes de organizadores.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </section>
-                    </>
-                ) : (
-                    <section className={styles.profilePanel}>
-                        <article className={styles.profileHero}>
-                            <div className={styles.profileAvatar} aria-hidden="true">
-                                {profileName.slice(0, 2).toUpperCase()}
-                            </div>
-                            <div>
-                                <span>Administrador</span>
-                                <h2>{isProfileLoading ? "Cargando perfil" : profileName}</h2>
-                                <p>Consulta los datos de tu cuenta administradora sin salir del panel.</p>
-                            </div>
-                        </article>
-
-                        <article className={styles.panel}>
-                            <div className={styles.panelHeader}>
-                                <div>
-                                    <span>Cuenta</span>
-                                    <h2>Datos personales</h2>
-                                </div>
-                            </div>
-
-                            <dl className={styles.profileGrid}>
-                                <div>
-                                    <dt>Nombre</dt>
-                                    <dd>{profile?.nombre || "Sin nombre"}</dd>
-                                </div>
-                                <div>
-                                    <dt>Apellido paterno</dt>
-                                    <dd>{profile?.apellido_paterno || "Sin apellido"}</dd>
-                                </div>
-                                <div>
-                                    <dt>Apellido materno</dt>
-                                    <dd>{profile?.apellido_materno || "Sin apellido"}</dd>
-                                </div>
-                                <div>
-                                    <dt>Correo</dt>
-                                    <dd>{profile?.email || "Sin correo"}</dd>
-                                </div>
-                                <div>
-                                    <dt>Telefono</dt>
-                                    <dd>{profile?.telefono || "Sin telefono"}</dd>
-                                </div>
-                            </dl>
-                        </article>
-
-                        <section className={styles.dangerZone}>
-                            <div>
-                                <span>Zona sensible</span>
-                                <h2>Eliminar cuenta</h2>
-                                <p>Esta accion elimina tu cuenta y cierra la sesion actual.</p>
-                            </div>
-                            <button type="button" onClick={handleDeleteAccount} disabled={isDeletingAccount}>
-                                <img src={trashIcon} alt="" aria-hidden="true" />
-                                {isDeletingAccount ? "Eliminando..." : "Eliminar cuenta"}
-                            </button>
-                        </section>
-                    </section>
-                )}
-            </section>
-        </main>
+            {activePage === "profile" && (
+                <AdminProfilePanel
+                    profile={profile}
+                    profileName={profileName}
+                    isLoading={isProfileLoading}
+                    isDeletingAccount={isDeletingAccount}
+                    onDeleteAccount={() => void handleDeleteAccount()}
+                />
+            )}
+        </AdminLayout>
     );
 }

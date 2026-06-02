@@ -30,6 +30,7 @@ export const raffles: Raffle[] = [
         endsIn: "00:58:47",
         status: "limited",
         image: gamingSuiteImage,
+        featured: false,
     },
     {
         id: "cash-drop-5000",
@@ -43,6 +44,7 @@ export const raffles: Raffle[] = [
         endsIn: "04:58:47",
         status: "hot",
         image: cashDropImage,
+        featured: false,
     },
     {
         id: "festival-all-access",
@@ -56,5 +58,6 @@ export const raffles: Raffle[] = [
         endsIn: "12:30:19",
         status: "rare",
         image: ibizaExperienceImage,
+        featured: false,
     },
 ];

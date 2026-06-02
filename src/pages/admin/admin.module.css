@@ -643,8 +643,49 @@
     accent-color: #ff66c4;
 }
 
+.imageDropZone {
+    position: relative;
+    min-height: 174px;
+    align-content: center;
+    justify-items: center;
+    padding: 18px;
+    border: 1px dashed rgba(255, 102, 196, 0.42);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.52);
+    cursor: pointer;
+    text-align: center;
+}
+
+.imageDropZone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    min-height: 100%;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.imageDropZone span {
+    display: block;
+    max-width: 420px;
+    color: var(--text-h);
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: none;
+}
+
+.imageDropZone img {
+    width: min(100%, 360px);
+    max-height: 180px;
+    margin-top: 12px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
 .formActions {
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
     margin-top: 18px;
 }
@@ -657,6 +698,12 @@
     background: var(--gradient-main);
     color: #000;
     font-weight: 900;
+}
+
+.formActions button[type="button"] {
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-h);
 }
 
 .rafflePreviewPanel {
@@ -719,6 +766,10 @@
     color: var(--text);
     font-size: 12px;
     font-weight: 800;
+}
+
+.rafflePreview .rowActions {
+    margin-top: 10px;
 }
 
 .profilePanel {
