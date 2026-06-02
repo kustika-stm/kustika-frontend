@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { routes } from "../../app/router/routes";
-import { raffles, type Raffle, type RaffleStatus } from "../../entities/raffle";
+import { type Raffle, type RaffleStatus } from "../../entities/raffle";
+import { rafflesApi } from "../../features/raffles";
 import styles from "./raffles.module.css";
 
 const badgeLabels: Record<RaffleStatus, string> = {
@@ -67,8 +69,38 @@ function RaffleCard({ raffle }: { raffle: Raffle }) {
 }
 
 export function RafflesPage() {
+    const [raffles, setRaffles] = useState<Raffle[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        let isMounted = true;
+
+        rafflesApi.getPublicRaffles()
+            .then((response) => {
+                if (isMounted) {
+                    setRaffles(response);
+                    setError("");
+                }
+            })
+            .catch((requestError) => {
+                if (isMounted) {
+                    setError(requestError instanceof Error ? requestError.message : "No pudimos cargar los sorteos.");
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
     const featuredRaffle = raffles.find((raffle) => raffle.featured) ?? raffles[0];
-    const activeRaffles = raffles.filter((raffle) => raffle.id !== featuredRaffle.id);
+    const activeRaffles = featuredRaffle ? raffles.filter((raffle) => raffle.id !== featuredRaffle.id) : raffles;
 
     return (
         <main className={styles.page}>
@@ -82,19 +114,38 @@ export function RafflesPage() {
                 </div>
             </section>
 
-            <section className={styles.featuredSection} aria-labelledby="featured-raffle-title">
-                <h2 id="featured-raffle-title"><span aria-hidden="true">★</span> Sorteo destacado</h2>
-                <FeaturedRaffle raffle={featuredRaffle} />
-            </section>
+            {isLoading ? (
+                <section className={styles.statePanel}>
+                    <h2>Cargando sorteos</h2>
+                    <p>Estamos consultando los sorteos disponibles.</p>
+                </section>
+            ) : error ? (
+                <section className={styles.statePanel}>
+                    <h2>No pudimos cargar los sorteos</h2>
+                    <p>{error}</p>
+                </section>
+            ) : !featuredRaffle ? (
+                <section className={styles.statePanel}>
+                    <h2>No hay sorteos activos</h2>
+                    <p>Vuelve pronto para ver nuevas oportunidades de ganar experiencias.</p>
+                </section>
+            ) : (
+                <>
+                    <section className={styles.featuredSection} aria-labelledby="featured-raffle-title">
+                        <h2 id="featured-raffle-title"><span aria-hidden="true">★</span> Sorteo destacado</h2>
+                        <FeaturedRaffle raffle={featuredRaffle} />
+                    </section>
 
-            <section className={styles.activeSection} aria-labelledby="active-raffles-title">
-                <h2 id="active-raffles-title">Sorteos activos</h2>
-                <div className={styles.raffleGrid}>
-                    {activeRaffles.map((raffle) => (
-                        <RaffleCard raffle={raffle} key={raffle.id} />
-                    ))}
-                </div>
-            </section>
+                    <section className={styles.activeSection} aria-labelledby="active-raffles-title">
+                        <h2 id="active-raffles-title">Sorteos activos</h2>
+                        <div className={styles.raffleGrid}>
+                            {activeRaffles.map((raffle) => (
+                                <RaffleCard raffle={raffle} key={raffle.id} />
+                            ))}
+                        </div>
+                    </section>
+                </>
+            )}
         </main>
     );
 }

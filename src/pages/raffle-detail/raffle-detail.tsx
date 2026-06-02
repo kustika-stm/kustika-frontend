@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { routes } from "../../app/router/routes";
-import { getRaffleById, raffles, type Raffle, type RaffleStatus } from "../../entities/raffle";
+import { type Raffle, type RaffleStatus } from "../../entities/raffle";
+import { rafflesApi } from "../../features/raffles";
 import styles from "./raffle-detail.module.css";
 
 const badgeLabels: Record<RaffleStatus, string> = {
@@ -42,19 +43,63 @@ function MiniRaffleCard({ raffle }: { raffle: Raffle }) {
 }
 
 export function RaffleDetailPage({ raffleId }: RaffleDetailPageProps) {
-    const raffle = getRaffleById(raffleId);
+    const [raffle, setRaffle] = useState<Raffle | null>(null);
+    const [raffles, setRaffles] = useState<Raffle[]>([]);
     const [ticketCount, setTicketCount] = useState(5);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        let isMounted = true;
+
+        Promise.all([
+            rafflesApi.getPublicRaffle(raffleId),
+            rafflesApi.getPublicRaffles().catch(() => [] as Raffle[]),
+        ])
+            .then(([nextRaffle, nextRaffles]) => {
+                if (isMounted) {
+                    setRaffle(nextRaffle);
+                    setRaffles(nextRaffles);
+                    setError("");
+                }
+            })
+            .catch((requestError) => {
+                if (isMounted) {
+                    setError(requestError instanceof Error ? requestError.message : "Sorteo no encontrado");
+                }
+            })
+            .finally(() => {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [raffleId]);
 
     const relatedRaffles = useMemo(() => {
         return raffles.filter((item) => item.id !== raffleId).slice(0, 3);
-    }, [raffleId]);
+    }, [raffleId, raffles]);
 
-    if (!raffle) {
+    if (isLoading) {
+        return (
+            <main className={styles.page}>
+                <section className={styles.notFound}>
+                    <h1>Cargando sorteo</h1>
+                    <p>Estamos consultando los detalles del sorteo.</p>
+                </section>
+            </main>
+        );
+    }
+
+    if (error || !raffle) {
         return (
             <main className={styles.page}>
                 <section className={styles.notFound}>
                     <h1>Sorteo no encontrado</h1>
-                    <p>Ese sorteo ya no está disponible o cambió de dirección.</p>
+                    <p>{error || "Ese sorteo ya no está disponible o cambió de dirección."}</p>
                     <a href={routes.raffles}>Volver a sorteos</a>
                 </section>
             </main>
@@ -148,17 +193,19 @@ export function RaffleDetailPage({ raffleId }: RaffleDetailPageProps) {
                 </div>
             </section>
 
-            <section className={styles.relatedPanel} aria-labelledby="related-raffles-title">
-                <div className={styles.relatedHeader}>
-                    <h2 id="related-raffles-title">Más sorteos activos</h2>
-                    <a href={routes.raffles}>Ver todo</a>
-                </div>
-                <div className={styles.relatedGrid}>
-                    {relatedRaffles.map((item) => (
-                        <MiniRaffleCard raffle={item} key={item.id} />
-                    ))}
-                </div>
-            </section>
+            {relatedRaffles.length > 0 && (
+                <section className={styles.relatedPanel} aria-labelledby="related-raffles-title">
+                    <div className={styles.relatedHeader}>
+                        <h2 id="related-raffles-title">Más sorteos activos</h2>
+                        <a href={routes.raffles}>Ver todo</a>
+                    </div>
+                    <div className={styles.relatedGrid}>
+                        {relatedRaffles.map((item) => (
+                            <MiniRaffleCard raffle={item} key={item.id} />
+                        ))}
+                    </div>
+                </section>
+            )}
         </main>
     );
 }

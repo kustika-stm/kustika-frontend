@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
-import { raffles as mockRaffles, type Raffle, type RaffleStatus } from "../../entities/raffle";
+import type { Raffle, RaffleStatus } from "../../entities/raffle";
 import { clearSession, getStoredSession, saveSession, type SessionUser } from "../../entities/session";
 import { adminApi, type AdminEvent, type AdminUser, type AdminUserRole } from "../../features/admin/api";
 import { authApi } from "../../features/auth/api";
 import { organizerRequestsApi, type OrganizerRequest, type OrganizerRequestStatus } from "../../features/organizers/api";
 import { profileApi } from "../../features/profile/api";
+import { rafflesApi, type RafflePayload } from "../../features/raffles";
 import { useAlerts } from "../../shared/ui/alerts";
 import { AdminLayout } from "./ui/AdminLayout";
 import { AdminProfilePanel } from "./ui/AdminProfilePanel";
@@ -13,10 +14,14 @@ import { EventsPanel } from "./ui/EventsPanel";
 import { RafflesPanel } from "./ui/RafflesPanel";
 import { RequestsPanel } from "./ui/RequestsPanel";
 import { UsersPanel } from "./ui/UsersPanel";
-import { createSlug, getTokenUserId, usersPerPage, type AdminPageName } from "./model/adminUtils";
+import { getTokenUserId, usersPerPage, type AdminPageName } from "./model/adminUtils";
 
 type AdminPageProps = {
     page?: AdminPageName;
+};
+
+const formatTicketPrice = (ticketPrice: number) => {
+    return `$${ticketPrice.toFixed(2)}`;
 };
 
 export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
@@ -28,7 +33,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const displayName = [session?.user?.nombre, session?.user?.apellido_paterno].filter(Boolean).join(" ") || "Administrador";
     const [users, setUsers] = useState<AdminUser[]>([]);
     const [events, setEvents] = useState<AdminEvent[]>([]);
-    const [raffleList, setRaffleList] = useState<Raffle[]>(mockRaffles);
+    const [raffleList, setRaffleList] = useState<Raffle[]>([]);
     const [requests, setRequests] = useState<OrganizerRequest[]>([]);
     const [requestStatus, setRequestStatus] = useState<OrganizerRequestStatus | "todos">("pendiente");
     const [profile, setProfile] = useState<SessionUser | null>(session?.user ?? null);
@@ -38,9 +43,12 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isEventsLoading, setIsEventsLoading] = useState(activePage === "events");
+    const [isRafflesLoading, setIsRafflesLoading] = useState(activePage === "raffles");
     const [isRequestsLoading, setIsRequestsLoading] = useState(activePage === "requests");
     const [isProfileLoading, setIsProfileLoading] = useState(activePage === "profile");
     const [processingRequestId, setProcessingRequestId] = useState<string | null>(null);
+    const [processingRaffleId, setProcessingRaffleId] = useState<string | null>(null);
+    const [editingRaffle, setEditingRaffle] = useState<Raffle | null>(null);
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
@@ -109,6 +117,30 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         }
     }, [activePage, alerts, getCurrentToken]);
 
+    const loadRaffles = useCallback(async () => {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken || activePage !== "raffles") {
+            return;
+        }
+
+        setIsRafflesLoading(true);
+
+        try {
+            const response = await rafflesApi.getAdminRaffles(currentToken);
+
+            setRaffleList(response);
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: "Sorteos no disponibles",
+                message: error instanceof Error ? error.message : "No pudimos cargar los sorteos.",
+            });
+        } finally {
+            setIsRafflesLoading(false);
+        }
+    }, [activePage, alerts, getCurrentToken]);
+
     const loadRequests = useCallback(async () => {
         const currentToken = getCurrentToken();
 
@@ -148,6 +180,14 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
 
         return () => window.clearTimeout(timer);
     }, [loadEvents]);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            void loadRaffles();
+        }, 0);
+
+        return () => window.clearTimeout(timer);
+    }, [loadRaffles]);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -226,6 +266,11 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                 return;
             }
 
+            if (activePage === "raffles") {
+                void loadRaffles();
+                return;
+            }
+
             if (activePage === "requests") {
                 void loadRequests();
             }
@@ -240,7 +285,7 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             window.removeEventListener("online", reloadActivePage);
             document.removeEventListener("visibilitychange", reloadActivePage);
         };
-    }, [activePage, loadEvents, loadRequests, loadUsers]);
+    }, [activePage, loadEvents, loadRaffles, loadRequests, loadUsers]);
 
     const handleRoleChange = async (user: AdminUser, rol: AdminUserRole) => {
         const currentToken = getCurrentToken();
@@ -407,56 +452,147 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
         }
     };
 
-    const handleCreateRaffle = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmitRaffle = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
 
         const formData = new FormData(event.currentTarget);
         const title = String(formData.get("title") ?? "").trim();
         const subtitle = String(formData.get("subtitle") ?? "").trim();
         const description = String(formData.get("description") ?? "").trim();
-        const price = String(formData.get("price") ?? "").trim();
         const ticketPrice = Number(formData.get("ticketPrice"));
         const entries = String(formData.get("entries") ?? "").trim();
-        const ticketsSold = String(formData.get("ticketsSold") ?? "").trim();
         const endsIn = String(formData.get("endsIn") ?? "").trim();
         const status = String(formData.get("status") ?? "trending") as RaffleStatus;
-        const image = String(formData.get("image") ?? "").trim() || mockRaffles[0].image;
+        const existingImage = String(formData.get("image") ?? "").trim();
+        const imageFile = formData.get("imageFile");
         const featured = formData.get("featured") === "on";
 
-        if (!title || !subtitle || !description || !price || !entries || !ticketsSold || !endsIn || !Number.isFinite(ticketPrice)) {
+        if (!title || !subtitle || !description || !entries || !endsIn || !Number.isFinite(ticketPrice)) {
             alerts.notify({
                 tone: "error",
                 title: "Sorteo incompleto",
-                message: "Completa todos los datos principales del sorteo mock.",
+                message: "Completa todos los datos requeridos del sorteo.",
             });
             return;
         }
 
-        const nextRaffle: Raffle = {
-            id: createSlug(title),
-            title,
-            subtitle,
-            description,
-            price,
-            ticketPrice,
-            entries,
-            ticketsSold,
-            endsIn,
-            status,
-            image,
-            featured,
-        };
+        if (ticketPrice < 0) {
+            alerts.notify({
+                tone: "error",
+                title: "Precio invalido",
+                message: "El precio numerico debe ser mayor o igual a 0.",
+            });
+            return;
+        }
 
-        setRaffleList((currentRaffles) => [
-            nextRaffle,
-            ...currentRaffles.map((raffle) => featured ? { ...raffle, featured: false } : raffle),
-        ]);
-        event.currentTarget.reset();
-        alerts.notify({
-            tone: "success",
-            title: "Sorteo mock creado",
-            message: "Se agrego al panel local. Cuando exista endpoint, conectamos este formulario a la API.",
+        const uploadedImageFile = imageFile instanceof File && imageFile.size > 0 ? imageFile : null;
+        const shouldUseExistingImage = Boolean(editingRaffle && existingImage);
+
+        if (!uploadedImageFile && !shouldUseExistingImage) {
+            alerts.notify({
+                tone: "error",
+                title: "Imagen requerida",
+                message: "Sube una imagen para el sorteo.",
+            });
+            return;
+        }
+
+        const form = event.currentTarget;
+        setProcessingRaffleId(editingRaffle?.id ?? "new");
+
+        try {
+            const image = uploadedImageFile
+                ? await rafflesApi.uploadAdminRaffleImage(currentToken, uploadedImageFile)
+                : existingImage;
+            const payload: RafflePayload = {
+                title,
+                subtitle,
+                description,
+                price: formatTicketPrice(ticketPrice),
+                ticketPrice,
+                entries,
+                ticketsSold: editingRaffle?.ticketsSold ?? "0",
+                endsIn,
+                status,
+                image,
+                featured,
+            };
+
+            if (editingRaffle) {
+                await rafflesApi.updateAdminRaffle(currentToken, editingRaffle.id, payload);
+            } else {
+                await rafflesApi.createAdminRaffle(currentToken, payload);
+            }
+
+            await loadRaffles();
+            form.reset();
+            setEditingRaffle(null);
+            alerts.notify({
+                tone: "success",
+                title: editingRaffle ? "Sorteo actualizado" : "Sorteo creado",
+                message: editingRaffle ? "Los cambios se guardaron correctamente." : "El sorteo ya esta disponible en el catalogo.",
+            });
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: editingRaffle ? "No pudimos actualizar el sorteo" : "No pudimos crear el sorteo",
+                message: error instanceof Error ? error.message : "Intentalo nuevamente en unos momentos.",
+            });
+        } finally {
+            setProcessingRaffleId(null);
+        }
+    };
+
+    const handleDeleteRaffle = async (raffle: Raffle) => {
+        const currentToken = getCurrentToken();
+
+        if (!currentToken) {
+            window.location.assign(routes.login);
+            return;
+        }
+
+        const shouldDelete = await alerts.confirm({
+            tone: "error",
+            title: "Eliminar sorteo",
+            message: `Esta accion eliminara "${raffle.title}" del catalogo.`,
+            confirmLabel: "Eliminar",
         });
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        setProcessingRaffleId(raffle.id);
+
+        try {
+            const response = await rafflesApi.deleteAdminRaffle(currentToken, raffle.id);
+
+            if (editingRaffle?.id === raffle.id) {
+                setEditingRaffle(null);
+            }
+
+            await loadRaffles();
+            alerts.notify({
+                tone: "success",
+                title: "Sorteo eliminado",
+                message: response.message,
+            });
+        } catch (error) {
+            alerts.notify({
+                tone: "error",
+                title: "No pudimos eliminar el sorteo",
+                message: error instanceof Error ? error.message : "Intentalo nuevamente en unos momentos.",
+            });
+        } finally {
+            setProcessingRaffleId(null);
+        }
     };
 
     const profileName = [profile?.nombre, profile?.apellido_paterno, profile?.apellido_materno].filter(Boolean).join(" ") || profile?.email || displayName;
@@ -510,7 +646,14 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
                     raffles={raffleList}
                     featuredRaffles={featuredRaffles}
                     totalRaffleTickets={totalRaffleTickets}
-                    onCreateRaffle={handleCreateRaffle}
+                    editingRaffle={editingRaffle}
+                    isLoading={isRafflesLoading}
+                    processingRaffleId={processingRaffleId}
+                    onSubmitRaffle={(event) => void handleSubmitRaffle(event)}
+                    onEditRaffle={setEditingRaffle}
+                    onCancelEdit={() => setEditingRaffle(null)}
+                    onDeleteRaffle={(raffle) => void handleDeleteRaffle(raffle)}
+                    onRefresh={() => void loadRaffles()}
                 />
             )}
 
