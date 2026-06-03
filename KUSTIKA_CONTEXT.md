@@ -1,5 +1,7 @@
 # KUSTIKA - FRONTEND CONTEXT
-- Por cada feature, es una rama nueva
+- Por cada feature, es una rama correspondiente o nueva, si ya existe primero se hace un pull.
+
+- No hacer commits hasta que se indique con un "sube los cambios" o algo parecido
 ## Descripción
 Kustika es una plataforma web para la compra de boletos de conciertos y eventos.
 
