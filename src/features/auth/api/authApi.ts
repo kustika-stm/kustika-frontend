@@ -42,6 +42,15 @@ export type ResetPasswordRequest = VerifyResetCodeRequest & {
     nueva_password: string;
 };
 
+export type CreateGooglePasswordRequest = {
+    password: string;
+};
+
+export type CreateGooglePasswordResponse = {
+    message: string;
+    requires_password_setup: boolean;
+};
+
 type RegisterResponse = {
     usuario?: SessionUser;
     user?: SessionUser;
@@ -151,6 +160,14 @@ export const authApi = {
     resetPassword(payload: ResetPasswordRequest) {
         return apiRequest<unknown>("/auth/reset-password", {
             method: "POST",
+            body: payload,
+        });
+    },
+
+    createGooglePassword(accessToken: string, payload: CreateGooglePasswordRequest) {
+        return apiRequest<CreateGooglePasswordResponse>("/auth/google/crear-password", {
+            method: "POST",
+            token: accessToken,
             body: payload,
         });
     },

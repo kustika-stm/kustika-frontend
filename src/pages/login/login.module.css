@@ -344,6 +344,13 @@
     outline: none;
 }
 
+.passwordRules {
+    margin-top: -4px;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 .verifySubmit,
 .secondaryButton {
     display: inline-flex;

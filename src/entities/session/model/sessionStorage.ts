@@ -44,6 +44,26 @@ export function updateStoredSessionRole(role: UserRole) {
     return nextSession;
 }
 
+export function updateStoredSessionPasswordSetup(requiresPasswordSetup: boolean) {
+    const session = getStoredSession();
+
+    if (!session) {
+        return null;
+    }
+
+    const nextSession = {
+        ...session,
+        user: {
+            ...session.user,
+            email: session.user?.email ?? "",
+            requiresPasswordSetup,
+        },
+    };
+
+    saveSession(nextSession);
+    return nextSession;
+}
+
 export function clearSession() {
     window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
     window.localStorage.removeItem(LEGACY_LOCAL_STORAGE_KEY);
