@@ -10,6 +10,7 @@ import {
     type SessionUser,
 } from "../../entities/session";
 import { authApi } from "../../features/auth/api";
+import { PasswordField } from "../../shared/ui/password-field";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import styles from "./login.module.css";
 
@@ -163,8 +164,7 @@ function GooglePasswordSetup({ session }: PasswordSetupProps) {
                 <form className={styles.verifyForm} onSubmit={handleSubmit}>
                     <label className={styles.verifyField}>
                         <span>Contrasena</span>
-                        <input
-                            type="password"
+                        <PasswordField
                             minLength={8}
                             maxLength={32}
                             autoComplete="new-password"
@@ -176,8 +176,7 @@ function GooglePasswordSetup({ session }: PasswordSetupProps) {
 
                     <label className={styles.verifyField}>
                         <span>Confirmar contrasena</span>
-                        <input
-                            type="password"
+                        <PasswordField
                             minLength={8}
                             maxLength={32}
                             autoComplete="new-password"
