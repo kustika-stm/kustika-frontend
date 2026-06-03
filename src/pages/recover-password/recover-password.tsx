@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
 import { authApi } from "../../features/auth/api";
+import { PasswordField } from "../../shared/ui/password-field";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
 import { kustikaWordmark } from "../../shared/assets/images/logo";
@@ -193,11 +194,11 @@ export function RecoverPasswordPage() {
                         <form className={styles.verifyForm} onSubmit={handleResetPassword}>
                             <label className={styles.verifyField}>
                                 <span>Nueva contraseña</span>
-                                <input name="nueva_password" type="password" autoComplete="new-password" minLength={8} required />
+                                <PasswordField name="nueva_password" autoComplete="new-password" minLength={8} required />
                             </label>
                             <label className={styles.verifyField}>
                                 <span>Confirmar contraseña</span>
-                                <input name="passwordConfirm" type="password" autoComplete="new-password" minLength={8} required />
+                                <PasswordField name="passwordConfirm" autoComplete="new-password" minLength={8} required />
                             </label>
                             <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
                                 Cambiar contraseña

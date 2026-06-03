@@ -1,5 +1,6 @@
 import { type FormEvent } from "react";
 import { useAlerts } from "../../../shared/ui/alerts";
+import { PasswordField } from "../../../shared/ui/password-field";
 import styles from "./auth-form.module.css";
 
 export type AuthMode = "login" | "register";
@@ -107,9 +108,8 @@ export function AuthForm(props: Props) {
 
             <label className={styles.field}>
                 <span>Contraseña</span>
-                <input
+                <PasswordField
                     name="password"
-                    type="password"
                     placeholder="Tu contraseña"
                     autoComplete={isRegister ? "new-password" : "current-password"}
                     minLength={8}
@@ -120,9 +120,8 @@ export function AuthForm(props: Props) {
             {isRegister && (
                 <label className={styles.field}>
                     <span>Confirmar contraseña</span>
-                    <input
+                    <PasswordField
                         name="passwordConfirm"
-                        type="password"
                         placeholder="Repite tu contraseña"
                         autoComplete="new-password"
                         minLength={8}
