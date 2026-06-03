@@ -12,6 +12,7 @@ export type SessionUser = {
     avatar_url?: string;
     photo_url?: string;
     picture?: string;
+    requiresPasswordSetup?: boolean;
 };
 
 export type AuthSession = {

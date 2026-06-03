@@ -4,5 +4,7 @@ export type {
     RefreshRequest,
     RegisterRequest,
     ResendCodeRequest,
+    CreateGooglePasswordRequest,
+    CreateGooglePasswordResponse,
     VerifyEmailRequest,
 } from "./authApi";

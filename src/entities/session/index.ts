@@ -9,5 +9,6 @@ export {
     getTokenRole,
     normalizeRole,
     saveSession,
+    updateStoredSessionPasswordSetup,
     updateStoredSessionRole,
 } from "./model";
