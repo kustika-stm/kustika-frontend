@@ -39,10 +39,11 @@ type EventsPanelProps = {
     deletingEventId: string;
     editingEventId: string;
     eventForm: AdminEventForm;
+    eventFormResetKey: number;
     publishedEvents: number;
     cancelledEvents: number;
     onRefresh: () => void;
-    onCreateEvent: (event: FormEvent<HTMLFormElement>, tickets: AdminEventTicketForm[]) => void;
+    onCreateEvent: (event: FormEvent<HTMLFormElement>, tickets: AdminEventTicketForm[]) => Promise<boolean>;
     onEditEvent: (event: AdminEvent) => void;
     onDeleteEvent: (event: AdminEvent) => void;
     onCancelEdit: () => void;
@@ -85,6 +86,7 @@ export function EventsPanel({
     deletingEventId,
     editingEventId,
     eventForm,
+    eventFormResetKey,
     publishedEvents,
     cancelledEvents,
     onRefresh,
@@ -127,6 +129,23 @@ export function EventsPanel({
     const closeForm = () => {
         onCancelEdit();
         setIsFormOpen(false);
+    };
+
+    const handleSubmitEvent = async (event: FormEvent<HTMLFormElement>) => {
+        const wasSaved = await onCreateEvent(event, tickets);
+
+        if (!wasSaved) {
+            return;
+        }
+
+        setActiveSection("mine");
+        setIsFormOpen(false);
+        window.setTimeout(() => {
+            document.getElementById("admin-my-events")?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }, 0);
     };
 
     const renderEventRows = (events: AdminEvent[], withActions = false) => (
@@ -236,7 +255,7 @@ export function EventsPanel({
             )}
 
             {activeSection === "mine" && !isFormOpen && (
-                <section className={styles.panel}>
+                <section className={styles.panel} id="admin-my-events">
                     <div className={styles.panelHeader}>
                         <div>
                             <span>Gestion propia</span>
@@ -282,7 +301,11 @@ export function EventsPanel({
                         </button>
                     </div>
 
-                    <form className={styles.adminEventForm} onSubmit={(event) => onCreateEvent(event, tickets)}>
+                    <form
+                        key={eventFormResetKey}
+                        className={styles.adminEventForm}
+                        onSubmit={(event) => void handleSubmitEvent(event)}
+                    >
                         <fieldset>
                             <legend>Datos principales</legend>
                             <div className={styles.formGrid}>

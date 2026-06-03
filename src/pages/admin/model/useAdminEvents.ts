@@ -55,6 +55,50 @@ const buildAdminTicketPayload = (ticket: AdminEventTicketForm): AddTicketTypePay
     color: optionalText(ticket.color),
 });
 
+const getDateTimeValue = (value: string) => {
+    if (!value) {
+        return null;
+    }
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime()) ? null : date.getTime();
+};
+
+const getTicketValidationError = (ticket: AdminEventTicketForm, index: number) => {
+    const ticketLabel = `Boleto ${index + 1}`;
+    const price = Number(ticket.precio);
+    const totalQuantity = Number(ticket.cantidad_total);
+    const serviceFee = ticket.cargo_servicio === "" ? 0 : Number(ticket.cargo_servicio);
+    const maxPerOrder = ticket.max_por_orden === "" ? 10 : Number(ticket.max_por_orden);
+
+    if (!ticket.nombre.trim()) {
+        return `${ticketLabel}: agrega el nombre.`;
+    }
+
+    if (ticket.precio === "" || Number.isNaN(price) || price < 0) {
+        return `${ticketLabel}: el precio debe ser 0 o mayor.`;
+    }
+
+    if (ticket.cantidad_total === "" || Number.isNaN(totalQuantity) || totalQuantity <= 0) {
+        return `${ticketLabel}: la cantidad total debe ser mayor a 0.`;
+    }
+
+    if (ticket.cargo_servicio !== "" && (Number.isNaN(serviceFee) || serviceFee < 0)) {
+        return `${ticketLabel}: el cargo por servicio debe ser 0 o mayor.`;
+    }
+
+    if (ticket.max_por_orden !== "" && (Number.isNaN(maxPerOrder) || maxPerOrder <= 0)) {
+        return `${ticketLabel}: el maximo por orden debe ser mayor a 0.`;
+    }
+
+    if (maxPerOrder > totalQuantity) {
+        return `${ticketLabel}: el maximo por orden no puede ser mayor a la cantidad total.`;
+    }
+
+    return "";
+};
+
 const asRecord = (value: unknown): Record<string, unknown> | undefined => (
     value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : undefined
 );
@@ -202,7 +246,7 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
 
         if (!currentToken) {
             window.location.assign(routes.login);
-            return;
+            return false;
         }
 
         const form = event.currentTarget;
@@ -221,12 +265,40 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
 
         if (!title || !categoryId || !venueName) {
             alerts.notify({ tone: "error", title: "Datos incompletos", message: "Completa titulo, categoria y lugar del evento." });
-            return;
+            return false;
         }
 
         if (!editingEventId && !startsAt) {
             alerts.notify({ tone: "error", title: "Funcion incompleta", message: "Agrega la fecha y hora de inicio de la funcion." });
-            return;
+            return false;
+        }
+
+        if (!editingEventId) {
+            const startsAtValue = getDateTimeValue(startsAt);
+            const endsAt = String(formData.get("fecha_fin") ?? "").trim();
+            const doorsOpenAt = String(formData.get("fecha_apertura_puertas") ?? "").trim();
+            const endsAtValue = getDateTimeValue(endsAt);
+            const doorsOpenAtValue = getDateTimeValue(doorsOpenAt);
+
+            if (!startsAtValue) {
+                alerts.notify({ tone: "error", title: "Fecha invalida", message: "La fecha de inicio no es valida." });
+                return false;
+            }
+
+            if (endsAt && !endsAtValue) {
+                alerts.notify({ tone: "error", title: "Fecha invalida", message: "La fecha de fin no es valida." });
+                return false;
+            }
+
+            if (endsAtValue && endsAtValue < startsAtValue) {
+                alerts.notify({ tone: "error", title: "Fechas invalidas", message: "La fecha de fin no puede ser anterior al inicio." });
+                return false;
+            }
+
+            if (doorsOpenAt && !doorsOpenAtValue) {
+                alerts.notify({ tone: "error", title: "Fecha invalida", message: "La apertura de puertas no es valida." });
+                return false;
+            }
         }
 
         if (!editingEventId && !validTickets.length) {
@@ -235,7 +307,22 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
                 title: "Boletos incompletos",
                 message: "Agrega al menos un tipo de boleto con nombre, precio y cantidad.",
             });
-            return;
+            return false;
+        }
+
+        if (!editingEventId) {
+            const ticketValidationError = validTickets
+                .map(getTicketValidationError)
+                .find(Boolean);
+
+            if (ticketValidationError) {
+                alerts.notify({
+                    tone: "error",
+                    title: "Boletos invalidos",
+                    message: ticketValidationError,
+                });
+                return false;
+            }
         }
 
         setIsCreatingEvent(true);
@@ -261,7 +348,7 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
                         ? "Evento actualizado y publicado correctamente."
                         : "Evento actualizado correctamente.",
                 });
-                return;
+                return true;
             }
 
             const createdEvent = await eventsApi.createEvent(currentToken, buildAdminEventPayload(formData, uploadedImageUrl));
@@ -290,12 +377,14 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
                     ? "Evento creado y publicado correctamente."
                     : "Evento guardado como borrador correctamente.",
             });
+            return true;
         } catch (error) {
             alerts.notify({
                 tone: "error",
                 title: editingEventId ? "No pudimos actualizar el evento" : "No pudimos crear el evento",
                 message: getErrorMessage(error),
             });
+            return false;
         } finally {
             setIsCreatingEvent(false);
         }
