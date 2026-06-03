@@ -1,5 +1,5 @@
 # KUSTIKA - FRONTEND CONTEXT
-- Por cada feature, es una rama correspondiente o nueva, si ya existe primero se hace un pull.
+- Por cada feature, es una rama correspondiente o nueva, si ya existe primero se hace un pull de la rama llamada dev, que esta en el repo.
 
 - No hacer commits hasta que se indique con un "sube los cambios" o algo parecido
 ## Descripción

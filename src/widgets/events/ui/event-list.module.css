@@ -43,22 +43,30 @@
     gap: var(--space-md);
     margin-top: var(--space-sm);
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
     padding: 0 var(--space-md) 10px;
     padding-left: calc(50% - 40%);
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     scroll-padding-left: calc(50% - 40%);
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 .list::-webkit-scrollbar {
     display: none;
 }
 
+.isAnimating {
+    scroll-snap-type: none;
+}
+
 .item {
     flex: 0 0 auto;
     min-width: 80%;
     scroll-snap-align: start;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .arrow {
@@ -116,6 +124,13 @@
 
     .item {
         min-width: calc((100% - (3 * var(--space-md))) / 4);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .list {
+        scroll-behavior: auto;
+        scroll-snap-type: none;
     }
 }
 
