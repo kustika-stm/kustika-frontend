@@ -11,7 +11,11 @@
     color: inherit;
     text-decoration: none;
 
-    transition: var(--transition-normal);
+    transform: translateZ(0);
+    transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal);
+    will-change: transform;
 }
 
 /* hover */
