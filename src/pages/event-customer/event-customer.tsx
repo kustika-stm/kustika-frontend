@@ -387,16 +387,26 @@ export function EventCustomerPage() {
         const cancelDescription = await alerts.prompt({
             tone: "warning",
             title: "Motivo de cancelación",
-            message: "Puedes agregar una descripción para explicar la cancelación.",
-            label: "Descripción opcional",
+            message: "Agrega el motivo para cancelar este evento.",
+            label: "Motivo",
             placeholder: "Ej. El evento se reprogramará por causas de fuerza mayor.",
             confirmLabel: "Continuar",
         });
+        const trimmedCancelDescription = cancelDescription?.trim();
+
+        if (!trimmedCancelDescription) {
+            alerts.notify({
+                tone: "error",
+                title: "Motivo requerido",
+                message: "El backend requiere un motivo para cancelar el evento.",
+            });
+            return;
+        }
 
         setCancellingEventId(managedEvent.id);
 
         try {
-            await eventsApi.cancelEvent(token, managedEvent.id, cancelDescription?.trim() || undefined);
+            await eventsApi.cancelEvent(token, managedEvent.id, trimmedCancelDescription);
             setMyEvents((current) => current.map((event) => (
                 event.id === managedEvent.id ? { ...event, status: "cancelado" } : event
             )));

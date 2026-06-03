@@ -353,16 +353,26 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
         const deleteReason = await alerts.prompt({
             tone: "warning",
             title: "Motivo de eliminacion",
-            message: "Puedes agregar una nota interna para explicar la eliminacion.",
-            label: "Descripcion opcional",
+            message: "Agrega el motivo para cancelar este evento.",
+            label: "Motivo",
             placeholder: "Ej. Evento duplicado o ya no se realizara.",
             confirmLabel: "Continuar",
         });
+        const trimmedDeleteReason = deleteReason?.trim();
+
+        if (!trimmedDeleteReason) {
+            alerts.notify({
+                tone: "error",
+                title: "Motivo requerido",
+                message: "El backend requiere un motivo para cancelar el evento.",
+            });
+            return;
+        }
 
         setDeletingEventId(event.id);
 
         try {
-            await eventsApi.cancelEvent(currentToken, event.id, deleteReason?.trim() || undefined);
+            await eventsApi.cancelEvent(currentToken, event.id, trimmedDeleteReason);
             setAllEvents((current) => current.map((item) => (
                 item.id === event.id ? { ...item, status: "cancelado" } : item
             )));

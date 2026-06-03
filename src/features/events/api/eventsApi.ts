@@ -221,11 +221,11 @@ export const eventsApi = {
         });
     },
 
-    cancelEvent(token: string, eventId: string, descripcion?: string) {
+    cancelEvent(token: string, eventId: string, motivo: string) {
         return apiRequest(`/eventos/${encodeURIComponent(eventId)}/cancelar`, {
             method: "PUT",
             token,
-            body: descripcion ? { descripcion } : undefined,
+            body: { motivo },
         });
     },
 
