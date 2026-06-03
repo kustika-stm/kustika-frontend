@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
 import { clearSession, getStoredSession } from "../../entities/session";
 import { organizerRequestsApi, type OrganizerRequest } from "../../features/organizers/api";
+import { getMissingProfileFields, isProfileComplete } from "../../features/profile/model";
 import { ApiError } from "../../shared/api";
 import { useAlerts } from "../../shared/ui/alerts";
 import styles from "./organizer-request.module.css";
@@ -22,9 +23,11 @@ export function OrganizerRequestPage() {
     const [isLoading, setIsLoading] = useState(Boolean(token));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const rejectedNoticeId = useRef("");
+    const profileRedirectNoticeShown = useRef(false);
+    const isMissingProfile = Boolean(token) && !isProfileComplete(session?.user);
 
     useEffect(() => {
-        if (!token) {
+        if (!token || isMissingProfile) {
             return;
         }
 
@@ -58,7 +61,35 @@ export function OrganizerRequestPage() {
         return () => {
             isMounted = false;
         };
-    }, [alerts, token]);
+    }, [alerts, isMissingProfile, token]);
+
+    useEffect(() => {
+        if (!isMissingProfile) {
+            return;
+        }
+
+        if (!profileRedirectNoticeShown.current) {
+            profileRedirectNoticeShown.current = true;
+            const missingFields = getMissingProfileFields(session?.user)
+                .map((field) => field.label)
+                .join(", ");
+
+            alerts.notify({
+                tone: "warning",
+                title: "Completa tu perfil",
+                message: missingFields
+                    ? `Te falta agregar: ${missingFields}. Te redirigimos a tu perfil para completar tus datos.`
+                    : "Te redirigimos para completar tu perfil.",
+                durationMs: 3200,
+            });
+        }
+
+        const redirectTimer = window.setTimeout(() => {
+            window.location.assign(`${routes.profile}?complete=1`);
+        }, 1200);
+
+        return () => window.clearTimeout(redirectTimer);
+    }, [alerts, isMissingProfile, session?.user]);
 
     useEffect(() => {
         if (request?.status !== "rechazada" || rejectedNoticeId.current === request.id) {
@@ -156,6 +187,18 @@ export function OrganizerRequestPage() {
                     <h1>Inicia sesión para solicitar acceso</h1>
                     <p>Necesitas una cuenta de Kustika para pedir aprobación como organizador.</p>
                     <a className={styles.primaryAction} href={routes.login}>Iniciar sesión</a>
+                </section>
+            </main>
+        );
+    }
+
+    if (isMissingProfile) {
+        return (
+            <main className={styles.page}>
+                <section className={styles.hero}>
+                    <span className={styles.eyebrow}>Completa tu perfil</span>
+                    <h1>Necesitamos tus datos completos</h1>
+                    <p>Te estamos redirigiendo a tu perfil para completar tus datos antes de solicitar acceso como organizador.</p>
                 </section>
             </main>
         );
