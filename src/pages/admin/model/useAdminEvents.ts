@@ -168,8 +168,13 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
 
             try {
                 setMyEvents(await adminApi.getEvents(currentToken));
-            } catch {
-                setMyEvents(eventItems.status === "fulfilled" ? eventItems.value : []);
+            } catch (error) {
+                setMyEvents([]);
+                alerts.notify({
+                    tone: "error",
+                    title: "Mis eventos no disponibles",
+                    message: getErrorMessage(error),
+                });
             }
 
             if (categoryItems.status === "fulfilled") {
