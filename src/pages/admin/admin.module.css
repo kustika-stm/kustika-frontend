@@ -297,6 +297,16 @@
     margin-bottom: 16px;
 }
 
+.secondaryButton {
+    min-height: 40px;
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-h);
+    font-weight: 900;
+}
+
 .limitControl {
     display: inline-flex;
     gap: 10px;
@@ -360,7 +370,7 @@
 
 .eventRow {
     display: grid;
-    grid-template-columns: minmax(280px, 1fr) auto minmax(130px, 0.24fr) minmax(130px, 0.24fr);
+    grid-template-columns: minmax(240px, 1fr) auto minmax(120px, 0.22fr) minmax(120px, 0.22fr) auto;
     gap: 16px;
     align-items: center;
     padding: 16px 18px;
@@ -592,6 +602,11 @@
 .emptyState p {
     max-width: 560px;
     color: var(--text-muted);
+}
+
+.emptyState .secondaryButton {
+    width: fit-content;
+    margin-top: 8px;
 }
 
 .pagination {

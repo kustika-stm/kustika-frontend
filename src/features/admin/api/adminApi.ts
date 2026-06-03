@@ -215,6 +215,16 @@ export const adminApi = {
         });
     },
 
+    async getAllEvents(token: string) {
+        const response = await apiRequest<unknown>("/eventos", {
+            method: "GET",
+            token,
+        });
+        const hydratedEvents = await hydrateAdminEvents(getArrayPayload(response), token);
+
+        return hydratedEvents.map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
+    },
+
     async getEvents(token: string) {
         const response = await apiRequest<unknown>("/eventos/mis-eventos", {
             method: "GET",

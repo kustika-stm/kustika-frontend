@@ -162,15 +162,23 @@ export function AdminPage({ page: activePage = "users" }: AdminPageProps) {
             {activePage === "events" && (
                 <EventsPanel
                     key={eventsPanel.eventFormResetKey}
-                    events={eventsPanel.events}
+                    allEvents={eventsPanel.allEvents}
+                    myEvents={eventsPanel.myEvents}
                     categories={eventsPanel.eventCategories}
                     categoriesStatus={eventsPanel.eventCategoriesStatus}
                     isLoading={eventsPanel.isEventsLoading}
                     isCreatingEvent={eventsPanel.isCreatingEvent}
-                    publishedEvents={eventsPanel.events.filter((event) => event.status.toLowerCase() === "publicado").length}
-                    cancelledEvents={eventsPanel.events.filter((event) => event.status.toLowerCase() === "cancelado").length}
+                    isLoadingSelectedEvent={eventsPanel.isLoadingSelectedEvent}
+                    deletingEventId={eventsPanel.deletingEventId}
+                    editingEventId={eventsPanel.editingEventId}
+                    eventForm={eventsPanel.eventForm}
+                    publishedEvents={eventsPanel.allEvents.filter((event) => event.status.toLowerCase() === "publicado").length}
+                    cancelledEvents={eventsPanel.allEvents.filter((event) => event.status.toLowerCase() === "cancelado").length}
                     onRefresh={() => void eventsPanel.loadEvents()}
                     onCreateEvent={(event, tickets) => void eventsPanel.handleCreateEvent(event, tickets)}
+                    onEditEvent={(event) => void eventsPanel.handleEditEvent(event)}
+                    onDeleteEvent={(event) => void eventsPanel.handleDeleteEvent(event)}
+                    onCancelEdit={eventsPanel.handleCancelEdit}
                 />
             )}
 
