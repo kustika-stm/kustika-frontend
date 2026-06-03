@@ -192,6 +192,27 @@ const hydrateAdminEvents = async (events: unknown[], token: string) => {
     }));
 };
 
+const mapAndHydrateAdminEvents = async (events: unknown[], token: string) => {
+    const hydratedEvents = await hydrateAdminEvents(events, token);
+
+    return hydratedEvents.map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
+};
+
+const mergeAdminEvents = (eventGroups: AdminEvent[][]) => {
+    const eventsById = new Map<string, AdminEvent>();
+
+    for (const eventGroup of eventGroups) {
+        for (const event of eventGroup) {
+            eventsById.set(event.id, {
+                ...eventsById.get(event.id),
+                ...event,
+            });
+        }
+    }
+
+    return Array.from(eventsById.values());
+};
+
 export const adminApi = {
     async getUsers(token: string, page: number, limit: number) {
         const params = new URLSearchParams({
@@ -215,13 +236,40 @@ export const adminApi = {
         });
     },
 
+    async getAllEvents(token: string) {
+        try {
+            const response = await apiRequest<unknown>("/admin/eventos", {
+                method: "GET",
+                token,
+            });
+
+            return mapAndHydrateAdminEvents(getArrayPayload(response), token);
+        } catch {
+            const [publicEventsResponse, myEventsResponse] = await Promise.all([
+                apiRequest<unknown>("/eventos", {
+                    method: "GET",
+                    token,
+                }),
+                apiRequest<unknown>("/eventos/mis-eventos", {
+                    method: "GET",
+                    token,
+                }),
+            ]);
+            const [publicEvents, myEvents] = await Promise.all([
+                mapAndHydrateAdminEvents(getArrayPayload(publicEventsResponse), token),
+                mapAndHydrateAdminEvents(getArrayPayload(myEventsResponse), token),
+            ]);
+
+            return mergeAdminEvents([publicEvents, myEvents]);
+        }
+    },
+
     async getEvents(token: string) {
         const response = await apiRequest<unknown>("/eventos/mis-eventos", {
             method: "GET",
             token,
         });
-        const hydratedEvents = await hydrateAdminEvents(getArrayPayload(response), token);
 
-        return hydratedEvents.map(mapAdminEvent).filter((event): event is AdminEvent => Boolean(event));
+        return mapAndHydrateAdminEvents(getArrayPayload(response), token);
     },
 };
