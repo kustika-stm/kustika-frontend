@@ -4,7 +4,8 @@ import { adminApi, type AdminEvent } from "../../../features/admin/api";
 import { eventsApi, type AddTicketTypePayload, type CreateEventPayload, type EventCategory } from "../../../features/events/api";
 import { ApiError } from "../../../shared/api";
 import { useAlerts } from "../../../shared/ui/alerts";
-import { emptyAdminEventForm, type AdminEventForm, type AdminEventTicketForm } from "../ui/EventsPanel";
+import { emptyAdminEventForm } from "./adminEventForms";
+import type { AdminEventForm, AdminEventTicketForm } from "../ui/EventsPanel";
 import { optionalNumber, optionalText, splitValues } from "./adminFormUtils";
 import type { AdminPageName } from "./adminUtils";
 

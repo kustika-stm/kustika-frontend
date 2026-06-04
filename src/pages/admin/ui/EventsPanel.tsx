@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import type { AdminEvent } from "../../../features/admin/api";
 import type { EventCategory } from "../../../features/events/api";
 import { formatOptionalDate, getStatusClassName } from "../model/adminUtils";
@@ -61,20 +61,6 @@ const createEmptyTicket = (): AdminEventTicketForm => ({
     color: "#ff66c4",
 });
 
-export const emptyAdminEventForm: AdminEventForm = {
-    titulo: "",
-    categoria_id: "",
-    nombre_venue: "",
-    direccion_venue: "",
-    ciudad_venue: "",
-    descripcion_corta: "",
-    descripcion: "",
-    imagen_portada: "",
-    artistas: "",
-    tags: "",
-    edad_minima: "0",
-};
-
 export function EventsPanel({
     allEvents,
     myEvents,
@@ -95,23 +81,28 @@ export function EventsPanel({
     onDeleteEvent,
     onCancelEdit,
 }: EventsPanelProps) {
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [activeSection, setActiveSection] = useState<EventsSection>("catalog");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [tickets, setTickets] = useState<AdminEventTicketForm[]>([createEmptyTicket()]);
     const isEditing = Boolean(editingEventId);
+    const currentEventKey = editingEventId || `new-event-${eventFormResetKey}`;
+    const [imageSelection, setImageSelection] = useState({
+        key: currentEventKey,
+        name: "",
+        previewUrl: "",
+    });
+    const selectedImageName = imageSelection.key === currentEventKey ? imageSelection.name : "";
+    const previewUrl = imageSelection.key === currentEventKey ? imageSelection.previewUrl : "";
+    const currentImageUrl = previewUrl || eventForm.imagen_portada;
 
     useEffect(() => {
-        if (isEditing) {
-            setActiveSection("mine");
-            setIsFormOpen(true);
-        }
-    }, [isEditing]);
-
-    useEffect(() => {
-        if (!isEditing) {
-            setTickets([createEmptyTicket()]);
-        }
-    }, [isEditing]);
+        return () => {
+            if (imageSelection.previewUrl) {
+                URL.revokeObjectURL(imageSelection.previewUrl);
+            }
+        };
+    }, [imageSelection.previewUrl]);
 
     const updateTicket = (index: number, field: keyof AdminEventTicketForm, value: string) => {
         setTickets((current) => current.map((ticket, ticketIndex) => (
@@ -119,16 +110,73 @@ export function EventsPanel({
         )));
     };
 
+    const setSelectedFile = (file?: File) => {
+        if (!file) {
+            return;
+        }
+
+        if (imageSelection.previewUrl) {
+            URL.revokeObjectURL(imageSelection.previewUrl);
+        }
+
+        setImageSelection({
+            key: currentEventKey,
+            name: file.name,
+            previewUrl: URL.createObjectURL(file),
+        });
+    };
+
+    const clearSelectedImage = () => {
+        if (imageSelection.previewUrl) {
+            URL.revokeObjectURL(imageSelection.previewUrl);
+        }
+
+        setImageSelection({
+            key: currentEventKey,
+            name: "",
+            previewUrl: "",
+        });
+    };
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setSelectedFile(event.target.files?.[0]);
+    };
+
+    const handleImageDrop = (event: DragEvent<HTMLLabelElement>) => {
+        event.preventDefault();
+        const file = Array.from(event.dataTransfer.files).find((item) => item.type.startsWith("image/"));
+
+        if (!file || !fileInputRef.current) {
+            return;
+        }
+
+        const transfer = new DataTransfer();
+
+        transfer.items.add(file);
+        fileInputRef.current.files = transfer.files;
+        setSelectedFile(file);
+    };
+
     const openCreateForm = () => {
         onCancelEdit();
         setTickets([createEmptyTicket()]);
+        clearSelectedImage();
         setActiveSection("mine");
         setIsFormOpen(true);
     };
 
     const closeForm = () => {
         onCancelEdit();
+        clearSelectedImage();
         setIsFormOpen(false);
+    };
+
+    const handleEditEventClick = (event: AdminEvent) => {
+        setTickets([createEmptyTicket()]);
+        clearSelectedImage();
+        setActiveSection("mine");
+        setIsFormOpen(true);
+        onEditEvent(event);
     };
 
     const handleSubmitEvent = async (event: FormEvent<HTMLFormElement>) => {
@@ -169,7 +217,7 @@ export function EventsPanel({
                         <div className={styles.rowActions}>
                             <button
                                 type="button"
-                                onClick={() => onEditEvent(event)}
+                                onClick={() => handleEditEventClick(event)}
                                 disabled={Boolean(deletingEventId) || isLoadingSelectedEvent}
                             >
                                 {isLoadingSelectedEvent && editingEventId === event.id ? "Cargando" : "Editar"}
@@ -364,12 +412,23 @@ export function EventsPanel({
                         <fieldset>
                             <legend>Imagen y contenido</legend>
                             <div className={styles.formGrid}>
-                                <label>
+                                <label
+                                    className={`${styles.fullField} ${styles.imageDropZone}`}
+                                    onDragOver={(event) => event.preventDefault()}
+                                    onDrop={handleImageDrop}
+                                >
                                     Imagen de portada
-                                    <input name="imagen_portada_file" type="file" accept="image/jpeg,image/png,image/webp" />
-                                    {isEditing && eventForm.imagen_portada && (
-                                        <span className={styles.fieldHint}>La imagen actual se conserva si no eliges otra.</span>
-                                    )}
+                                    <input
+                                        ref={fileInputRef}
+                                        name="imagen_portada_file"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        onChange={handleFileChange}
+                                    />
+                                    <span>
+                                        {selectedImageName || (isEditing ? "Arrastra una nueva imagen o conserva la actual" : "Arrastra una imagen o haz clic para subir")}
+                                    </span>
+                                    {currentImageUrl && <img src={currentImageUrl} alt="" aria-hidden="true" />}
                                 </label>
 
                                 <label>
