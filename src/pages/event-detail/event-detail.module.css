@@ -30,9 +30,27 @@
 .heroContent {
     position: relative;
     z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+    gap: 48px;
+    align-items: end;
     width: min(100%, 1200px);
     margin: 0 auto;
     padding: 48px 16px;
+}
+
+.heroInfo {
+    min-width: 0;
+}
+
+.heroPoster {
+    justify-self: end;
+    width: min(100%, 360px);
+    height: 430px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-md);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
+    object-fit: cover;
 }
 
 .backLink {
@@ -459,6 +477,17 @@
         min-height: 470px;
     }
 
+    .heroContent {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .heroPoster {
+        justify-self: start;
+        width: min(100%, 320px);
+        height: 220px;
+    }
+
     .titleGroup h1 {
         font-size: 42px;
     }
@@ -509,11 +538,16 @@
 
 @media (max-width: 640px) {
     .hero {
-        min-height: 450px;
+        min-height: 560px;
     }
 
     .heroContent {
         padding: 28px 16px 58px;
+    }
+
+    .heroPoster {
+        width: min(100%, 280px);
+        height: 180px;
     }
 
     .backLink {
