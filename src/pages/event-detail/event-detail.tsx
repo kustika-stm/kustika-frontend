@@ -142,13 +142,14 @@ export function EventDetailPage({ eventId }: Props) {
                 <div className={styles.heroOverlay} />
 
                 <div className={styles.heroContent}>
-                    <a href={routes.home} className={styles.backLink}>Volver</a>
+                    <div className={styles.heroInfo}>
+                        <a href={routes.home} className={styles.backLink}>Volver</a>
 
-                    <div className={styles.titleGroup}>
-                        <span className={styles.kicker}>{event.category}</span>
-                        <h1>{event.title}</h1>
-                        <p>{event.subtitle}</p>
-                    </div>
+                        <div className={styles.titleGroup}>
+                            <span className={styles.kicker}>{event.category}</span>
+                            <h1>{event.title}</h1>
+                            <p>{event.subtitle}</p>
+                        </div>
 
                     <div className={styles.heroMeta} aria-label="Información principal del evento">
                         <div>
@@ -164,6 +165,10 @@ export function EventDetailPage({ eventId }: Props) {
                             <strong>{event.location}</strong>
                         </div>
                     </div>
+
+                    </div>
+
+                    <EventImage src={event.image} alt={event.title} className={styles.heroPoster} />
                 </div>
             </section>
 
