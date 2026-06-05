@@ -4,7 +4,8 @@ import { type MouseEvent, useEffect, useState } from "react";
 import styles from "./landing.module.css";
 import heroImage from "../../shared/assets/images/landing/BANNERHERO.png";
 import bannerImage from "../../shared/assets/images/landing/BANNER2.png";
-import fiestaMestizaImage from "../../shared/assets/images/landing/FIESTA_MESTIZA_BANNER.png";
+import fiestaMestizaImage from "../../shared/assets/images/landing/SKA LETRERO QR.png";
+import alamenosImage from "../../shared/assets/images/landing/prox-alamenos.jpg";
 import eventImage from "../../shared/assets/images/landing/EVENTO.jpg";
 import nexoImage from "../../shared/assets/images/landing/NEXO.jpg";
 import energyImage from "../../shared/assets/images/landing/ENERGIA.jpg";
@@ -217,6 +218,25 @@ export function LandingPage() {
                 <a className={styles.featuredCta} href="https://arema.mx/e/17886" target="_blank" rel="noreferrer">
                     &iexcl;Compra aquí!
                 </a>
+            </section>
+
+            <section
+                className={`${styles.featuredEvent} ${styles.upcomingEvent}`}
+                aria-labelledby="alamenos-title"
+            >
+                <div className={styles.featuredCopy}>
+                    <p>Muy pronto</p>
+
+                    <h2 id="alamenos-title">Alameños</h2>
+                </div>
+
+                <div className={styles.featuredMedia}>
+                    <img src={alamenosImage} alt="Próximamente: Alameños" />
+                </div>
+
+                <p className={`${styles.featuredCta} ${styles.comingSoon}`}>
+                    Próximamente
+                </p>
             </section>
 
             <section id="nosotros" className={styles.about}>
