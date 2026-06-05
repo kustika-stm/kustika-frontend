@@ -1,0 +1,222 @@
+import { useState, type FormEvent } from "react";
+import { routes } from "../../app/router/routes";
+import { authApi } from "../../features/auth/api";
+import { PasswordField } from "../../shared/ui/password-field";
+import arrowIcon from "../../shared/assets/icons/flecha.png";
+import heroImage from "../../shared/assets/images/hero/hero.jpg";
+import { kustikaWordmark } from "../../shared/assets/images/logo";
+import { useAlerts } from "../../shared/ui/alerts";
+import styles from "../login/login.module.css";
+
+type RecoveryStep = "email" | "code" | "password" | "done";
+
+export function RecoverPasswordPage() {
+    const alerts = useAlerts();
+    const [step, setStep] = useState<RecoveryStep>("email");
+    const [email, setEmail] = useState("");
+    const [codigo, setCodigo] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleRequestCode = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+        const nextEmail = String(formData.get("email") ?? "").trim();
+
+        setIsLoading(true);
+
+        try {
+            await authApi.recoverPassword({ email: nextEmail });
+            setEmail(nextEmail);
+            setStep("code");
+            alerts.notify({
+                tone: "success",
+                title: "Código enviado",
+                message: "Te enviamos un código de recuperación a tu correo.",
+            });
+        } catch (requestError) {
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos enviar el código.";
+
+            alerts.notify({ tone: "error", title: "No pudimos enviar el código", message: nextError });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+        const nextCodigo = String(formData.get("codigo") ?? "").trim();
+
+        setIsLoading(true);
+
+        try {
+            await authApi.verifyResetCode({ email, codigo: nextCodigo });
+            setCodigo(nextCodigo);
+            setStep("password");
+            alerts.notify({
+                tone: "success",
+                title: "Código verificado",
+                message: "Ahora crea tu nueva contraseña.",
+            });
+        } catch (requestError) {
+            const nextError = requestError instanceof Error ? requestError.message : "El código no es válido.";
+
+            alerts.notify({ tone: "error", title: "Código inválido", message: nextError });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendCode = async () => {
+        setIsLoading(true);
+
+        try {
+            await authApi.recoverPassword({ email });
+            alerts.notify({ tone: "success", title: "Código reenviado", message: "Te reenviamos el código de recuperación." });
+        } catch (requestError) {
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos reenviar el código.";
+
+            alerts.notify({ tone: "error", title: "No pudimos reenviar el código", message: nextError });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResetPassword = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+        const nuevaPassword = String(formData.get("nueva_password") ?? "");
+        const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
+
+        if (nuevaPassword.length < 8) {
+            alerts.notify({ tone: "error", title: "Contraseña inválida", message: "La contraseña debe tener al menos 8 caracteres." });
+            return;
+        }
+
+        if (nuevaPassword !== passwordConfirm) {
+            alerts.notify({ tone: "error", title: "Contraseñas distintas", message: "Las contraseñas no coinciden." });
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            await authApi.resetPassword({
+                email,
+                codigo,
+                nueva_password: nuevaPassword,
+            });
+            setStep("done");
+            alerts.notify({
+                tone: "success",
+                title: "Contraseña actualizada",
+                message: "Ya puedes iniciar sesión.",
+            });
+        } catch (requestError) {
+            const nextError = requestError instanceof Error ? requestError.message : "No pudimos cambiar tu contraseña.";
+
+            alerts.notify({ tone: "error", title: "No pudimos cambiar tu contraseña", message: nextError });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <main className={styles.page}>
+            {isLoading && (
+                <div className={styles.loadingOverlay} role="status" aria-live="polite" aria-label="Procesando solicitud">
+                    <div className={styles.loadingDialog}>
+                        <span className={styles.spinner} aria-hidden="true" />
+                        <strong>Procesando</strong>
+                        <p>Estamos validando tu solicitud.</p>
+                    </div>
+                </div>
+            )}
+
+            <section className={styles.shell}>
+                <aside className={styles.media}>
+                    <img src={heroImage} alt="Concierto Kustika" className={styles.mediaImage} />
+                    <div className={styles.mediaOverlay} />
+                    <div className={styles.mediaContent}>
+                        <span className={styles.kicker}>Acceso seguro</span>
+                        <h2>Vuelve a entrar a tu cuenta.</h2>
+                        <p>Recupera tu acceso y continúa guardando eventos, boletos y compras.</p>
+                    </div>
+                </aside>
+
+                <section className={styles.panel}>
+                    <div className={styles.copy}>
+                        <div className={styles.formTopbar}>
+                            <img src={kustikaWordmark} alt="Kustika" className={styles.formLogo} />
+                            <a className={styles.homeLink} href={routes.home}>
+                                <img src={arrowIcon} alt="" aria-hidden="true" />
+                                Volver al inicio
+                            </a>
+                        </div>
+                        <h1>Recuperar contraseña</h1>
+                        <p>Completa los pasos para crear una nueva contraseña.</p>
+                    </div>
+
+                    {step === "email" && (
+                        <form className={styles.verifyForm} onSubmit={handleRequestCode}>
+                            <label className={styles.verifyField}>
+                                <span>Correo electrónico</span>
+                                <input name="email" type="email" placeholder="tu@email.com" autoComplete="email" required />
+                            </label>
+                            <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
+                                Enviar código
+                            </button>
+                        </form>
+                    )}
+
+                    {step === "code" && (
+                        <form className={styles.verifyForm} onSubmit={handleVerifyCode}>
+                            <label className={styles.verifyField}>
+                                <span>Código de recuperación</span>
+                                <input name="codigo" type="text" placeholder="Código recibido" required />
+                            </label>
+                            <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
+                                Verificar código
+                            </button>
+                            <button className={styles.secondaryButton} type="button" disabled={isLoading} onClick={handleResendCode}>
+                                Reenviar código
+                            </button>
+                            <button className={styles.secondaryButton} type="button" onClick={() => setStep("email")}>
+                                Cambiar correo
+                            </button>
+                        </form>
+                    )}
+
+                    {step === "password" && (
+                        <form className={styles.verifyForm} onSubmit={handleResetPassword}>
+                            <label className={styles.verifyField}>
+                                <span>Nueva contraseña</span>
+                                <PasswordField name="nueva_password" autoComplete="new-password" minLength={8} required />
+                            </label>
+                            <label className={styles.verifyField}>
+                                <span>Confirmar contraseña</span>
+                                <PasswordField name="passwordConfirm" autoComplete="new-password" minLength={8} required />
+                            </label>
+                            <button className={styles.verifySubmit} type="submit" disabled={isLoading}>
+                                Cambiar contraseña
+                            </button>
+                        </form>
+                    )}
+
+                    {step === "done" && (
+                        <a className={styles.verifySubmit} href={routes.login}>
+                            Iniciar sesión
+                        </a>
+                    )}
+
+                    <p className={styles.switch}>
+                        ¿Recordaste tu contraseña? <a href={routes.login}>Inicia sesión</a>
+                    </p>
+                </section>
+            </section>
+        </main>
+    );
+}

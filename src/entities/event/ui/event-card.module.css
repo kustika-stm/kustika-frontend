@@ -1,5 +1,6 @@
 .card {
     position: relative;
+    display: block;
     min-width: 280px;
     height: 380px;
 
@@ -7,22 +8,35 @@
     overflow: hidden;
 
     background: var(--surface);
+    color: inherit;
+    text-decoration: none;
 
-    transition: var(--transition-normal);
+    transform: translateZ(0);
+    transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal);
+    will-change: transform;
 }
 
 /* hover */
 .card:hover {
     transform: translateY(-6px);
     box-shadow: 0 20px 60px rgba(var(--color-primary-rgb), 0.3);
+    color: inherit;
+}
+
+.card:focus-visible {
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 4px;
 }
 
 /* imagen */
 .image {
     position: absolute;
     inset: 0;
-    background-size: cover;
-    background-position: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* overlay */
@@ -87,6 +101,9 @@
 
 /* fecha */
 .meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
     font-size: 13px;
     color: var(--color-secondary);
 }

@@ -1,9 +1,10 @@
 import { type ReactNode } from "react";
+import { AlertsProvider } from "../../shared/ui/alerts";
 
 interface AppProvidersProps {
     children: ReactNode;
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
-    return <>{children}</>;
+    return <AlertsProvider>{children}</AlertsProvider>;
 }

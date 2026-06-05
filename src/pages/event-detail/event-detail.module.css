@@ -1,0 +1,608 @@
+.page {
+    width: 100%;
+    background: var(--bg);
+}
+
+.hero {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.heroImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(15, 15, 15, 0.25), var(--bg)),
+        linear-gradient(90deg, rgba(15, 15, 15, 0.96), rgba(15, 15, 15, 0.3));
+}
+
+.heroContent {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+    gap: 48px;
+    align-items: end;
+    width: min(100%, 1200px);
+    margin: 0 auto;
+    padding: 48px 16px;
+}
+
+.heroInfo {
+    min-width: 0;
+}
+
+.heroPoster {
+    justify-self: end;
+    width: min(100%, 360px);
+    height: 430px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-md);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
+    object-fit: cover;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 48px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.backLink:hover {
+    color: var(--color-highlight);
+}
+
+.titleGroup {
+    max-width: 720px;
+}
+
+.kicker,
+.eyebrow {
+    display: block;
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.titleGroup h1 {
+    margin: 8px 0 14px;
+    font-size: 56px;
+    line-height: 1;
+}
+
+.titleGroup p {
+    max-width: 640px;
+    color: var(--text);
+    font-size: 18px;
+}
+
+.heroMeta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    width: min(100%, 760px);
+    margin-top: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.heroMeta div {
+    padding: 16px;
+    background: rgba(15, 15, 15, 0.72);
+    backdrop-filter: blur(14px);
+}
+
+.heroMeta span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.heroMeta strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-h);
+    font-size: 16px;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 32px;
+    align-items: start;
+    width: min(100%, 1200px);
+    margin: 0 auto;
+    padding: 40px 16px 72px;
+}
+
+.mainInfo,
+.sidebar {
+    min-width: 0;
+}
+
+.mainInfo {
+    order: 1;
+}
+
+.sidebar {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.summary div,
+.buyBox,
+.sideBlock {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.82);
+}
+
+.summary div {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.summary strong {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-h);
+}
+
+.block {
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+}
+
+.block h2,
+.sideBlock h2 {
+    margin-bottom: 14px;
+    font-size: 22px;
+}
+
+.block p,
+.sideBlock p,
+.buyBox p {
+    color: var(--text-muted);
+}
+
+.highlights {
+    display: grid;
+    gap: 12px;
+}
+
+.highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.highlight span {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    margin-top: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+}
+
+.timeline {
+    display: grid;
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--border);
+}
+
+.timelineItem {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 20px;
+    padding: 18px;
+    background: var(--surface);
+}
+
+.timelineItem time {
+    color: var(--color-secondary);
+    font-weight: 700;
+}
+
+.timelineItem strong {
+    color: var(--text-h);
+}
+
+.timelineItem p {
+    margin-top: 4px;
+    color: var(--text-muted);
+}
+
+.buyBox,
+.sideBlock {
+    padding: 20px;
+}
+
+.buyBox {
+    position: sticky;
+    top: 84px;
+    z-index: 4;
+    display: block;
+    transition:
+        border-color var(--transition-normal),
+        max-height var(--transition-normal),
+        opacity var(--transition-normal),
+        padding var(--transition-normal),
+        transform var(--transition-normal),
+        visibility var(--transition-normal),
+        box-shadow var(--transition-normal);
+}
+
+.buyBoxTrigger {
+    height: 1px;
+}
+
+.price {
+    display: block;
+    margin: 4px 0 8px;
+    color: var(--text-h);
+    font-size: 34px;
+    line-height: 1;
+}
+
+.buyIntro p {
+    font-size: 15px;
+}
+
+.eventFacts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    overflow: hidden;
+    margin-top: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--border);
+}
+
+.eventFacts div {
+    padding: 14px;
+    background: rgba(15, 15, 15, 0.72);
+}
+
+.eventFacts span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.eventFacts strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--text-h);
+    font-size: 15px;
+}
+
+.eventFacts p {
+    margin-top: 3px;
+    font-size: 14px;
+}
+
+.buyAction {
+    display: block;
+}
+
+.cta {
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 800;
+}
+
+.cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.cta:disabled {
+    cursor: not-allowed;
+    filter: grayscale(1);
+    opacity: 0.7;
+}
+
+.buyBoxDocked {
+    max-height: 620px;
+    overflow: hidden;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.buyBoxDockedHidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-color: transparent;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.98);
+    visibility: hidden;
+}
+
+.buyBoxFloating {
+    position: fixed;
+    top: 92px;
+    left: max(16px, calc((100vw - 1200px) / 2 + 16px));
+    width: min(420px, calc(100vw - 32px));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.38);
+    transform: translateY(-16px) scale(0.98);
+    visibility: hidden;
+}
+
+.buyBoxFloatingVisible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+}
+
+.buyBoxFloating .buyIntro p,
+.buyBoxFloating .eventFacts {
+    display: none;
+}
+
+.buyBoxFloating .price {
+    margin: 2px 0 0;
+    font-size: 26px;
+}
+
+.buyBoxFloating .cta {
+    margin-top: 0;
+    padding: 12px 16px;
+}
+
+.tickets {
+    display: grid;
+    gap: 12px;
+}
+
+.ticket {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: start;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ticket:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.ticket strong,
+.venue {
+    color: var(--text-h);
+}
+
+.ticket span {
+    color: var(--color-highlight);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.policies {
+    display: grid;
+    gap: 10px;
+    padding-left: 18px;
+    color: var(--text-muted);
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tags span {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    background: var(--surface);
+    font-size: 13px;
+}
+
+.notFound {
+    width: min(100%, 760px);
+    margin: 0 auto;
+    padding: 96px 16px;
+}
+
+.notFound span {
+    color: var(--color-highlight);
+    font-weight: 700;
+}
+
+.notFound h1 {
+    margin-top: 10px;
+}
+
+.notFound p {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.notFound a {
+    display: inline-flex;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .hero {
+        min-height: 470px;
+    }
+
+    .heroContent {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .heroPoster {
+        justify-self: start;
+        width: min(100%, 320px);
+        height: 220px;
+    }
+
+    .titleGroup h1 {
+        font-size: 42px;
+    }
+
+    .content {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding-top: 0;
+    }
+
+    .mainInfo {
+        grid-column: auto;
+        grid-row: auto;
+        order: 2;
+    }
+
+    .sidebar {
+        display: flex;
+        order: 1;
+    }
+
+    .buyBox {
+        position: static;
+        display: block;
+        margin-top: -34px;
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
+        z-index: 2;
+    }
+
+    .buyBoxFloating {
+        display: none;
+    }
+
+    .eventFacts {
+        grid-template-columns: 1fr;
+        margin-top: 18px;
+    }
+
+    .cta {
+        margin-top: 18px;
+    }
+
+    .sidebar {
+        gap: 14px;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero {
+        min-height: 560px;
+    }
+
+    .heroContent {
+        padding: 28px 16px 58px;
+    }
+
+    .heroPoster {
+        width: min(100%, 280px);
+        height: 180px;
+    }
+
+    .backLink {
+        margin-bottom: 28px;
+    }
+
+    .titleGroup h1 {
+        font-size: 34px;
+    }
+
+    .titleGroup p {
+        font-size: 16px;
+    }
+
+    .heroMeta {
+        display: none;
+    }
+
+    .content {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .buyBox,
+    .sideBlock {
+        padding: 18px;
+    }
+
+    .price {
+        font-size: 40px;
+    }
+
+    .eventFacts {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .eventFacts div:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .block:first-child {
+        border-top: 0;
+        padding-top: 12px;
+    }
+
+    .timelineItem {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .ticket {
+        grid-template-columns: 1fr;
+    }
+}

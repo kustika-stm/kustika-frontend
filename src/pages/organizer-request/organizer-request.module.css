@@ -1,0 +1,249 @@
+.page {
+    width: min(100%, 1180px);
+    margin: 0 auto;
+    padding: 44px 14px 88px;
+}
+
+.hero {
+    display: grid;
+    gap: 12px;
+    padding: 34px 0 38px;
+    border-bottom: 1px solid var(--border);
+}
+
+.eyebrow {
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    max-width: 780px;
+    margin: 0;
+    font-size: 38px;
+    line-height: 1.04;
+}
+
+.hero p {
+    max-width: 760px;
+    color: var(--text-muted);
+    font-size: 17px;
+    line-height: 1.55;
+}
+
+.layout {
+    display: grid;
+    gap: 18px;
+    max-width: 920px;
+    padding-top: 24px;
+}
+
+.steps {
+    display: grid;
+    gap: 10px;
+    max-width: 920px;
+    padding-top: 24px;
+}
+
+.steps span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    font-weight: 900;
+}
+
+.steps .currentStep {
+    background: var(--gradient-main);
+    color: #000;
+}
+
+.steps .doneStep {
+    border-color: rgba(51, 214, 159, 0.42);
+    background: rgba(51, 214, 159, 0.12);
+    color: #9af3d3;
+}
+
+.panel {
+    display: grid;
+    gap: 18px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.82);
+    box-shadow: var(--shadow);
+}
+
+.panelHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.panelHeader h2 {
+    margin: 4px 0 0;
+    color: var(--text-h);
+    font-size: 24px;
+}
+
+.formGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.formGrid label {
+    display: grid;
+    gap: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.formGrid input,
+.formGrid textarea {
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: 0;
+    background: rgba(15, 15, 15, 0.72);
+    color: var(--text-h);
+    font: inherit;
+}
+
+.formGrid textarea {
+    resize: vertical;
+}
+
+.formGrid input:focus,
+.formGrid textarea:focus {
+    border-color: rgba(255, 63, 199, 0.72);
+}
+
+.formGrid input:disabled,
+.formGrid textarea:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+.panel button,
+.primaryAction {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 46px;
+    padding: 11px 16px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 900;
+}
+
+.panel button:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+    opacity: 0.7;
+}
+
+.message {
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+}
+
+.success {
+    border: 1px solid rgba(51, 214, 159, 0.42);
+    background: rgba(51, 214, 159, 0.12);
+    color: #9af3d3;
+}
+
+.error {
+    border: 1px solid rgba(255, 92, 122, 0.44);
+    background: rgba(255, 92, 122, 0.12);
+    color: #ffb3c1;
+}
+
+.emptyState,
+.statusCard {
+    display: grid;
+    gap: 8px;
+    min-height: 180px;
+    align-content: center;
+    padding: 18px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.48);
+}
+
+.emptyState strong,
+.statusCard strong {
+    color: var(--text-h);
+    font-size: 18px;
+}
+
+.emptyState p,
+.statusCard p {
+    color: var(--text-muted);
+}
+
+.pendiente,
+.aprobada,
+.rechazada {
+    width: fit-content;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.pendiente {
+    background: rgba(255, 219, 51, 0.14);
+    color: var(--color-highlight);
+}
+
+.aprobada {
+    background: rgba(51, 214, 159, 0.14);
+    color: #9af3d3;
+}
+
+.rechazada {
+    background: rgba(255, 92, 122, 0.14);
+    color: #ffb3c1;
+}
+
+@media (min-width: 720px) {
+    .formGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fullField {
+        grid-column: 1 / -1;
+    }
+
+    .steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 980px) {
+    .page {
+        padding: 72px 22px 110px;
+    }
+
+    .hero h1 {
+        font-size: clamp(48px, 4vw, 62px);
+    }
+
+    .panel {
+        padding: 24px;
+    }
+}

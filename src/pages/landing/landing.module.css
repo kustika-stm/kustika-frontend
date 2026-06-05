@@ -265,6 +265,18 @@
     text-transform: uppercase;
 }
 
+.upcomingEvent {
+    padding-top: 54px;
+}
+
+.comingSoon {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    letter-spacing: 0.08em;
+    cursor: default;
+}
+
 .about,
 .upcoming {
     width: min(100%, 1440px);
@@ -640,6 +652,10 @@
         min-height: 58px;
         padding: 0 30px;
         font-size: 20px;
+    }
+
+    .upcomingEvent {
+        padding-top: 82px;
     }
 
     .about {

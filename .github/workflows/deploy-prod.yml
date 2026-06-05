@@ -1,4 +1,4 @@
-name: Deploy Evenxa Web Prod
+name: Deploy Kustika Prod
 
 on:
   push:
@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: evenxa-backend-prod
+  PROJECT_ID: kustika-frontend
   REGION: us-central1
-  SERVICE: evenxa-web-prod
-  IMAGE: us-central1-docker.pkg.dev/evenxa-backend-prod/evenxa-repo/web-prod:latest
+  SERVICE: kustika-prod
+  IMAGE: us-central1-docker.pkg.dev/kustika-frontend/cloud-run-source-deploy/kustika-prod:latest
 
 jobs:
   deploy:
@@ -42,6 +42,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64 \
+            --provenance=false \
             -t $IMAGE \
             --push .
 

@@ -1,104 +1,133 @@
-/* 🔥 CONTENEDOR PADRE */
 .wrapper {
-    padding: var(--space-md);
+    padding: 18px 0 8px;
 }
 
-/* 🔥 HERO COMO CARD */
 .banner {
     position: relative;
-
-    min-height: 420px;
-    width: 100%;
-    max-width: 1200px;
-
-    margin: 0 auto;
-
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-
     display: flex;
-    align-items: center;
-    padding: var(--space-lg);
-
+    align-items: end;
+    min-height: clamp(460px, 62svh, 680px);
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
     background-size: cover;
     background-position: center;
-
-    /* 👇 sombra elegante (NO exagerada) */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.48);
 }
 
-/* overlay */
 .overlay {
     position: absolute;
     inset: 0;
-
     background:
-        linear-gradient(to right,
-            rgba(0, 0, 0, 0.85),
-            rgba(0, 0, 0, 0.4)),
-        radial-gradient(circle at 20% 20%,
-            rgba(var(--color-primary-rgb), 0.35),
-            transparent 60%);
+        linear-gradient(90deg, rgba(6, 6, 8, 0.94) 0%, rgba(8, 8, 10, 0.62) 48%, rgba(8, 8, 10, 0.18) 100%),
+        linear-gradient(180deg, rgba(6, 6, 8, 0.08) 0%, rgba(6, 6, 8, 0.92) 100%);
 }
 
-/* contenido */
 .content {
     position: relative;
     z-index: 2;
-    max-width: 480px;
+    width: min(100%, 680px);
+    padding: clamp(24px, 5vw, 64px);
 }
 
-/* badge */
 .badge {
-    display: inline-block;
-    margin-bottom: var(--space-sm);
-
-    font-size: 11px;
-    font-weight: 600;
-
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    margin-bottom: 14px;
     padding: 6px 10px;
-
+    border: 1px solid rgba(255, 219, 51, 0.42);
     border-radius: var(--radius-sm);
-    background: var(--color-highlight);
-    color: #000;
+    background: rgba(255, 219, 51, 0.12);
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
 }
 
-/* título */
 .content h1 {
-    font-size: 34px;
-    line-height: 1.1;
+    max-width: 620px;
+    margin: 0;
+    font-size: clamp(38px, 7vw, 76px);
+    line-height: 0.98;
 }
 
-/* texto */
 .content p {
-    margin-top: var(--space-sm);
-    color: var(--text-muted);
+    max-width: 520px;
+    margin-top: 18px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 17px;
 }
 
-/* botones */
 .actions {
-    margin-top: var(--space-md);
     display: flex;
-    gap: var(--space-sm);
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+.primary,
+.secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+}
+
+.primary {
+    background: var(--gradient-main);
+    color: #000;
+    box-shadow: 0 18px 42px rgba(255, 102, 196, 0.2);
+}
+
+.primary:hover {
+    color: #000;
+    filter: brightness(1.08);
+    transform: translateY(-1px);
 }
 
 .secondary {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-
-    padding: 12px 18px;
-    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(8, 8, 10, 0.58);
+    color: var(--text-h);
+    backdrop-filter: blur(14px);
 }
 
-/* 💻 desktop */
-@media (min-width: 768px) {
+.secondary:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--text-h);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+    .wrapper {
+        padding-top: 10px;
+    }
+
     .banner {
         min-height: 520px;
-        padding: var(--space-xl);
+    }
+
+    .content {
+        max-width: 340px;
+        padding: 24px;
     }
 
     .content h1 {
-        font-size: 56px;
+        font-size: 34px;
+        line-height: 1.05;
+    }
+
+    .content p {
+        font-size: 15px;
+    }
+
+    .actions {
+        display: grid;
     }
 }

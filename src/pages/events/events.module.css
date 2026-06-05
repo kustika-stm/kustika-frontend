@@ -1,0 +1,257 @@
+.page {
+    width: min(100%, 1200px);
+    margin: 0 auto;
+    padding: 28px 12px 72px;
+}
+
+.hero {
+    display: grid;
+    align-items: end;
+    min-height: 250px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.hero span {
+    display: block;
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    max-width: 760px;
+    margin: 8px 0 14px;
+    font-size: 40px;
+    line-height: 1.05;
+}
+
+.hero p {
+    max-width: 680px;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.searchSection {
+    position: sticky;
+    top: var(--app-header-height);
+    z-index: 80;
+    padding: 6px 0 10px;
+}
+
+.toolbar {
+    display: grid;
+    gap: 12px;
+    padding: 18px 0 8px;
+}
+
+.toolbar label {
+    display: grid;
+    gap: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.toolbar select {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: 0;
+    background: rgba(24, 24, 27, 0.82);
+    color: var(--text-h);
+    font: inherit;
+}
+
+.toolbar select:focus {
+    border-color: rgba(255, 63, 199, 0.72);
+}
+
+.results {
+    display: grid;
+    gap: 18px;
+    padding-top: 24px;
+}
+
+.resultsHeader {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.resultsHeader h2 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.resultsHeader p {
+    margin-top: 4px;
+    color: var(--text-muted);
+}
+
+.list {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--border);
+}
+
+.eventRow {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.eventImage {
+    display: block;
+    width: 92px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+}
+
+.eventImage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+}
+
+.eventImage:hover img {
+    transform: scale(1.06);
+}
+
+.eventInfo {
+    min-width: 0;
+}
+
+.eventMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.eventMeta span:not(:last-child)::after {
+    content: "•";
+    margin-left: 6px;
+    color: var(--text-muted);
+}
+
+.eventInfo h3 {
+    margin: 4px 0;
+    font-size: 18px;
+    line-height: 1.25;
+}
+
+.eventInfo h3 a {
+    color: var(--text-h);
+}
+
+.eventInfo h3 a:hover {
+    color: var(--color-secondary);
+}
+
+.eventInfo p {
+    color: var(--text-muted);
+}
+
+.eventTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.eventTags span {
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    background: rgba(24, 24, 27, 0.82);
+    font-size: 12px;
+}
+
+.rowCta {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 800;
+}
+
+.rowCta:hover {
+    color: #000;
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.emptyState {
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.82);
+}
+
+.emptyState h3 {
+    margin-bottom: 8px;
+}
+
+.emptyState p {
+    color: var(--text-muted);
+}
+
+@media (min-width: 640px) {
+    .toolbar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding-top: 22px;
+    }
+
+    .eventRow {
+        grid-template-columns: 112px minmax(0, 1fr) 180px;
+        gap: 20px;
+        padding: 22px 0;
+    }
+
+    .eventImage {
+        width: 112px;
+    }
+
+    .rowCta {
+        grid-column: auto;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page {
+        padding: 36px 16px 88px;
+    }
+
+    .hero h1 {
+        font-size: 56px;
+    }
+
+    .eventRow {
+        grid-template-columns: 128px minmax(0, 1fr) 210px;
+        gap: 24px;
+    }
+
+    .eventImage {
+        width: 128px;
+    }
+}

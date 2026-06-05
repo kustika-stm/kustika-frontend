@@ -3,6 +3,7 @@ steps:
     args: [
       'buildx', 'build',
       '--platform', 'linux/amd64',
+      '--provenance=false',
       '-t', 'us-central1-docker.pkg.dev/evenxa-backend-prod/evenxa-repo/web-dev:latest',
       '--push', '.'
     ]

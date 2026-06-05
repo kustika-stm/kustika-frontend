@@ -1,0 +1,427 @@
+.page {
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 32px 14px 72px;
+}
+
+.hero {
+    display: grid;
+    gap: 20px;
+    align-items: center;
+    padding: 34px 0 38px;
+    border-bottom: 1px solid var(--border);
+}
+
+.avatar {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+    background: var(--gradient-main);
+    color: #000;
+    font-size: 28px;
+    font-weight: 900;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.eyebrow {
+    display: block;
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    margin: 6px 0 10px;
+    font-size: 36px;
+    line-height: 1;
+}
+
+.hero p {
+    max-width: 760px;
+    color: var(--text-muted);
+    font-size: 17px;
+    line-height: 1.55;
+}
+
+.primaryAction,
+.panelHeader a,
+.formActions a,
+.formActions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+}
+
+.primaryAction {
+    width: fit-content;
+    min-width: 168px;
+    background: var(--gradient-main);
+    color: #000;
+}
+
+.primaryAction:hover {
+    color: #000;
+    filter: brightness(1.08);
+}
+
+.panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.82);
+}
+
+.layout {
+    display: grid;
+    gap: 18px;
+    padding-top: 20px;
+}
+
+.warningBanner,
+.formError,
+.formSuccess {
+    display: grid;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+
+.warningBanner {
+    border: 1px solid rgba(255, 219, 51, 0.48);
+    background: rgba(255, 219, 51, 0.12);
+    color: #ffe877;
+}
+
+.warningBanner strong {
+    color: var(--color-highlight);
+    font-size: 16px;
+}
+
+.warningBanner p {
+    color: rgba(255, 255, 255, 0.84);
+}
+
+.warningBanner a {
+    width: fit-content;
+    color: var(--color-highlight);
+    font-weight: 800;
+}
+
+.formError {
+    border: 1px solid rgba(254, 124, 102, 0.42);
+    background: rgba(254, 124, 102, 0.12);
+    color: #ffb8aa;
+    font-weight: 700;
+}
+
+.formSuccess {
+    border: 1px solid rgba(255, 219, 51, 0.32);
+    background: rgba(255, 219, 51, 0.1);
+    color: var(--color-highlight);
+    font-weight: 700;
+}
+
+.panel {
+    padding: 18px;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.dangerZone {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid rgba(254, 124, 102, 0.38);
+    border-radius: var(--radius-md);
+    background: rgba(254, 124, 102, 0.08);
+}
+
+.dangerZone h2 {
+    margin: 4px 0 8px;
+    color: var(--text-h);
+    font-size: 22px;
+}
+
+.dangerZone p {
+    max-width: 680px;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.5;
+}
+
+.dangerZone button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    min-height: 46px;
+    padding: 11px 14px;
+    border: 1px solid rgba(254, 124, 102, 0.72);
+    border-radius: var(--radius-md);
+    background: rgba(254, 124, 102, 0.16);
+    color: #ffb8aa;
+    font-weight: 800;
+}
+
+.deleteIcon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+.dangerZone button:hover {
+    background: rgba(254, 124, 102, 0.24);
+    color: #ffd3ca;
+}
+
+.dangerZone button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
+.panelHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.panelHeader h2 {
+    margin: 4px 0 0;
+    font-size: 24px;
+}
+
+.panelHeader a,
+.formActions a {
+    border: 1px solid var(--border);
+    background: rgba(15, 15, 15, 0.64);
+    color: var(--text-h);
+}
+
+.editHeader {
+    display: grid;
+    gap: 18px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.editHeader h1 {
+    margin: 6px 0 10px;
+    font-size: 36px;
+    line-height: 1.05;
+}
+
+.editHeader p {
+    max-width: 680px;
+    color: var(--text-muted);
+}
+
+.backLink {
+    width: fit-content;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.backLink:hover {
+    color: var(--color-highlight);
+}
+
+.editForm {
+    display: grid;
+    gap: 16px;
+    padding-top: 24px;
+}
+
+.formGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.formGrid label {
+    display: grid;
+    gap: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.formGrid input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: 0;
+    background: rgba(15, 15, 15, 0.72);
+    color: var(--text-h);
+    font: inherit;
+}
+
+.formGrid input:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+.formGrid input:focus {
+    border-color: rgba(255, 63, 199, 0.72);
+}
+
+.missingField {
+    color: var(--color-highlight);
+}
+
+.missingField input {
+    border-color: rgba(255, 219, 51, 0.72);
+    background: rgba(255, 219, 51, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 219, 51, 0.1);
+}
+
+.formActions {
+    display: grid;
+    gap: 10px;
+}
+
+.formActions button {
+    background: var(--gradient-main);
+    color: #000;
+}
+
+.formActions button:disabled {
+    cursor: wait;
+    filter: grayscale(0.35);
+    opacity: 0.72;
+}
+
+.infoGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.infoItem {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    min-height: 92px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.54);
+}
+
+.missingItem {
+    border-color: rgba(255, 219, 51, 0.66);
+    background:
+        linear-gradient(180deg, rgba(255, 219, 51, 0.1), rgba(15, 15, 15, 0.54)),
+        rgba(15, 15, 15, 0.54);
+}
+
+.missingItem dt,
+.missingItem dd {
+    color: var(--color-highlight);
+}
+
+.infoGrid dt {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.infoGrid dd {
+    color: var(--text-h);
+    font-size: 18px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+@media (min-width: 680px) {
+    .hero {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .hero h1 {
+        font-size: 46px;
+    }
+
+    .primaryAction {
+        justify-self: start;
+        grid-column: 2;
+    }
+
+    .infoGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formActions {
+        grid-template-columns: 180px 220px;
+        justify-content: end;
+    }
+}
+
+@media (min-width: 980px) {
+    .page {
+        padding: 72px 22px 110px;
+    }
+
+    .hero {
+        grid-template-columns: 108px minmax(0, 1fr) auto;
+        gap: 24px;
+        padding: 56px 0 44px;
+    }
+
+    .avatar {
+        width: 104px;
+        height: 104px;
+        font-size: 34px;
+    }
+
+    .hero h1 {
+        max-width: 860px;
+        font-size: clamp(48px, 4.2vw, 64px);
+    }
+
+    .layout {
+        padding-top: 28px;
+    }
+
+    .panel {
+        padding: 24px;
+    }
+
+    .infoGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+}
+
+@media (min-width: 1180px) {
+    .panelHeader h2 {
+        font-size: 28px;
+    }
+
+    .infoGrid div {
+        min-height: 104px;
+    }
+}

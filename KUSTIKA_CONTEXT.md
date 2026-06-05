@@ -1,7 +1,9 @@
-# EVENXA - FRONTEND CONTEXT
+# KUSTIKA - FRONTEND CONTEXT
+- Por cada feature, es una rama correspondiente o nueva, si ya existe primero se hace un pull de la rama llamada dev, que esta en el repo.
 
+- No hacer commits hasta que se indique con un "sube los cambios" o algo parecido
 ## Descripción
-Evenxa es una plataforma web para la compra de boletos de conciertos y eventos.
+Kustika es una plataforma web para la compra de boletos de conciertos y eventos.
 
 Este chat está enfocado únicamente en el desarrollo del frontend.
 

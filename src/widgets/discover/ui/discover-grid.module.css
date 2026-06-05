@@ -1,128 +1,129 @@
 .section {
-    padding: var(--space-xl) var(--space-md);
+    width: min(100%, 1240px);
+    margin: 0 auto;
+    padding: 38px var(--space-md) 56px;
 }
 
-/* header */
 .header {
-    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
 }
 
 .header h2 {
-    font-size: 24px;
+    margin: 0;
+    font-size: clamp(24px, 3vw, 34px);
     background: var(--gradient-main);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .header span {
-    font-size: 14px;
+    max-width: 360px;
     color: var(--text-muted);
+    font-size: 14px;
+    text-align: right;
 }
-
-/* ========================= */
-/* GRID */
-/* ========================= */
 
 .grid {
     display: grid;
     gap: var(--space-md);
 }
 
-/* CARD BASE */
 .card {
     position: relative;
-    height: 180px;
-
-    border-radius: var(--radius-lg);
+    min-height: 190px;
     overflow: hidden;
-
-    background-size: cover;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
     background-position: center;
-
-    cursor: pointer;
-    transition: transform var(--transition-normal);
+    background-size: cover;
+    color: var(--text-h);
+    transition: transform var(--transition-normal), border-color var(--transition-normal);
 }
 
 .card:hover {
-    transform: scale(1.02);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: var(--text-h);
+    transform: translateY(-3px);
 }
 
-/* overlay */
 .overlay {
     position: absolute;
     inset: 0;
-
-    background: linear-gradient(to top,
-            rgba(0, 0, 0, 0.9),
-            rgba(0, 0, 0, 0.2));
+    background:
+        linear-gradient(to top, rgba(0, 0, 0, 0.94), rgba(0, 0, 0, 0.2)),
+        linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.28), transparent 54%);
 }
 
-/* content */
 .content {
     position: absolute;
+    right: 0;
     bottom: 0;
     left: 0;
-    right: 0;
-
-    padding: var(--space-md);
     z-index: 2;
+    padding: 18px;
 }
 
 .content h3 {
-    font-size: 16px;
+    margin-top: 4px;
+    font-size: 19px;
 }
 
-/* tag */
 .tag {
-    font-size: 12px;
     color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
 }
-
-/* ========================= */
-/* 📱 MOBILE */
-/* ========================= */
 
 @media (max-width: 768px) {
+    .section {
+        padding-inline: 0;
+    }
+
+    .header {
+        display: grid;
+        padding: 0 var(--space-md);
+    }
+
+    .header span {
+        text-align: left;
+    }
+
     .grid {
         grid-template-columns: 1fr;
     }
 
     .card {
-        height: 200px;
+        min-height: 210px;
     }
 }
 
-/* ========================= */
-/* 💻 DESKTOP */
-/* ========================= */
-
 @media (min-width: 768px) {
     .grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: 200px 200px;
-
         grid-template-areas:
             "one one two"
             "three four four";
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: 210px 210px;
     }
 
     .one {
         grid-area: one;
-        height: 100%;
     }
 
     .two {
         grid-area: two;
-        height: 100%;
     }
 
     .three {
         grid-area: three;
-        height: 100%;
     }
 
     .four {
         grid-area: four;
-        height: 100%;
     }
 }

@@ -1,0 +1,408 @@
+.page {
+    width: min(100%, 1200px);
+    margin: 0 auto;
+    padding: 32px 12px 72px;
+}
+
+.header {
+    display: grid;
+    gap: 18px;
+    padding: 18px 0 22px;
+}
+
+.backLink {
+    width: fit-content;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.backLink:hover {
+    color: var(--color-highlight);
+}
+
+.eyebrow {
+    display: block;
+    color: var(--color-highlight);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.header h1 {
+    margin-top: 6px;
+    font-size: 34px;
+    line-height: 1.05;
+}
+
+.header p {
+    margin-top: 8px;
+    color: var(--text-muted);
+}
+
+.layout {
+    display: grid;
+    gap: 16px;
+}
+
+.form {
+    display: grid;
+    gap: 14px;
+}
+
+.step,
+.summary {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(24, 24, 27, 0.82);
+}
+
+.step {
+    padding: 16px;
+}
+
+.stepTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.stepTitle span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--gradient-main);
+    color: #000;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.stepTitle h2,
+.summary h2 {
+    font-size: 20px;
+}
+
+.stepHint {
+    margin: -4px 0 14px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.ticketChoices,
+.paymentChoices {
+    display: grid;
+    gap: 10px;
+}
+
+.ticketChoice,
+.paymentChoice {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    align-items: center;
+    min-height: 72px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.72);
+    cursor: pointer;
+    transition:
+        border-color var(--transition-normal),
+        background var(--transition-normal),
+        transform var(--transition-normal);
+}
+
+.ticketChoice {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.ticketChoice input,
+.paymentChoice input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+
+.ticketChoice strong,
+.paymentChoice strong {
+    display: block;
+    color: var(--text-h);
+}
+
+.ticketChoice small,
+.paymentChoice small {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.ticketChoice b {
+    color: var(--color-highlight);
+    white-space: nowrap;
+}
+
+.ticketChoiceSelected,
+.paymentChoiceSelected {
+    border-color: rgba(255, 63, 199, 0.68);
+    background: rgba(255, 63, 199, 0.1);
+}
+
+.ticketChoiceDisabled {
+    cursor: not-allowed;
+    filter: grayscale(1);
+    opacity: 0.58;
+}
+
+.quantityControl {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(15, 15, 15, 0.72);
+}
+
+.quantityControl strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-h);
+}
+
+.quantityButtons {
+    display: grid;
+    grid-template-columns: 1fr 52px 1fr;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+}
+
+.quantityButtons button,
+.quantityButtons span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+}
+
+.quantityButtons button {
+    padding: 0;
+    background: transparent;
+    color: var(--text-h);
+    font-size: 20px;
+}
+
+.quantityButtons button:disabled {
+    color: var(--text-muted);
+    opacity: 0.45;
+}
+
+.quantityButtons span {
+    color: var(--text-h);
+    font-weight: 800;
+}
+
+.formGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.formGrid label {
+    display: grid;
+    gap: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.formGrid input,
+.formGrid select {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: 0;
+    background: rgba(15, 15, 15, 0.72);
+    color: var(--text-h);
+    font: inherit;
+}
+
+.formGrid select {
+    cursor: pointer;
+}
+
+.formGrid input:focus,
+.formGrid select:focus {
+    border-color: rgba(255, 63, 199, 0.72);
+}
+
+.fullField {
+    grid-column: 1 / -1;
+}
+
+.summary {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+}
+
+.summary p {
+    color: var(--text-muted);
+}
+
+.summaryRows {
+    display: grid;
+    gap: 10px;
+    padding-top: 6px;
+}
+
+.summaryRows div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--text-muted);
+}
+
+.summaryRows strong {
+    color: var(--text-h);
+    white-space: nowrap;
+}
+
+.summaryRows .totalRow {
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    color: var(--text-h);
+    font-weight: 800;
+}
+
+.totalRow strong {
+    color: var(--color-highlight);
+    font-size: 22px;
+}
+
+.checkoutCta {
+    min-height: 52px;
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 800;
+}
+
+.notFound {
+    width: min(100%, 760px);
+    margin: 0 auto;
+    padding: 96px 16px;
+}
+
+.notFound span {
+    color: var(--color-highlight);
+    font-weight: 700;
+}
+
+.notFound h1 {
+    margin-top: 10px;
+}
+
+.notFound p {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.notFound a {
+    display: inline-flex;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 700;
+}
+
+.profileGate {
+    display: grid;
+    gap: 14px;
+    width: min(100%, 760px);
+    margin: 56px auto 0;
+    padding: 24px;
+    border: 1px solid rgba(255, 219, 51, 0.48);
+    border-radius: var(--radius-md);
+    background: rgba(255, 219, 51, 0.1);
+}
+
+.profileGate h1 {
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.05;
+}
+
+.profileGate p {
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+.profileGate a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 48px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    color: #000;
+    font-weight: 800;
+}
+
+@media (min-width: 760px) {
+    .page {
+        padding: 40px 16px 88px;
+    }
+
+    .header h1 {
+        font-size: 42px;
+    }
+
+    .layout {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        align-items: start;
+        gap: 24px;
+    }
+
+    .step {
+        padding: 20px;
+    }
+
+    .quantityControl {
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .quantityButtons {
+        width: 180px;
+        grid-template-columns: 42px 1fr 42px;
+    }
+
+    .paymentChoices {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .summary {
+        position: sticky;
+        top: 96px;
+    }
+}

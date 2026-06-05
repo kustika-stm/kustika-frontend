@@ -1,6 +1,27 @@
 .main {
     width: 100%;
-    max-width: 1440px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--space-md);
+    padding: 0 var(--space-md) 42px;
+}
+
+.searchSection {
+    position: sticky;
+    top: var(--app-header-height);
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    width: min(100%, 960px);
+    margin: -28px auto 24px;
+    padding: 0;
+}
+
+@media (max-width: 640px) {
+    .main {
+        padding-inline: 10px;
+    }
+
+    .searchSection {
+        margin-top: -24px;
+    }
 }

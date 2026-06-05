@@ -1,0 +1,63 @@
+import cashDropImage from "../../../shared/assets/images/raffles/cash-drop.png";
+import gamingSuiteImage from "../../../shared/assets/images/raffles/gaming-suite.png";
+import ibizaExperienceImage from "../../../shared/assets/images/raffles/ibiza-experience.png";
+import type { Raffle } from "./raffle";
+
+export const raffles: Raffle[] = [
+    {
+        id: "ultimate-ibiza-experience",
+        title: "Experiencia de lujo en Ibiza",
+        subtitle: "Viaje completo para dos personas",
+        description: "7 días de lujo, clubes VIP, hotel y acceso a yate privado.",
+        price: "$19.99",
+        ticketPrice: 19.99,
+        entries: "5,432 entradas",
+        ticketsSold: "15,203",
+        endsIn: "23:59:05",
+        status: "trending",
+        image: ibizaExperienceImage,
+        featured: true,
+    },
+    {
+        id: "next-gen-gaming-suite",
+        title: "Set gamer de última generación",
+        subtitle: "RTX 4090, monitor 4K y silla premium",
+        description: "Equipo completo para jugar, crear contenido y transmitir en vivo.",
+        price: "$9.99",
+        ticketPrice: 9.99,
+        entries: "2,184 entradas",
+        ticketsSold: "7,812",
+        endsIn: "00:58:47",
+        status: "limited",
+        image: gamingSuiteImage,
+        featured: false,
+    },
+    {
+        id: "cash-drop-5000",
+        title: "$5,000 en efectivo",
+        subtitle: "Transferencia directa al ganador",
+        description: "El premio cae directo a tu cuenta para usarlo como quieras.",
+        price: "$4.99",
+        ticketPrice: 4.99,
+        entries: "8,910 entradas",
+        ticketsSold: "21,440",
+        endsIn: "04:58:47",
+        status: "hot",
+        image: cashDropImage,
+        featured: false,
+    },
+    {
+        id: "festival-all-access",
+        title: "Acceso total al festival",
+        subtitle: "Abono VIP y acceso tras bambalinas",
+        description: "Entradas, transporte local y acceso exclusivo para vivir el festival desde dentro.",
+        price: "$7.99",
+        ticketPrice: 7.99,
+        entries: "1,642 entradas",
+        ticketsSold: "4,108",
+        endsIn: "12:30:19",
+        status: "rare",
+        image: ibizaExperienceImage,
+        featured: false,
+    },
+];

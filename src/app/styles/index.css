@@ -32,6 +32,7 @@
 
   /* UI */
   --shadow: rgba(0, 0, 0, 0.4) 0 10px 30px -10px;
+  --app-header-height: 73px;
 
   /* TYPOGRAPHY */
   --font-main: 'Montserrat', sans-serif;
@@ -126,7 +127,7 @@ button {
   transition: var(--transition-fast);
 }
 
-/* CTA EVENXA (esto te da vida visual) */
+/* CTA KUSTIKA (esto te da vida visual) */
 .button-primary {
   background: var(--gradient-main);
   color: #000;
