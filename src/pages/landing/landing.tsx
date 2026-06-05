@@ -200,44 +200,46 @@ export function LandingPage() {
                 </div>
             </section>
 
-            <section
-                id="fiesta-mestiza"
-                className={styles.featuredEvent}
-                aria-labelledby="fiesta-mestiza-title"
-            >
-                <div className={styles.featuredCopy}>
-                    <p>Únete a</p>
+            <div className={styles.featuredGrid}>
+                <section
+                    id="fiesta-mestiza"
+                    className={styles.featuredEvent}
+                    aria-labelledby="fiesta-mestiza-title"
+                >
+                    <div className={styles.featuredCopy}>
+                        <p>Únete a</p>
 
-                    <h2 id="fiesta-mestiza-title">Fiesta Mestiza</h2>
-                </div>
+                        <h2 id="fiesta-mestiza-title">Fiesta Mestiza</h2>
+                    </div>
 
-                <div className={styles.featuredMedia}>
-                    <img src={fiestaMestizaImage} alt="Fiesta Mestiza" />
-                </div>
+                    <div className={styles.featuredMedia}>
+                        <img src={fiestaMestizaImage} alt="Fiesta Mestiza" />
+                    </div>
 
-                <a className={styles.featuredCta} href="https://arema.mx/e/17886" target="_blank" rel="noreferrer">
-                    &iexcl;Compra aquí!
-                </a>
-            </section>
+                    <a className={styles.featuredCta} href="https://arema.mx/e/17886" target="_blank" rel="noreferrer">
+                        &iexcl;Compra aquí!
+                    </a>
+                </section>
 
-            <section
-                className={`${styles.featuredEvent} ${styles.upcomingEvent}`}
-                aria-labelledby="alamenos-title"
-            >
-                <div className={styles.featuredCopy}>
-                    <p>Muy pronto</p>
+                <section
+                    className={`${styles.featuredEvent} ${styles.upcomingEvent}`}
+                    aria-labelledby="alamenos-title"
+                >
+                    <div className={styles.featuredCopy}>
+                        <p>Muy pronto</p>
 
-                    <h2 id="alamenos-title">Alameños</h2>
-                </div>
+                        <h2 id="alamenos-title">Alameños</h2>
+                    </div>
 
-                <div className={styles.featuredMedia}>
-                    <img src={alamenosImage} alt="Próximamente: Alameños" />
-                </div>
+                    <div className={styles.featuredMedia}>
+                        <img src={alamenosImage} alt="Próximamente: Alameños" />
+                    </div>
 
-                <p className={`${styles.featuredCta} ${styles.comingSoon}`}>
-                    Próximamente
-                </p>
-            </section>
+                    <p className={`${styles.featuredCta} ${styles.comingSoon}`}>
+                        Próximamente
+                    </p>
+                </section>
+            </div>
 
             <section id="nosotros" className={styles.about}>
                 <div className={styles.sectionTitle}>
