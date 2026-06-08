@@ -14,6 +14,7 @@ export type Event = {
     image: string;
     category: string;
     status: "available" | "sold-out" | "soon";
+    featured?: boolean;
     organizer: string;
     capacity: number;
     tags: string[];

@@ -96,6 +96,34 @@ const numberValue = (record: EventRecord, keys: string[], fallback = 0) => {
     return fallback;
 };
 
+const booleanValue = (record: EventRecord, keys: string[], fallback = false) => {
+    for (const key of keys) {
+        const value = record[key];
+
+        if (typeof value === "boolean") {
+            return value;
+        }
+
+        if (typeof value === "number") {
+            return value === 1;
+        }
+
+        if (typeof value === "string") {
+            const normalizedValue = value.trim().toLowerCase();
+
+            if (["true", "1", "si", "sí"].includes(normalizedValue)) {
+                return true;
+            }
+
+            if (["false", "0", "no"].includes(normalizedValue)) {
+                return false;
+            }
+        }
+    }
+
+    return fallback;
+};
+
 const slugify = (value: string) => {
     return value
         .normalize("NFD")
@@ -293,6 +321,7 @@ const mapPublicEvent = (item: unknown): Event | null => {
         image: stringValue(record, ["imagen_portada", "imagen_url", "image", "image_url"], heroImage),
         category,
         status: mapStatus(stringValue(record, ["status", "estado"], "publicado")),
+        featured: booleanValue(record, ["featured", "destacado", "es_destacado"]),
         organizer: stringValue(record, ["organizador", "organizer"], "Kustika"),
         capacity: numberValue(record, ["capacidad", "capacity"], 0),
         tags,
