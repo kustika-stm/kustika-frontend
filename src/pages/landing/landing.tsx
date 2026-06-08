@@ -68,7 +68,7 @@ const socialLinks = [
     },
     {
         label: "TikTok",
-        href: "https://www.tiktok.com/@kustikamx",
+        href: "https://www.tiktok.com/@kustika.mx",
         icon: tiktokIcon,
     },
     {
