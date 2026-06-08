@@ -99,15 +99,25 @@ export function CategoriesPage({ categoryId }: Props) {
                         return (
                             <a
                                 className={styles.categoryCard}
+                                data-category={category.id}
                                 href={routes.categoryDetail(category.id)}
                                 key={category.id}
                             >
                                 <EventImage className={styles.categoryImage} src={coverImage} alt="" aria-hidden="true" />
                                 <div className={styles.cardShade} />
-                                <div>
-                                    <span>{categoryEvents.length} evento{categoryEvents.length === 1 ? "" : "s"}</span>
-                                    <h2>{category.name}</h2>
-                                    <p>{category.description}</p>
+                                <div className={styles.cardContent}>
+                                    <div className={styles.cardTop}>
+                                        <span className={styles.eventCount}>
+                                            {categoryEvents.length} evento{categoryEvents.length === 1 ? "" : "s"}
+                                        </span>
+                                        <span className={styles.cardArrow} aria-hidden="true">↗</span>
+                                    </div>
+
+                                    <div className={styles.cardCopy}>
+                                        <span className={styles.cardEyebrow}>Explorar categoría</span>
+                                        <h2>{category.name}</h2>
+                                        <p>{category.description}</p>
+                                    </div>
                                 </div>
                             </a>
                         );
