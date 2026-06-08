@@ -1,25 +1,29 @@
-import { Footer } from "../widgets/footer";
-import { Header } from "../widgets/header/ui/header";
-import { AppProviders } from "./providers";
-import { AppRouter } from "./router";
-import { routes } from "./router/routes";
+//Para cambiar de landing a Home, solo hay q comentar el return de la landing y descomentar el return del home, y viceversa.
+
+// import { Footer } from "../widgets/footer";
+// import { Header } from "../widgets/header/ui/header";
+// import { AppProviders } from "./providers";
+// import { AppRouter } from "./router";
+// import { routes } from "./router/routes";
+import { LandingPage } from "../pages/landing/landing";
 import "./styles/index.css";
 
 export function App() {
-    const pathname = window.location.pathname;
-    const authRoutes: string[] = [routes.login, routes.register, routes.recoverPassword, routes.googleCallback];
-    const isAuthRoute = authRoutes.includes(pathname);
-    const isAdminRoute = pathname === routes.admin || pathname.startsWith(`${routes.admin}/`);
+    // const pathname = window.location.pathname;
+    // const authRoutes: string[] = [routes.login, routes.register, routes.recoverPassword, routes.googleCallback];
+    // const isAuthRoute = authRoutes.includes(pathname);
+    // const isAdminRoute = pathname === routes.admin || pathname.startsWith(`${routes.admin}/`);
 
-    return (
-        <AppProviders>
-            {!isAuthRoute && !isAdminRoute && <Header />}
+    // return (
+    //     <AppProviders>
+    //         {!isAuthRoute && !isAdminRoute && <Header />}
 
-            <AppRouter />
+    //         <AppRouter />
 
-            {!isAuthRoute && !isAdminRoute && <Footer />}
-        </AppProviders>
-    );
+    //         {!isAuthRoute && !isAdminRoute && <Footer />}
+    //     </AppProviders>
+    // );
+    return <LandingPage />;
 }
 
 export default App;
