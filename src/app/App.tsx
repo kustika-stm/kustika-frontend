@@ -23,7 +23,7 @@ export function App() {
     //         {!isAuthRoute && !isAdminRoute && <Footer />}
     //     </AppProviders>
     // );
-    return <LandingPage />;
+     return <LandingPage />;
 }
 
 export default App;

@@ -114,8 +114,14 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
 };
 
 export const authApi = {
-    getGoogleLoginUrl() {
-        return `${API_BASE_URL}/auth/google`;
+    getGoogleLoginUrl(returnUrl?: string) {
+        const googleLoginUrl = new URL(`${API_BASE_URL}/auth/google`);
+
+        if (returnUrl) {
+            googleLoginUrl.searchParams.set("returnUrl", returnUrl);
+        }
+
+        return googleLoginUrl.toString();
     },
 
     getGoogleCallbackUrl() {
