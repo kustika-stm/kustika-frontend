@@ -30,7 +30,7 @@
 }
 
 .brand img {
-    width: 70px;
+    width: clamp(58px, 6vw, 70px);
     height: auto;
 }
 
@@ -783,7 +783,7 @@
 
 .imageDropZone {
     position: relative;
-    min-height: 174px;
+    min-height: clamp(160px, 20vw, 210px);
     align-content: center;
     justify-items: center;
     padding: 18px;
@@ -814,8 +814,9 @@
 }
 
 .imageDropZone img {
-    width: min(100%, 360px);
-    max-height: 180px;
+    width: min(100%, clamp(260px, 34vw, 360px));
+    max-height: clamp(150px, 18vw, 200px);
+    aspect-ratio: 16 / 9;
     margin-top: 12px;
     border-radius: 12px;
     object-fit: cover;
@@ -858,7 +859,7 @@
 
 .rafflePreview {
     display: grid;
-    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-columns: clamp(76px, 9vw, 92px) minmax(0, 1fr);
     gap: 14px;
     align-items: center;
     padding: 12px;
@@ -868,8 +869,8 @@
 }
 
 .rafflePreview img {
-    width: 92px;
-    height: 72px;
+    width: clamp(76px, 9vw, 92px);
+    aspect-ratio: 23 / 18;
     border-radius: 10px;
     object-fit: cover;
 }
@@ -929,8 +930,8 @@
 
 .profileAvatar {
     display: grid;
-    width: 82px;
-    height: 82px;
+    width: clamp(72px, 8vw, 82px);
+    height: clamp(72px, 8vw, 82px);
     place-items: center;
     border-radius: 50%;
     background: var(--gradient-main);

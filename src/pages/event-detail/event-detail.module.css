@@ -5,7 +5,7 @@
 
 .hero {
     position: relative;
-    min-height: 560px;
+    min-height: clamp(470px, 58vw, 560px);
     display: flex;
     align-items: flex-end;
     overflow: hidden;
@@ -45,8 +45,8 @@
 
 .heroPoster {
     justify-self: end;
-    width: min(100%, 360px);
-    height: 430px;
+    width: clamp(260px, 30vw, 360px);
+    aspect-ratio: 6 / 7;
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: var(--radius-md);
     box-shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
@@ -474,7 +474,7 @@
 
 @media (max-width: 900px) {
     .hero {
-        min-height: 470px;
+        min-height: clamp(470px, 72vw, 540px);
     }
 
     .heroContent {
@@ -484,8 +484,8 @@
 
     .heroPoster {
         justify-self: start;
-        width: min(100%, 320px);
-        height: 220px;
+        width: clamp(240px, 50vw, 320px);
+        aspect-ratio: 16 / 11;
     }
 
     .titleGroup h1 {
@@ -538,7 +538,7 @@
 
 @media (max-width: 640px) {
     .hero {
-        min-height: 560px;
+        min-height: clamp(520px, 145vw, 620px);
     }
 
     .heroContent {
@@ -546,8 +546,8 @@
     }
 
     .heroPoster {
-        width: min(100%, 280px);
-        height: 180px;
+        width: clamp(220px, 74vw, 280px);
+        aspect-ratio: 14 / 9;
     }
 
     .backLink {

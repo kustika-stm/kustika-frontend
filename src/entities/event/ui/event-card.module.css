@@ -1,8 +1,9 @@
 .card {
     position: relative;
     display: block;
-    min-width: 280px;
-    height: 380px;
+    min-width: clamp(240px, 74vw, 280px);
+    height: clamp(340px, 100vw, 380px);
+    aspect-ratio: 14 / 19;
 
     border-radius: var(--radius-lg);
     overflow: hidden;
