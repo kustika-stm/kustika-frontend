@@ -32,7 +32,9 @@ export function LoginPage() {
 
     const handleGoogleLogin = () => {
         setIsLoading(true);
-        window.location.assign(authApi.getGoogleLoginUrl());
+        const returnUrl = new URL(routes.googleCallback, window.location.origin).toString();
+
+        window.location.assign(authApi.getGoogleLoginUrl(returnUrl));
     };
 
     return (
