@@ -1,8 +1,11 @@
+//Para cambiar de landing a Home, solo hay q comentar el return de la landing y descomentar el return del home, y viceversa.
+
 import { Footer } from "../widgets/footer";
 import { Header } from "../widgets/header/ui/header";
 import { AppProviders } from "./providers";
 import { AppRouter } from "./router";
 import { routes } from "./router/routes";
+// import { LandingPage } from "../pages/landing/landing";
 import "./styles/index.css";
 
 export function App() {
@@ -20,6 +23,7 @@ export function App() {
             {!isAuthRoute && !isAdminRoute && <Footer />}
         </AppProviders>
     );
+    // return <LandingPage />;
 }
 
 export default App;

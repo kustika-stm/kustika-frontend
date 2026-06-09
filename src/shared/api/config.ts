@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE_URL = "https://evenxa-api-976401550096.us-central1.run.app";
+const DEFAULT_API_BASE_URL = "https://kustika-api-1084023589826.us-central1.run.app";
 
 const getApiBaseUrl = () => {
     const configuredUrl = import.meta.env.VITE_API_BASE_URL?.trim();

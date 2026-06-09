@@ -5,7 +5,7 @@ import styles from "./landing.module.css";
 import heroImage from "../../shared/assets/images/landing/BANNERHERO.png";
 import bannerImage from "../../shared/assets/images/landing/BANNER2.png";
 import fiestaMestizaImage from "../../shared/assets/images/landing/SKA LETRERO QR.png";
-import alamenosImage from "../../shared/assets/images/landing/prox-alamenos.jpg";
+import alamenosImage from "../../shared/assets/images/landing/alamenos-leon.jpg";
 import eventImage from "../../shared/assets/images/landing/EVENTO.jpg";
 import nexoImage from "../../shared/assets/images/landing/NEXO.jpg";
 import energyImage from "../../shared/assets/images/landing/ENERGIA.jpg";
@@ -68,7 +68,7 @@ const socialLinks = [
     },
     {
         label: "TikTok",
-        href: "https://www.tiktok.com/@kustikamx",
+        href: "https://www.tiktok.com/@kustika.mx",
         icon: tiktokIcon,
     },
     {
@@ -226,18 +226,18 @@ export function LandingPage() {
                     aria-labelledby="alamenos-title"
                 >
                     <div className={styles.featuredCopy}>
-                        <p>Muy pronto</p>
+                        <p>En vivo</p>
 
                         <h2 id="alamenos-title">Alameños</h2>
                     </div>
 
                     <div className={styles.featuredMedia}>
-                        <img src={alamenosImage} alt="Próximamente: Alameños" />
+                        <img src={alamenosImage} alt="Alameños de la Sierra en León" />
                     </div>
 
-                    <p className={`${styles.featuredCta} ${styles.comingSoon}`}>
-                        Próximamente
-                    </p>
+                    <a className={styles.featuredCta} href="https://arema.mx/e/17935" target="_blank" rel="noreferrer">
+                        ¡Compra aquí!
+                    </a>
                 </section>
             </div>
 
