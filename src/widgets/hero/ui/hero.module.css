@@ -6,7 +6,7 @@
     position: relative;
     display: flex;
     align-items: end;
-    min-height: clamp(460px, 62svh, 680px);
+    min-height: clamp(420px, 62svh, 680px);
     width: min(100%, 1240px);
     margin: 0 auto;
     overflow: hidden;
@@ -202,7 +202,7 @@
     }
 
     .banner {
-        min-height: 520px;
+        min-height: clamp(440px, 132vw, 520px);
     }
 
     .content {

@@ -84,7 +84,7 @@
 
 .eventMedia {
     position: relative;
-    min-height: 180px;
+    min-height: clamp(170px, 50vw, 220px);
     background: var(--surface);
 }
 
@@ -250,7 +250,7 @@
     }
 
     .ticketCard {
-        grid-template-columns: 160px minmax(0, 1fr);
+        grid-template-columns: clamp(150px, 24vw, 190px) minmax(0, 1fr);
     }
 
     .eventMedia {
@@ -276,7 +276,7 @@
     }
 
     .ticketCard {
-        grid-template-columns: 190px minmax(0, 1fr) 180px;
+        grid-template-columns: clamp(160px, 18vw, 190px) minmax(0, 1fr) 180px;
     }
 
     .ticketCode {

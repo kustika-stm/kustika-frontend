@@ -218,7 +218,7 @@
 }
 
 .formLogo {
-    width: 112px;
+    width: clamp(96px, 12vw, 112px);
     height: auto;
     display: block;
 }
@@ -403,10 +403,6 @@
         gap: 12px;
     }
 
-    .formLogo {
-        width: 104px;
-    }
-
     .copy h1 {
         font-size: 32px;
     }
@@ -416,10 +412,6 @@
     .panel {
         padding-top: 22px;
         padding-bottom: 22px;
-    }
-
-    .formLogo {
-        width: 96px;
     }
 
     .formTopbar {

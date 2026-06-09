@@ -34,7 +34,7 @@
 
 .card {
     position: relative;
-    min-height: 190px;
+    min-height: clamp(190px, 52vw, 230px);
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md);
@@ -98,7 +98,7 @@
     }
 
     .card {
-        min-height: 210px;
+        min-height: clamp(190px, 52vw, 230px);
     }
 }
 
@@ -108,7 +108,7 @@
             "one one two"
             "three four four";
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        grid-template-rows: 210px 210px;
+        grid-template-rows: repeat(2, clamp(190px, 17vw, 220px));
     }
 
     .one {

@@ -15,8 +15,8 @@
 .avatar {
     display: grid;
     place-items: center;
-    width: 84px;
-    height: 84px;
+    width: clamp(84px, 9vw, 104px);
+    height: clamp(84px, 9vw, 104px);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 50%;
     background: var(--gradient-main);
@@ -392,8 +392,6 @@
     }
 
     .avatar {
-        width: 104px;
-        height: 104px;
         font-size: 34px;
     }
 

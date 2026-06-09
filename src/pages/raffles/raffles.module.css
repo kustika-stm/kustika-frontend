@@ -72,7 +72,7 @@
 }
 
 .featuredCard {
-    min-height: 430px;
+    min-height: clamp(330px, 42vw, 430px);
     isolation: isolate;
 }
 
@@ -103,7 +103,7 @@
     z-index: 1;
     display: grid;
     align-content: end;
-    min-height: 430px;
+    min-height: clamp(330px, 42vw, 430px);
     max-width: 720px;
     padding: 46px;
 }
@@ -255,7 +255,7 @@
 
 .raffleCard {
     display: grid;
-    grid-template-rows: 220px 1fr;
+    grid-template-rows: clamp(180px, 20vw, 240px) 1fr;
     min-height: 500px;
     transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
@@ -268,7 +268,7 @@
 
 .imageWrap {
     position: relative;
-    min-height: 220px;
+    min-height: clamp(180px, 20vw, 240px);
 }
 
 .imageWrap::after {
@@ -372,11 +372,6 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .featuredCard,
-    .featuredContent {
-        min-height: 380px;
-    }
-
     .featuredContent {
         padding: 32px;
     }
@@ -412,11 +407,6 @@
         font-size: 22px;
     }
 
-    .featuredCard,
-    .featuredContent {
-        min-height: 330px;
-    }
-
     .featuredShade {
         background:
             linear-gradient(90deg, rgba(8, 8, 10, 0.9), rgba(8, 8, 10, 0.42)),
@@ -441,12 +431,12 @@
     }
 
     .raffleCard {
-        grid-template-rows: 180px 1fr;
+        grid-template-rows: clamp(180px, 54vw, 220px) 1fr;
         min-height: 430px;
     }
 
     .imageWrap {
-        min-height: 180px;
+        min-height: clamp(180px, 54vw, 220px);
     }
 
     .cardBody {
