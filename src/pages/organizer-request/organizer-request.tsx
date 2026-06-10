@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { routes } from "../../app/router/routes";
 import { clearSession, getStoredSession } from "../../entities/session";
 import { organizerRequestsApi, type OrganizerRequest } from "../../features/organizers/api";
@@ -13,7 +13,17 @@ const statusLabels: Record<string, string> = {
     rechazada: "Rechazada",
 };
 
-const optionalFields = ["descripcion", "telefono_empresa", "email_contacto", "sitio_web"] as const;
+const getMyRequest = async (token: string) => {
+    try {
+        return await organizerRequestsApi.getMyRequest(token);
+    } catch (error) {
+        if (error instanceof ApiError && error.status === 404) {
+            return null;
+        }
+
+        throw error;
+    }
+};
 
 export function OrganizerRequestPage() {
     const alerts = useAlerts();
@@ -22,7 +32,8 @@ export function OrganizerRequestPage() {
     const [request, setRequest] = useState<OrganizerRequest | null>(null);
     const [isLoading, setIsLoading] = useState(Boolean(token));
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const rejectedNoticeId = useRef("");
+    const [rfcFile, setRfcFile] = useState<File | null>(null);
+    const [rfcFileError, setRfcFileError] = useState("");
     const profileRedirectNoticeShown = useRef(false);
     const isMissingProfile = Boolean(token) && !isProfileComplete(session?.user);
 
@@ -33,7 +44,7 @@ export function OrganizerRequestPage() {
 
         let isMounted = true;
 
-        organizerRequestsApi.getMyRequest(token)
+        getMyRequest(token)
             .then((currentRequest) => {
                 if (isMounted) {
                     setRequest(currentRequest);
@@ -41,15 +52,13 @@ export function OrganizerRequestPage() {
             })
             .catch((error) => {
                 if (isMounted) {
-                    if (error instanceof ApiError && error.status !== 404) {
-                        alerts.notify({
-                            tone: "error",
-                            title: "Solicitud no disponible",
-                            message: error.message,
-                        });
-                    }
-
-                    setRequest(null);
+                    alerts.notify({
+                        tone: "error",
+                        title: "Solicitud no disponible",
+                        message: error instanceof ApiError
+                            ? error.technicalMessage ?? error.message
+                            : error instanceof Error ? error.message : "No pudimos consultar tu solicitud.",
+                    });
                 }
             })
             .finally(() => {
@@ -91,20 +100,6 @@ export function OrganizerRequestPage() {
         return () => window.clearTimeout(redirectTimer);
     }, [alerts, isMissingProfile, session?.user]);
 
-    useEffect(() => {
-        if (request?.status !== "rechazada" || rejectedNoticeId.current === request.id) {
-            return;
-        }
-
-        rejectedNoticeId.current = request.id;
-        alerts.notify({
-            tone: "warning",
-            title: "Solicitud rechazada",
-            message: `Solicitud rechazada${request.motivo_rechazo ? `: ${request.motivo_rechazo}` : "."} Corrige la información y vuelve a enviarla.`,
-            durationMs: 6800,
-        });
-    }, [alerts, request]);
-
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -113,49 +108,71 @@ export function OrganizerRequestPage() {
             return;
         }
 
-        const formData = new FormData(event.currentTarget);
-        const nombre_empresa = String(formData.get("nombre_empresa") ?? "").trim();
-        const rfc = String(formData.get("rfc") ?? "").trim().toUpperCase();
-        const payload = {
-            nombre_empresa,
-            rfc,
-            ...Object.fromEntries(
-                optionalFields
-                    .map((field) => [field, String(formData.get(field) ?? "").trim()])
-                    .filter(([, value]) => value),
-            ),
-        };
-        const telefonoEmpresa = String(payload.telefono_empresa ?? "");
-        const emailContacto = String(payload.email_contacto ?? "");
-        const sitioWeb = String(payload.sitio_web ?? "");
+        const values = new FormData(event.currentTarget);
+        const nombreEmpresa = String(values.get("nombre_empresa") ?? "").trim();
+        const descripcion = String(values.get("descripcion") ?? "").trim();
+        const telefonoEmpresa = String(values.get("telefono_empresa") ?? "").trim();
+        const emailContacto = String(values.get("email_contacto") ?? "").trim();
+        const sitioWeb = String(values.get("sitio_web") ?? "").trim();
 
-        if (!nombre_empresa || !rfc) {
-            alerts.notify({ tone: "error", title: "Datos incompletos", message: "Completa el nombre de empresa y RFC." });
+        if (nombreEmpresa.length < 2 || nombreEmpresa.length > 150) {
+            alerts.notify({ tone: "error", title: "Nombre de empresa inválido", message: "El nombre de empresa debe tener entre 2 y 150 caracteres." });
             return;
         }
 
-        if (telefonoEmpresa && !/^\d{10}$/.test(telefonoEmpresa.replace(/\D/g, ""))) {
-            alerts.notify({ tone: "error", title: "Teléfono inválido", message: "El teléfono de empresa debe tener 10 dígitos." });
+        if (descripcion.length < 10 || descripcion.length > 2000) {
+            alerts.notify({ tone: "error", title: "Descripción inválida", message: "La descripción debe tener entre 10 y 2000 caracteres." });
             return;
         }
 
-        if (emailContacto && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailContacto)) {
+        if (!/^\+?\d{10,15}$/.test(telefonoEmpresa)) {
+            alerts.notify({ tone: "error", title: "Teléfono inválido", message: "El teléfono debe tener entre 10 y 15 dígitos y puede comenzar con +." });
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailContacto)) {
             alerts.notify({ tone: "error", title: "Email inválido", message: "Escribe un email de contacto válido." });
             return;
         }
 
-        if (sitioWeb && !/^https?:\/\/.+\..+/.test(sitioWeb)) {
-            alerts.notify({ tone: "error", title: "Sitio web inválido", message: "El sitio web debe iniciar con http:// o https://." });
+        if (!rfcFile) {
+            setRfcFileError("Selecciona el documento RFC en formato PDF.");
             return;
+        }
+
+        if (rfcFile.type !== "application/pdf") {
+            setRfcFileError("El documento RFC debe ser un archivo PDF.");
+            return;
+        }
+
+        if (sitioWeb) {
+            try {
+                const websiteUrl = new URL(sitioWeb);
+
+                if (websiteUrl.protocol !== "http:" && websiteUrl.protocol !== "https:") {
+                    throw new Error("Invalid protocol");
+                }
+            } catch {
+                alerts.notify({ tone: "error", title: "Sitio web inválido", message: "Escribe una URL válida." });
+                return;
+            }
         }
 
         setIsSubmitting(true);
 
         try {
-            const response = await organizerRequestsApi.createRequest(token, {
-                ...payload,
-                telefono_empresa: telefonoEmpresa ? telefonoEmpresa.replace(/\D/g, "") : undefined,
-            });
+            const requestFormData = new FormData();
+            requestFormData.append("nombre_empresa", nombreEmpresa);
+            requestFormData.append("rfc", rfcFile);
+            requestFormData.append("descripcion", descripcion);
+            requestFormData.append("telefono_empresa", telefonoEmpresa);
+            requestFormData.append("email_contacto", emailContacto);
+
+            if (sitioWeb) {
+                requestFormData.append("sitio_web", sitioWeb);
+            }
+
+            const response = await organizerRequestsApi.createRequest(token, requestFormData);
 
             setRequest(response.data);
             alerts.notify({
@@ -164,14 +181,38 @@ export function OrganizerRequestPage() {
                 message: "Solicitud enviada correctamente.",
             });
         } catch (error) {
+            if (error instanceof ApiError && error.status === 409) {
+                try {
+                    setRequest(await getMyRequest(token));
+                } catch {
+                    // The original conflict remains the most useful error to show.
+                }
+            }
+
             alerts.notify({
                 tone: "error",
                 title: "No pudimos enviar tu solicitud",
-                message: error instanceof Error ? error.message : "No pudimos enviar tu solicitud.",
+                message: error instanceof ApiError
+                    ? error.technicalMessage ?? error.message
+                    : error instanceof Error ? error.message : "No pudimos enviar tu solicitud.",
             });
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleRfcFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.currentTarget.files?.[0] ?? null;
+
+        if (file && file.type !== "application/pdf") {
+            event.currentTarget.value = "";
+            setRfcFile(null);
+            setRfcFileError("El documento RFC debe ser un archivo PDF.");
+            return;
+        }
+
+        setRfcFile(file);
+        setRfcFileError("");
     };
 
     const handleRefreshAccess = () => {
@@ -226,7 +267,16 @@ export function OrganizerRequestPage() {
             </nav>
 
             <section className={styles.layout}>
-                {currentStep === 1 && (
+                {isLoading && (
+                <section className={styles.panel}>
+                    <div className={styles.emptyState}>
+                        <strong>Cargando solicitud</strong>
+                        <p>Estamos consultando el estado de tu solicitud.</p>
+                    </div>
+                </section>
+                )}
+
+                {!isLoading && currentStep === 1 && (
                 <form className={styles.panel} onSubmit={handleSubmit}>
                     <div className={styles.panelHeader}>
                         <div>
@@ -235,29 +285,69 @@ export function OrganizerRequestPage() {
                         </div>
                     </div>
 
+                    {request?.status === "rechazada" && (
+                        <div className={styles.rejectionNotice}>
+                            <strong>Tu solicitud fue rechazada.</strong>
+                            <p>{request.motivo_rechazo || "Corrige la información y envía una nueva solicitud."}</p>
+                        </div>
+                    )}
+
                     <div className={styles.formGrid}>
                         <label>
                             Nombre de empresa
-                            <input name="nombre_empresa" type="text" defaultValue={request?.nombre_empresa ?? ""} disabled={!canSubmitRequest} required />
+                            <input
+                                name="nombre_empresa"
+                                type="text"
+                                minLength={2}
+                                maxLength={150}
+                                defaultValue={request?.nombre_empresa ?? ""}
+                                disabled={!canSubmitRequest}
+                                required
+                            />
                         </label>
                         <label>
-                            RFC
-                            <input name="rfc" type="text" defaultValue={request?.rfc ?? ""} disabled={!canSubmitRequest} required />
+                            Documento RFC
+                            <input
+                                name="rfc"
+                                type="file"
+                                accept="application/pdf"
+                                disabled={!canSubmitRequest}
+                                onChange={handleRfcFileChange}
+                                required
+                            />
+                            {rfcFile && <span className={styles.fileName}>{rfcFile.name}</span>}
+                            {rfcFileError && <span className={styles.fileError}>{rfcFileError}</span>}
                         </label>
                         <label className={styles.fullField}>
                             Descripción
-                            <textarea name="descripcion" rows={4} defaultValue={request?.descripcion ?? ""} disabled={!canSubmitRequest} />
+                            <textarea
+                                name="descripcion"
+                                rows={4}
+                                minLength={10}
+                                maxLength={2000}
+                                defaultValue={request?.descripcion ?? ""}
+                                disabled={!canSubmitRequest}
+                                required
+                            />
                         </label>
                         <label>
                             Teléfono de empresa
-                            <input name="telefono_empresa" type="tel" inputMode="numeric" defaultValue={request?.telefono_empresa ?? ""} disabled={!canSubmitRequest} />
+                            <input
+                                name="telefono_empresa"
+                                type="tel"
+                                inputMode="tel"
+                                pattern="\+?[0-9]{10,15}"
+                                defaultValue={request?.telefono_empresa ?? ""}
+                                disabled={!canSubmitRequest}
+                                required
+                            />
                         </label>
                         <label>
                             Email de contacto
-                            <input name="email_contacto" type="email" defaultValue={request?.email_contacto ?? ""} disabled={!canSubmitRequest} />
+                            <input name="email_contacto" type="email" defaultValue={request?.email_contacto ?? ""} disabled={!canSubmitRequest} required />
                         </label>
                         <label className={styles.fullField}>
-                            Sitio web
+                            Sitio web (opcional)
                             <input name="sitio_web" type="url" placeholder="https://eventosleo.com" defaultValue={request?.sitio_web ?? ""} disabled={!canSubmitRequest} />
                         </label>
                     </div>
@@ -268,7 +358,7 @@ export function OrganizerRequestPage() {
                 </form>
                 )}
 
-                {currentStep === 2 && (
+                {!isLoading && currentStep === 2 && (
                 <section className={styles.panel}>
                     <div className={styles.panelHeader}>
                         <div>
@@ -277,18 +367,12 @@ export function OrganizerRequestPage() {
                         </div>
                     </div>
 
-                    {isLoading ? (
-                        <div className={styles.emptyState}>
-                            <strong>Cargando solicitud</strong>
-                            <p>Estamos revisando si ya tienes una solicitud registrada.</p>
-                        </div>
-                    ) : request ? (
+                    {request ? (
                         <div className={styles.statusCard}>
                             <span className={styles[request.status]}>{statusLabels[request.status] ?? request.status}</span>
                             <strong>{request.nombre_empresa}</strong>
-                            <p>{request.rfc}</p>
                             {request.status === "pendiente" && (
-                                <p>Tu solicitud está en revisión. Te avisaremos cuando cambie de estado.</p>
+                                <p>Tu solicitud está pendiente de revisión.</p>
                             )}
                         </div>
                     ) : (
@@ -300,7 +384,7 @@ export function OrganizerRequestPage() {
                 </section>
                 )}
 
-                {currentStep === 3 && (
+                {!isLoading && currentStep === 3 && (
                 <section className={styles.panel}>
                     <div className={styles.panelHeader}>
                         <div>
@@ -312,7 +396,7 @@ export function OrganizerRequestPage() {
                     <div className={styles.statusCard}>
                         <span className={styles.aprobada}>Aprobada</span>
                         <strong>{request?.nombre_empresa}</strong>
-                        <p>Tu solicitud fue aprobada. Para convertir tu cuenta a administrador de eventos necesitas iniciar sesión de nuevo y recibir un token actualizado.</p>
+                        <p>Tu solicitud fue aprobada.</p>
                         <button type="button" onClick={handleRefreshAccess}>Actualizar acceso</button>
                     </div>
                 </section>

@@ -34,15 +34,6 @@ type MessageResponse = {
     message: string;
 };
 
-export type CreateOrganizerRequestPayload = {
-    nombre_empresa: string;
-    rfc: string;
-    descripcion?: string;
-    telefono_empresa?: string;
-    email_contacto?: string;
-    sitio_web?: string;
-};
-
 export const organizerRequestsApi = {
     async getRequests(token: string, status?: OrganizerRequestStatus | "todos") {
         const params = status && status !== "todos"
@@ -65,7 +56,7 @@ export const organizerRequestsApi = {
         return response.data;
     },
 
-    createRequest(token: string, payload: CreateOrganizerRequestPayload) {
+    createRequest(token: string, payload: FormData) {
         return apiRequest<CreateOrganizerRequestResponse>("/organizadores/solicitar", {
             method: "POST",
             token,

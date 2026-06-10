@@ -122,6 +122,34 @@
     resize: vertical;
 }
 
+.fileName,
+.fileError {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fileName {
+    color: var(--text-muted);
+}
+
+.fileError {
+    color: #ffb3c1;
+}
+
+.rejectionNotice {
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    border: 1px solid rgba(255, 92, 122, 0.44);
+    border-radius: var(--radius-md);
+    background: rgba(255, 92, 122, 0.12);
+    color: #ffb3c1;
+}
+
+.rejectionNotice p {
+    margin: 0;
+}
+
 .formGrid input:focus,
 .formGrid textarea:focus {
     border-color: rgba(255, 63, 199, 0.72);
