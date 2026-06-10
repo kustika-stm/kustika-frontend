@@ -222,7 +222,7 @@ export function GoogleCallbackPage() {
                     Volver al inicio
                 </a>
                 <h1>No pudimos completar el inicio con Google</h1>
-                <p>El backend no regreso los tokens de sesion al frontend.</p>
+                <p>No recibimos la información necesaria para iniciar tu sesión. Inténtalo nuevamente.</p>
             </section>
         </main>
     );

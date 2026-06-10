@@ -80,12 +80,12 @@ export function useAdminUsers({ activePage, currentUserId, getCurrentToken }: Pa
         setUpdatingUserId(user.id);
 
         try {
-            const response = await adminApi.updateUserRole(currentToken, user.id, rol);
+            await adminApi.updateUserRole(currentToken, user.id, rol);
 
             alerts.notify({
                 tone: "success",
                 title: "Rol actualizado",
-                message: response.message,
+                message: "El nuevo rol del usuario se guardó correctamente.",
             });
             await loadUsers();
         } catch (error) {

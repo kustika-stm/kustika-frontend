@@ -454,7 +454,7 @@ export function useAdminEvents({ activePage, getCurrentToken }: Params) {
             alerts.notify({
                 tone: "error",
                 title: "Motivo requerido",
-                message: "El backend requiere un motivo para cancelar el evento.",
+                message: "Escribe un motivo para poder cancelar el evento.",
             });
             return;
         }

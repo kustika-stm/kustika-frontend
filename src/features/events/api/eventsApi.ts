@@ -158,7 +158,7 @@ export const eventsApi = {
         const uploadedImage = unwrapData(response);
 
         if (!uploadedImage.url) {
-            throw new Error("El backend no regreso la URL de la imagen.");
+            throw new Error("No pudimos guardar la imagen. Inténtalo nuevamente.");
         }
 
         return uploadedImage.url;
@@ -175,7 +175,7 @@ export const eventsApi = {
         const id = getCreatedId(createdEvent, "evento");
 
         if (!id) {
-            throw new Error("El backend no regreso el ID del evento creado.");
+            throw new Error("El evento se guardó, pero no pudimos abrirlo. Actualiza la página e inténtalo nuevamente.");
         }
 
         return { id };
@@ -200,7 +200,7 @@ export const eventsApi = {
         const id = getCreatedId(createdFunction, "funcion");
 
         if (!id) {
-            throw new Error("El backend no regresó el ID de la función creada.");
+            throw new Error("La función se guardó, pero no pudimos abrirla. Actualiza la página e inténtalo nuevamente.");
         }
 
         return { id };

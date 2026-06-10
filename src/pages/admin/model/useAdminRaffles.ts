@@ -168,7 +168,7 @@ export function useAdminRaffles({ activePage, getCurrentToken }: Params) {
         setProcessingRaffleId(raffle.id);
 
         try {
-            const response = await rafflesApi.deleteAdminRaffle(currentToken, raffle.id);
+            await rafflesApi.deleteAdminRaffle(currentToken, raffle.id);
 
             if (editingRaffle?.id === raffle.id) {
                 setEditingRaffle(null);
@@ -178,7 +178,7 @@ export function useAdminRaffles({ activePage, getCurrentToken }: Params) {
             alerts.notify({
                 tone: "success",
                 title: "Sorteo eliminado",
-                message: response.message,
+                message: "El sorteo se eliminó del catálogo correctamente.",
             });
         } catch (error) {
             alerts.notify({
