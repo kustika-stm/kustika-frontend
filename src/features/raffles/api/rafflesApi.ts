@@ -127,7 +127,7 @@ export const rafflesApi = {
         const imageUrl = normalizeImageUrl(getUploadedImageUrl(response));
 
         if (!imageUrl) {
-            throw new Error("El backend no regreso la URL de la imagen.");
+            throw new Error("No pudimos guardar la imagen. Inténtalo nuevamente.");
         }
 
         return imageUrl;

@@ -90,7 +90,7 @@ const normalizeSession = (response: LoginResponse, email: string): AuthSession =
     const refreshToken = payload.refreshToken ?? payload.refresh_token;
 
     if (!accessToken || !refreshToken) {
-        throw new Error("El backend no regresó tokens de sesión.");
+        throw new Error("No pudimos preparar tu sesión. Inténtalo nuevamente.");
     }
 
     const tokenRole = getTokenRole(accessToken);
@@ -197,7 +197,7 @@ export const authApi = {
         const accessToken = payload.accessToken ?? payload.access_token;
 
         if (!accessToken) {
-            throw new Error("El backend no regreso un accessToken nuevo.");
+            throw new Error("No pudimos renovar tu sesión. Inicia sesión nuevamente.");
         }
 
         return accessToken;

@@ -52,12 +52,12 @@ export function useAdminRequests({ activePage, getCurrentToken }: Params) {
         setProcessingRequestId(requestId);
 
         try {
-            const response = await organizerRequestsApi.approveRequest(currentToken, requestId);
+            await organizerRequestsApi.approveRequest(currentToken, requestId);
 
             alerts.notify({
                 tone: "success",
                 title: "Solicitud aprobada",
-                message: response.message,
+                message: "La cuenta ya tiene permisos de organizador.",
             });
             await loadRequests();
         } catch (error) {
@@ -96,12 +96,12 @@ export function useAdminRequests({ activePage, getCurrentToken }: Params) {
         setProcessingRequestId(requestId);
 
         try {
-            const response = await organizerRequestsApi.rejectRequest(currentToken, requestId, motivo.trim());
+            await organizerRequestsApi.rejectRequest(currentToken, requestId, motivo.trim());
 
             alerts.notify({
                 tone: "success",
                 title: "Solicitud rechazada",
-                message: response.message,
+                message: "La solicitud fue rechazada y el motivo quedó guardado.",
             });
             await loadRequests();
         } catch (error) {

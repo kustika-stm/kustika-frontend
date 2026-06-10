@@ -182,7 +182,7 @@ export function ProfilePage({ mode = "view" }: Props) {
             window.location.assign(routes.profile);
         } catch (requestError) {
             const message = requestError instanceof ApiError && requestError.status === 404
-                ? "El backend no encontró la ruta para actualizar tu perfil."
+                ? "No pudimos actualizar tu perfil en este momento."
                 : requestError instanceof Error ? requestError.message : "No pudimos actualizar tu perfil.";
             setFormError(message);
         } finally {
