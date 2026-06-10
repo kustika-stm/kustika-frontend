@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { AuthForm, type RegisterFormValues } from "../../features/auth/ui";
 import { authApi } from "../../features/auth/api";
+import { getRoleHomePath, saveSession } from "../../entities/session";
 import { routes } from "../../app/router/routes";
 import arrowIcon from "../../shared/assets/icons/flecha.png";
 import heroImage from "../../shared/assets/images/hero/hero.jpg";
@@ -11,6 +12,7 @@ import styles from "../login/login.module.css";
 export function RegisterPage() {
     const alerts = useAlerts();
     const [pendingEmail, setPendingEmail] = useState("");
+    const [pendingPassword, setPendingPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isResending, setIsResending] = useState(false);
 
@@ -20,6 +22,7 @@ export function RegisterPage() {
         try {
             await authApi.register(values);
             setPendingEmail(values.email);
+            setPendingPassword(values.password);
             alerts.notify({
                 tone: "success",
                 title: "Código enviado",
@@ -44,12 +47,27 @@ export function RegisterPage() {
 
         try {
             await authApi.verifyEmail({ email: pendingEmail, codigo });
-            alerts.notify({
-                tone: "success",
-                title: "Correo verificado",
-                message: "Ya puedes iniciar sesión.",
-            });
-            window.setTimeout(() => window.location.assign(routes.login), 900);
+
+            try {
+                const session = await authApi.login({ email: pendingEmail, password: pendingPassword });
+                saveSession(session);
+
+                alerts.notify({
+                    tone: "success",
+                    title: "Cuenta lista",
+                    message: "Verificamos tu correo e iniciamos tu sesión.",
+                });
+                window.setTimeout(() => window.location.assign(getRoleHomePath(session.user?.tipo_usuario)), 900);
+            } catch (loginError) {
+                const message = loginError instanceof Error ? loginError.message : "No pudimos iniciar sesión automáticamente.";
+
+                alerts.notify({
+                    tone: "error",
+                    title: "Correo verificado",
+                    message: `${message} Inténtalo desde el inicio de sesión.`,
+                });
+                window.setTimeout(() => window.location.assign(routes.login), 1400);
+            }
         } catch (requestError) {
             const nextError = requestError instanceof Error ? requestError.message : "No pudimos verificar el código.";
 
