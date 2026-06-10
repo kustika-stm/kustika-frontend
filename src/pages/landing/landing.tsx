@@ -58,7 +58,7 @@ const sectionRoutes = [
 const socialLinks = [
     {
         label: "Instagram",
-        href: "https://www.instagram.com/kustikamx/",
+        href: "https://www.instagram.com/kustika.mx/",
         icon: instagramIcon,
     },
     {
